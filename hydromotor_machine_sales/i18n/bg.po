@@ -1,0 +1,36 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Hydromotor 19.0\n"
+"Language: bg\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+
+#: model:base.automation,name:hydromotor_machine_sales.config_guard
+msgid "Hydromotor — config_guard"
+msgstr "Hydromotor — проверка на конфигурацията"
+
+#: model:base.automation,name:hydromotor_machine_sales.options_guard
+msgid "Hydromotor — options_guard"
+msgstr "Hydromotor — проверка на опциите"
+
+#: model:base.automation,name:hydromotor_machine_sales.options_unlink
+msgid "Hydromotor — options_unlink"
+msgstr "Hydromotor — изтриване на опции"
+
+#: model:base.automation,name:hydromotor_machine_sales.sale_line_guard
+msgid "Hydromotor — sale_line_guard"
+msgstr "Hydromotor — проверка на реда на продажбата"
+
+#: model:base.automation,name:hydromotor_machine_sales.sale_line_unlink
+msgid "Hydromotor — sale_line_unlink"
+msgstr "Hydromotor — изтриване на ред на продажбата"
+
+#: model:base.automation,name:hydromotor_machine_sales.sale_sync
+msgid "Hydromotor — sale_sync"
+msgstr "Hydromotor — синхронизиране на продажбите"
+
+#: model:ir.model.fields.selection,name:hydromotor_machine_sales.field_x_hm_config__x_language_en
+msgid "English"
+msgstr "Английски"

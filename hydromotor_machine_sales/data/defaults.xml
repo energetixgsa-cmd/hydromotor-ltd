@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+  <data noupdate="1"><record id="hydromotor_machine_sales.default_field_x_hm_config__x_quantity" model="ir.default">
+    <field name="field_id" ref="hydromotor_machine_sales.field_x_hm_config__x_quantity"/>
+    <field name="json_value">1</field>
+  </record>
+  <record id="hydromotor_machine_sales.default_field_x_hm_config__x_discount" model="ir.default">
+    <field name="field_id" ref="hydromotor_machine_sales.field_x_hm_config__x_discount"/>
+    <field name="json_value">0</field>
+  </record>
+  <record id="hydromotor_machine_sales.default_field_x_hm_config__x_chassis_price" model="ir.default">
+    <field name="field_id" ref="hydromotor_machine_sales.field_x_hm_config__x_chassis_price"/>
+    <field name="json_value">0</field>
+  </record>
+  <record id="hydromotor_machine_sales.default_field_x_hm_config__x_transport_price" model="ir.default">
+    <field name="field_id" ref="hydromotor_machine_sales.field_x_hm_config__x_transport_price"/>
+    <field name="json_value">0</field>
+  </record>
+  <record id="hydromotor_machine_sales.default_field_x_hm_config__x_other_price" model="ir.default">
+    <field name="field_id" ref="hydromotor_machine_sales.field_x_hm_config__x_other_price"/>
+    <field name="json_value">0</field>
+  </record>
+  <record id="hydromotor_machine_sales.default_field_x_hm_config__x_warranty_months" model="ir.default">
+    <field name="field_id" ref="hydromotor_machine_sales.field_x_hm_config__x_warranty_months"/>
+    <field name="json_value">0</field>
+  </record>
+  <record id="hydromotor_machine_sales.default_field_x_hm_config__x_market" model="ir.default">
+    <field name="field_id" ref="hydromotor_machine_sales.field_x_hm_config__x_market"/>
+    <field name="json_value">"EU"</field>
+  </record>
+  <record id="hydromotor_machine_sales.default_field_x_hm_config__x_chassis_type" model="ir.default">
+    <field name="field_id" ref="hydromotor_machine_sales.field_x_hm_config__x_chassis_type"/>
+    <field name="json_value">"unspecified"</field>
+  </record>
+  <record id="hydromotor_machine_sales.default_field_x_hm_config__x_language" model="ir.default">
+    <field name="field_id" ref="hydromotor_machine_sales.field_x_hm_config__x_language"/>
+    <field name="json_value">"bg"</field>
+  </record>
+  <record id="hydromotor_machine_sales.default_field_x_hm_settings__x_enabled" model="ir.default">
+    <field name="field_id" ref="hydromotor_machine_sales.field_x_hm_settings__x_enabled"/>
+    <field name="json_value">false</field>
+  </record>
+  <record id="hydromotor_machine_sales.registry_settings_main" model="x_hm_settings">
+    <field name="x_name">Hydromotor — регистър на машините</field>
+    <field name="x_company_id" ref="base.main_company"/>
+    <field name="x_enabled" eval="False"/>
+    <field name="x_target_model_id" ref="hydromotor_service.model_machine"/>
+    <field name="x_name_field_id" ref="hydromotor_service.field_machine_name"/>
+    <field name="x_partner_field_id" ref="hydromotor_service.field_machine_partner_id"/>
+    <field name="x_company_field_id" ref="hydromotor_service.field_machine_company_id"/>
+    <field name="x_key_field_id" ref="hydromotor_machine_sales.field_x_hm_machine__x_hms_source_key"/>
+    <field name="x_product_field_id" ref="hydromotor_service.field_machine_product_id"/>
+    <field name="x_summary_field_id" ref="hydromotor_machine_sales.field_x_hm_machine__x_hms_quote_description"/>
+    <field name="x_state_field_id" ref="hydromotor_machine_sales.field_x_hm_machine__x_hms_order_state"/>
+  </record>
+</data></odoo>

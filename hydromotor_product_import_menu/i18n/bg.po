@@ -1,0 +1,16 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Hydromotor 19.0\n"
+"Language: bg\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+
+#: model:ir.actions.act_window,name:hydromotor_product_import_menu.action_product_import
+msgid "Продукти за импорт / Product Import"
+msgstr "Артикули за импорт"
+
+#: model:ir.ui.menu,name:hydromotor_product_import_menu.menu_product_import
+msgid "Продукти за импорт / Product Import"
+msgstr "Артикули за импорт"

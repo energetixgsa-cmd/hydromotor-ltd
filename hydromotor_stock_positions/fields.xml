@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+  <record id="field_template_stock_positions" model="ir.model.fields">
+    <field name="model_id" ref="product.model_product_template"/>
+    <field name="name">x_studio_stock_positions</field>
+    <field name="ttype">char</field>
+    <field name="compute">for record in self:
+    positions = []
+    for quant in record.product_variant_ids.stock_quant_ids:
+        if quant.quantity &gt; 0 and quant.location_id.usage == 'internal':
+            name = quant.location_id.complete_name
+            if name not in positions:
+                positions.append(name)
+    record['x_studio_stock_positions'] = '; '.join(sorted(positions))</field>
+    <field name="depends">product_variant_ids.stock_quant_ids.quantity, product_variant_ids.stock_quant_ids.location_id, product_variant_ids.stock_quant_ids.location_id.complete_name, product_variant_ids.stock_quant_ids.location_id.usage</field>
+    <field name="field_description">Текущи складови позиции</field>
+    <field name="readonly" eval="True"/>
+    <field name="store" eval="False"/>
+    <field name="copied" eval="False"/>
+    <field name="required" eval="False"/>
+  </record>
+  <record id="field_sale_line_stock_positions" model="ir.model.fields">
+    <field name="model_id" ref="sale.model_sale_order_line"/>
+    <field name="name">x_studio_order_stock_positions</field>
+    <field name="ttype">char</field>
+    <field name="related">product_id.product_tmpl_id.x_studio_stock_positions</field>
+    <field name="field_description">Складови позиции</field>
+    <field name="readonly" eval="True"/>
+    <field name="store" eval="False"/>
+    <field name="copied" eval="False"/>
+    <field name="required" eval="False"/>
+  </record>
+</odoo>

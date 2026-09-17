@@ -1,0 +1,923 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+  <record id="hydromotor_service.action_register_sale" model="ir.actions.server">
+    <field name="name">Регистрирай доставените машини</field>
+    <field name="model_id" ref="sale.model_sale_order"/>
+    <field name="binding_model_id" ref="sale.model_sale_order"/>
+    <field name="state">code</field>
+    <field name="binding_type">action</field>
+    <field name="binding_view_types">list,form</field>
+    <field name="usage">ir_actions_server</field>
+    <field name="sequence" eval="5"/>
+    <field name="code">if not records:
+    raise UserError('Изберете поръчка за продажба.')
+result_ids = []
+for order in records:
+    if order.state != 'sale':
+        raise UserError('Машини се регистрират от потвърдена продажба след действителна доставка.')
+    lines = env['stock.move.line'].search([
+        ('move_id.sale_line_id.order_id', '=', order.id),
+        ('state', '=', 'done'), ('location_dest_id.usage', '=', 'customer'),
+        ('lot_id', '!=', False), ('quantity', '&gt;', 0),
+        ('product_id.product_tmpl_id.x_hm_is_machine', '=', True),
+        ('company_id', '=', order.company_id.id),
+    ])
+    for line in lines:
+        if line.product_id.tracking != 'serial':
+            raise UserError('Машината %s трябва да се проследява по отделен сериен номер.' % line.product_id.display_name)
+        machines = env['x_hm_machine'].search([('x_lot_id', '=', line.lot_id.id), ('x_company_id', '=', order.company_id.id)])
+        if len(machines) &gt; 1:
+            raise UserError('Има повече от едно досие за сериен номер %s.' % line.lot_id.name)
+        if machines:
+            machine = machines
+            if machine.x_sale_order_id and machine.x_sale_order_id != order:
+                raise UserError('Машината %s вече има първоначална продажба. Проверете нейното досие.' % machine.x_name)
+            if machine.x_partner_id.commercial_partner_id != order.partner_id.commercial_partner_id:
+                raise UserError('Собственикът на досието не съвпада с клиента в продажбата.')
+            if not machine.x_sale_order_id:
+                machine.write({'x_sale_order_id': order.id, 'x_delivery_id': line.picking_id.id,
+                    'x_delivery_date': line.picking_id.date_done.date() if line.picking_id.date_done else False})
+        else:
+            machine = env['x_hm_machine'].with_company(order.company_id).with_context(mail_create_nosubscribe=True).create({
+                'x_name': '%s / %s' % (line.product_id.display_name, line.lot_id.name),
+                'x_lot_id': line.lot_id.id, 'x_company_id': order.company_id.id,
+                'x_partner_id': order.partner_id.commercial_partner_id.id,
+                'x_sale_order_id': order.id, 'x_delivery_id': line.picking_id.id,
+                'x_delivery_date': line.picking_id.date_done.date() if line.picking_id.date_done else False,
+            })
+        if machine.id not in result_ids:
+            result_ids.append(machine.id)
+if not result_ids:
+    raise UserError('Няма доставени машини със сериен номер. Отбележете „Машина със сервизно досие“ в артикула и проверете завършената доставка.')
+action = {'type': 'ir.actions.act_window', 'name': 'Досиета на машините', 'res_model': 'x_hm_machine', 'view_mode': 'list,form', 'domain': [('id', 'in', result_ids)]}
+if len(result_ids) == 1:
+    action.update({'view_mode': 'form', 'res_id': result_ids[0]})
+</field>
+    <field name="group_ids" eval="[(6, 0, [ref('hydromotor_service.group_service_user')])]"/>
+  </record>
+  <record id="hydromotor_service.action_new_job" model="ir.actions.server">
+    <field name="name">Нова сервизна заявка</field>
+    <field name="model_id" ref="hydromotor_service.model_machine"/>
+    <field name="state">code</field>
+    <field name="binding_type">action</field>
+    <field name="binding_view_types">list,form</field>
+    <field name="usage">ir_actions_server</field>
+    <field name="sequence" eval="5"/>
+    <field name="code">record.ensure_one()
+if record.x_retired:
+    raise UserError('Машината е изведена от обслужване.')
+action = {'type': 'ir.actions.act_window', 'name': 'Нова сервизна заявка', 'res_model': 'x_hm_job', 'view_mode': 'form', 'target': 'current', 'context': {'default_x_machine_id': record.id, 'default_x_technician_id': env.uid}}
+</field>
+    <field name="group_ids" eval="[(6, 0, [ref('hydromotor_service.group_service_user')])]"/>
+  </record>
+  <record id="hydromotor_service.action_new_plan" model="ir.actions.server">
+    <field name="name">Нов сервизен план</field>
+    <field name="model_id" ref="hydromotor_service.model_machine"/>
+    <field name="state">code</field>
+    <field name="binding_type">action</field>
+    <field name="binding_view_types">list,form</field>
+    <field name="usage">ir_actions_server</field>
+    <field name="sequence" eval="5"/>
+    <field name="code">record.ensure_one()
+action = {'type': 'ir.actions.act_window', 'name': 'Нов сервизен план', 'res_model': 'x_hm_plan', 'view_mode': 'form', 'context': {'default_x_machine_id': record.id, 'default_x_technician_id': env.uid}}
+</field>
+    <field name="group_ids" eval="[(6, 0, [ref('hydromotor_service.group_service_user')])]"/>
+  </record>
+  <record id="hydromotor_service.action_new_meter" model="ir.actions.server">
+    <field name="name">Отчети моточасове</field>
+    <field name="model_id" ref="hydromotor_service.model_machine"/>
+    <field name="state">code</field>
+    <field name="binding_type">action</field>
+    <field name="binding_view_types">list,form</field>
+    <field name="usage">ir_actions_server</field>
+    <field name="sequence" eval="5"/>
+    <field name="code">record.ensure_one()
+action = {'type': 'ir.actions.act_window', 'name': 'Отчитане на моточасове', 'res_model': 'x_hm_meter', 'view_mode': 'form', 'context': {'default_x_machine_id': record.id, 'default_x_date': datetime.date.today().isoformat(), 'default_x_hours': record.x_hours}}
+</field>
+    <field name="group_ids" eval="[(6, 0, [ref('hydromotor_service.group_service_user')])]"/>
+  </record>
+  <record id="hydromotor_service.action_machine_repairs" model="ir.actions.server">
+    <field name="name">Ремонти за серийния номер</field>
+    <field name="model_id" ref="hydromotor_service.model_machine"/>
+    <field name="state">code</field>
+    <field name="binding_type">action</field>
+    <field name="binding_view_types">list,form</field>
+    <field name="usage">ir_actions_server</field>
+    <field name="sequence" eval="5"/>
+    <field name="code">record.ensure_one()
+action = {'type': 'ir.actions.act_window', 'name': 'Ремонти на машината', 'res_model': 'repair.order', 'view_mode': 'list,form', 'domain': [('lot_id', '=', record.x_lot_id.id), ('company_id', '=', record.x_company_id.id)], 'context': {'default_product_id': record.x_product_id.id, 'default_lot_id': record.x_lot_id.id, 'default_partner_id': record.x_partner_id.id, 'default_company_id': record.x_company_id.id}}
+</field>
+    <field name="group_ids" eval="[(6, 0, [ref('hydromotor_service.group_service_user')])]"/>
+  </record>
+  <record id="hydromotor_service.action_plan_job" model="ir.actions.server">
+    <field name="name">Създай / отвори заявка по плана</field>
+    <field name="model_id" ref="hydromotor_service.model_plan"/>
+    <field name="binding_model_id" ref="hydromotor_service.model_plan"/>
+    <field name="state">code</field>
+    <field name="binding_type">action</field>
+    <field name="binding_view_types">list,form</field>
+    <field name="usage">ir_actions_server</field>
+    <field name="sequence" eval="5"/>
+    <field name="code">ids = []
+for plan in records:
+    if not plan.x_enabled or plan.x_machine_id.x_retired:
+        raise UserError('Планът трябва да е активен и машината да е в обслужване.')
+    job = env['x_hm_job'].search([('x_plan_id', '=', plan.id), ('x_state', 'not in', ['done', 'cancel'])], limit=1)
+    if not job:
+        job = env['x_hm_job'].with_company(plan.x_company_id).with_context(mail_create_nosubscribe=True).create({
+            'x_name': plan.x_name, 'x_machine_id': plan.x_machine_id.id,
+            'x_plan_id': plan.id, 'x_technician_id': plan.x_technician_id.id,
+            'x_due_date': plan.x_next_date, 'x_problem': plan.x_instructions or plan.x_name,
+            'x_state': 'new', 'x_kind': 'onsite', 'x_coverage': 'review',
+        })
+    ids.append(job.id)
+action = {'type': 'ir.actions.act_window', 'name': 'Заявки по планове', 'res_model': 'x_hm_job', 'view_mode': 'list,form', 'domain': [('id', 'in', ids)]}
+if len(ids) == 1:
+    action.update({'view_mode': 'form', 'res_id': ids[0]})
+</field>
+    <field name="group_ids" eval="[(6, 0, [ref('hydromotor_service.group_service_user')])]"/>
+  </record>
+  <record id="hydromotor_service.action_scan_plans" model="ir.actions.server">
+    <field name="name">Провери настъпилите обслужвания</field>
+    <field name="model_id" ref="hydromotor_service.model_plan"/>
+    <field name="state">code</field>
+    <field name="binding_type">action</field>
+    <field name="binding_view_types">list,form</field>
+    <field name="usage">ir_actions_server</field>
+    <field name="sequence" eval="5"/>
+    <field name="code">plans = env['x_hm_plan'].search([('x_enabled', '=', True), ('x_machine_id.x_retired', '=', False)])
+due = plans.filtered(lambda p: p.x_due)
+if due:
+    action = env.ref('hydromotor_service.action_plan_job').with_context(active_model='x_hm_plan', active_ids=due.ids, active_id=due[0].id).run()
+else:
+    action = {'type': 'ir.actions.client', 'tag': 'display_notification', 'params': {'title': 'Сервизни планове', 'message': 'Няма настъпили обслужвания по въведените дати и моточасове.', 'type': 'success', 'sticky': False}}
+</field>
+    <field name="group_ids" eval="[(6, 0, [ref('hydromotor_service.group_service_user')])]"/>
+  </record>
+  <record id="hydromotor_service.action_job_plan" model="ir.actions.server">
+    <field name="name">Планирай</field>
+    <field name="model_id" ref="hydromotor_service.model_job"/>
+    <field name="state">code</field>
+    <field name="binding_type">action</field>
+    <field name="binding_view_types">list,form</field>
+    <field name="usage">ir_actions_server</field>
+    <field name="sequence" eval="5"/>
+    <field name="code">for job in records:
+    if job.x_state not in ['new', 'planned']:
+        raise UserError('Може да се планира нова или вече планирана заявка.')
+    if not job.x_planned_start or not job.x_technician_id:
+        raise UserError('Посочете начало на посещението и отговорен техник.')
+    job.write({'x_state': 'planned'})
+</field>
+    <field name="group_ids" eval="[(6, 0, [ref('hydromotor_service.group_service_user')])]"/>
+  </record>
+  <record id="hydromotor_service.action_job_start" model="ir.actions.server">
+    <field name="name">Започни</field>
+    <field name="model_id" ref="hydromotor_service.model_job"/>
+    <field name="state">code</field>
+    <field name="binding_type">action</field>
+    <field name="binding_view_types">list,form</field>
+    <field name="usage">ir_actions_server</field>
+    <field name="sequence" eval="5"/>
+    <field name="code">for job in records:
+    if job.x_state not in ['new', 'planned', 'progress']:
+        raise UserError('Завършена или отказана заявка не може да се започне отново.')
+    if not job.x_technician_id:
+        raise UserError('Посочете отговорен техник.')
+    job.write({'x_state': 'progress'})
+</field>
+    <field name="group_ids" eval="[(6, 0, [ref('hydromotor_service.group_service_user')])]"/>
+  </record>
+  <record id="hydromotor_service.action_job_cancel" model="ir.actions.server">
+    <field name="name">Откажи</field>
+    <field name="model_id" ref="hydromotor_service.model_job"/>
+    <field name="state">code</field>
+    <field name="binding_type">action</field>
+    <field name="binding_view_types">list,form</field>
+    <field name="usage">ir_actions_server</field>
+    <field name="sequence" eval="5"/>
+    <field name="code">for job in records:
+    if job.x_state == 'done':
+        raise UserError('Завършена заявка не може да се отказва.')
+    job.write({'x_state': 'cancel'})
+</field>
+    <field name="group_ids" eval="[(6, 0, [ref('hydromotor_service.group_service_user')])]"/>
+  </record>
+  <record id="hydromotor_service.action_job_done" model="ir.actions.server">
+    <field name="name">Завърши обслужването</field>
+    <field name="model_id" ref="hydromotor_service.model_job"/>
+    <field name="state">code</field>
+    <field name="binding_type">action</field>
+    <field name="binding_view_types">list,form</field>
+    <field name="usage">ir_actions_server</field>
+    <field name="sequence" eval="5"/>
+    <field name="code">for job in records:
+    if job.x_state == 'done':
+        continue
+    if job.x_state == 'cancel':
+        raise UserError('Отказана заявка не може да бъде завършена.')
+    if not job.x_work_done or not job.x_work_done.strip():
+        raise UserError('Опишете извършените дейности.')
+    if not job.x_technician_id or job.x_coverage == 'review':
+        raise UserError('Посочете техник и решение за начина на заплащане.')
+    plan = job.x_plan_id
+    if plan and plan.x_interval_hours &gt; 0 and not job.x_has_meter:
+        raise UserError('Планът е по моточасове. Въведете текущото отчитане.')
+    if job.x_has_meter and job.x_meter_hours &lt; job.x_machine_id.x_hours:
+        raise UserError('Моточасовете не могат да са по-малко от последния отчет в досието.')
+    now = datetime.datetime.now()
+    if job.x_has_meter:
+        previous = env['x_hm_meter'].search([('x_job_id', '=', job.id)], limit=1)
+        if not previous:
+            env['x_hm_meter'].with_context(mail_create_nosubscribe=True).create({
+                'x_name': job.x_reference or job.x_name, 'x_machine_id': job.x_machine_id.id,
+                'x_job_id': job.id, 'x_date': now.date(), 'x_hours': job.x_meter_hours,
+                'x_note': 'Отчет при завършване на сервизната заявка.',
+            })
+    if plan:
+        plan.write({
+            'x_next_date': now.date() + datetime.timedelta(days=plan.x_interval_days) if plan.x_interval_days &gt; 0 else False,
+            'x_next_hours': job.x_meter_hours + plan.x_interval_hours if plan.x_interval_hours &gt; 0 else 0,
+        })
+    job.write({'x_state': 'done', 'x_closed_at': now})
+</field>
+    <field name="group_ids" eval="[(6, 0, [ref('hydromotor_service.group_service_user')])]"/>
+  </record>
+  <record id="hydromotor_service.action_job_quote" model="ir.actions.server">
+    <field name="name">Сервизна оферта</field>
+    <field name="model_id" ref="hydromotor_service.model_job"/>
+    <field name="state">code</field>
+    <field name="binding_type">action</field>
+    <field name="binding_view_types">list,form</field>
+    <field name="usage">ir_actions_server</field>
+    <field name="sequence" eval="5"/>
+    <field name="code">record.ensure_one()
+job = record
+if job.x_state == 'cancel':
+    raise UserError('Отказана заявка не може да създаде оферта.')
+order = job.x_sale_order_id
+repair = job.x_repair_id
+if order and order.state == 'cancel':
+    raise UserError('Свързаната оферта е отказана. Отворете я от полето „Сервизна оферта / поръчка“ и проверете следващото действие.')
+if not order:
+    if repair:
+        if not repair.sale_order_id:
+            repair.action_create_sale_order()
+        order = repair.sale_order_id
+    else:
+        order = env['sale.order'].with_company(job.x_company_id).with_context(mail_create_nosubscribe=True).create({
+            'partner_id': job.x_partner_id.id, 'company_id': job.x_company_id.id,
+            'origin': '%s / %s' % (job.x_reference or job.x_name, job.x_machine_id.x_name),
+        })
+    if order.state == 'cancel':
+        raise UserError('Офертата на свързания ремонт е отказана. Проверете ремонта и неговата оферта.')
+    job.write({'x_sale_order_id': order.id})
+action = {'type': 'ir.actions.act_window', 'res_model': 'sale.order', 'view_mode': 'form', 'res_id': order.id, 'target': 'current'}
+</field>
+    <field name="group_ids" eval="[(6, 0, [ref('hydromotor_service.group_service_user')])]"/>
+  </record>
+  <record id="hydromotor_service.validate_machine" model="ir.actions.server">
+    <field name="name">Проверки: machine</field>
+    <field name="model_id" ref="hydromotor_service.model_machine"/>
+    <field name="state">code</field>
+    <field name="binding_type">action</field>
+    <field name="binding_view_types">list,form</field>
+    <field name="usage">ir_actions_server</field>
+    <field name="sequence" eval="5"/>
+    <field name="code">for r in records:
+    identity = '%s/%s' % (r.x_company_id.id, r.x_lot_id.id)
+    if r.x_identity_key and r.x_identity_key != identity:
+        raise UserError('Фирмата и серийният номер на записано досие не могат да се сменят. Създайте отделно досие за друга машина.')
+    if not r.x_identity_key:
+        r.write({'x_identity_key': identity})
+    if r.x_lot_id.product_id.tracking != 'serial':
+        raise UserError('За машината е необходимо проследяване по сериен номер, а не по партида.')
+    if r.x_lot_id.company_id and r.x_lot_id.company_id != r.x_company_id:
+        raise UserError('Серийният номер е от друга фирма.')
+    if env['x_hm_machine'].search_count([('id', '!=', r.id), ('x_lot_id', '=', r.x_lot_id.id), ('x_company_id', '=', r.x_company_id.id)]):
+        raise UserError('За този сериен номер вече има досие в същата фирма.')
+    if r.x_warranty_hours &lt; 0:
+        raise UserError('Гаранционният лимит не може да е отрицателен.')
+    if r.x_warranty_start and r.x_warranty_end and r.x_warranty_end &lt; r.x_warranty_start:
+        raise UserError('Краят на гаранцията е преди началото.')
+    if r.x_sale_order_id and r.x_sale_order_id.company_id != r.x_company_id:
+        raise UserError('Първоначалната продажба е от друга фирма.')
+    if r.x_delivery_id and r.x_delivery_id.company_id != r.x_company_id:
+        raise UserError('Доставката е от друга фирма.')
+</field>
+  </record>
+  <record id="hydromotor_service.validate_job" model="ir.actions.server">
+    <field name="name">Проверки: job</field>
+    <field name="model_id" ref="hydromotor_service.model_job"/>
+    <field name="state">code</field>
+    <field name="binding_type">action</field>
+    <field name="binding_view_types">list,form</field>
+    <field name="usage">ir_actions_server</field>
+    <field name="sequence" eval="5"/>
+    <field name="code">for r in records:
+    vals = {}
+    if r.x_machine_lock_id and r.x_machine_lock_id != r.x_machine_id:
+        raise UserError('Записаната заявка е за друга машина. Създайте нова заявка за правилната машина.')
+    if not r.x_machine_lock_id:
+        vals['x_machine_lock_id'] = r.x_machine_id.id
+    if not r.x_reference:
+        vals['x_reference'] = 'SRV-%06d' % r.id
+    if not r.x_partner_id:
+        vals['x_partner_id'] = r.x_machine_id.x_partner_id.id
+    if vals:
+        r.write(vals)
+    if r.x_state == 'done' and not r.x_closed_at:
+        raise UserError('Завършвайте заявката с бутона „Завърши“, за да се запишат отчетът и следващият срок.')
+    if r.x_state == 'planned' and (not r.x_planned_start or not r.x_technician_id):
+        raise UserError('Планираната заявка изисква начална дата и отговорен техник.')
+    if r.x_state == 'progress' and not r.x_technician_id:
+        raise UserError('За работа по заявката трябва да има отговорен техник.')
+    if r.x_labor_hours &lt; 0 or r.x_travel_km &lt; 0 or r.x_meter_hours &lt; 0:
+        raise UserError('Часовете и пробегът не могат да са отрицателни.')
+    if r.x_planned_end and (not r.x_planned_start or r.x_planned_end &lt; r.x_planned_start):
+        raise UserError('Краят на посещението трябва да е след началото.')
+    if r.x_plan_id and r.x_plan_id.x_machine_id != r.x_machine_id:
+        raise UserError('Планът е за друга машина.')
+    if r.x_sale_order_id:
+        if r.x_sale_order_id.company_id != r.x_company_id or r.x_sale_order_id.partner_id.commercial_partner_id != r.x_partner_id.commercial_partner_id:
+            raise UserError('Сервизната оферта трябва да е за същата фирма и клиент.')
+        if r.x_sale_order_id == r.x_machine_id.x_sale_order_id:
+            raise UserError('Сервизът изисква собствена поръчка, отделна от първоначалната продажба на машината.')
+    if r.x_repair_id:
+        repair = r.x_repair_id
+        if repair.lot_id != r.x_machine_id.x_lot_id or repair.company_id != r.x_company_id:
+            raise UserError('Ремонтът трябва да е за същия сериен номер и фирма.')
+        if repair.partner_id.commercial_partner_id != r.x_partner_id.commercial_partner_id:
+            raise UserError('Клиентът в ремонта трябва да съвпада със заявката.')
+        if r.x_sale_order_id and repair.sale_order_id != r.x_sale_order_id:
+            raise UserError('За свързан ремонт използвайте неговата собствена оферта. Не свързвайте две различни поръчки за едно обслужване.')
+        if env['x_hm_job'].search_count([('id', '!=', r.id), ('x_repair_id', '=', repair.id)]):
+            raise UserError('Този ремонт вече е свързан с друга сервизна заявка.')
+</field>
+  </record>
+  <record id="hydromotor_service.validate_plan" model="ir.actions.server">
+    <field name="name">Проверки: plan</field>
+    <field name="model_id" ref="hydromotor_service.model_plan"/>
+    <field name="state">code</field>
+    <field name="binding_type">action</field>
+    <field name="binding_view_types">list,form</field>
+    <field name="usage">ir_actions_server</field>
+    <field name="sequence" eval="5"/>
+    <field name="code">for r in records:
+    if r.x_interval_days &lt; 0 or r.x_interval_hours &lt; 0 or r.x_next_hours &lt; 0:
+        raise UserError('Интервалите и моточасовете не могат да бъдат отрицателни.')
+    if r.x_enabled:
+        if r.x_interval_days &lt;= 0 and r.x_interval_hours &lt;= 0:
+            raise UserError('Задайте интервал в дни, моточасове или и двете.')
+        if r.x_interval_days &gt; 0 and not r.x_next_date:
+            raise UserError('За план по дни задайте дата за следващо обслужване.')
+        if r.x_interval_hours &gt; 0 and r.x_next_hours &lt;= 0:
+            raise UserError('Задайте абсолютния праг за следващо обслужване по моточасове.')
+        if r.x_interval_days == 0 and r.x_next_date:
+            raise UserError('Дата за следващо обслужване изисква положителен интервал в дни.')
+        if r.x_interval_hours == 0 and r.x_next_hours &gt; 0:
+            raise UserError('Праг по моточасове изисква положителен интервал в моточасове.')
+</field>
+  </record>
+  <record id="hydromotor_service.validate_meter" model="ir.actions.server">
+    <field name="name">Проверки: meter</field>
+    <field name="model_id" ref="hydromotor_service.model_meter"/>
+    <field name="state">code</field>
+    <field name="binding_type">action</field>
+    <field name="binding_view_types">list,form</field>
+    <field name="usage">ir_actions_server</field>
+    <field name="sequence" eval="5"/>
+    <field name="code">for r in records:
+    if r.x_hours &lt; 0 or r.x_date &gt; datetime.date.today():
+        raise UserError('Отчетът не може да е отрицателен или с бъдеща дата.')
+    earlier = env['x_hm_meter'].search([('id', '!=', r.id), ('x_machine_id', '=', r.x_machine_id.id), ('x_date', '&lt;=', r.x_date)])
+    later = env['x_hm_meter'].search([('id', '!=', r.id), ('x_machine_id', '=', r.x_machine_id.id), ('x_date', '&gt;', r.x_date)])
+    if earlier and r.x_hours &lt; max(earlier.mapped('x_hours')):
+        raise UserError('Отчетът е по-малък от вече въведен отчет за същата или по-ранна дата.')
+    if later and r.x_hours &gt; min(later.mapped('x_hours')):
+        raise UserError('Историческият отчет надвишава по-късно отчитане.')
+    if r.x_job_id and r.x_job_id.x_machine_id != r.x_machine_id:
+        raise UserError('Заявката е за друга машина.')
+</field>
+  </record>
+  <record id="hydromotor_service.cron_service_plans_ir_actions_server" model="ir.actions.server">
+    <field name="name">Hydromotor: планови обслужвания</field>
+    <field name="model_id" ref="hydromotor_service.model_plan"/>
+    <field name="state">code</field>
+    <field name="binding_type">action</field>
+    <field name="binding_view_types">list,form</field>
+    <field name="usage">ir_cron</field>
+    <field name="sequence" eval="5"/>
+    <field name="code">env.ref('hydromotor_service.action_scan_plans').run()
+</field>
+  </record>
+  <record id="hydromotor_service.paper_service" model="report.paperformat">
+    <field name="name">Hydromotor Service A4</field>
+    <field name="format">A4</field>
+    <field name="orientation">Portrait</field>
+    <field name="page_height" eval="0"/>
+    <field name="page_width" eval="0"/>
+    <field name="margin_top" eval="38"/>
+    <field name="margin_bottom" eval="25"/>
+    <field name="margin_left" eval="12"/>
+    <field name="margin_right" eval="12"/>
+    <field name="header_spacing" eval="28"/>
+    <field name="dpi" eval="90"/>
+    <field name="header_line" eval="False"/>
+    <field name="css_margins" eval="False"/>
+  </record>
+  <record id="hydromotor_service.service_protocol" model="ir.ui.view">
+    <field name="name">service_protocol</field>
+    <field name="type">qweb</field>
+    <field name="mode">primary</field>
+    <field name="key">hydromotor_service.service_protocol</field>
+    <field name="priority" eval="16"/>
+    <field name="active" eval="True"/>
+    <field name="arch" type="xml">
+      <t t-name="hydromotor_service.service_protocol">
+    <t t-call="web.html_container">
+      <t t-foreach="docs" t-as="o">
+        <t t-set="company" t-value="o.x_company_id"/>
+        <t t-call="web.external_layout">
+          <div class="page" style="font-family: DejaVu Sans, sans-serif; font-size: 12px;">
+<h2>СЕРВИЗЕН ПРОТОКОЛ <span t-field="o.x_reference"/></h2>
+<table class="table table-sm"><tbody><tr><td style="width: 25%"><strong>Клиент</strong></td><td><span t-field="o.x_partner_id"/></td></tr><tr><td><strong>Машина</strong></td><td><span t-field="o.x_machine_id.x_name"/></td></tr><tr><td><strong>Сериен номер</strong></td><td><span t-field="o.x_machine_id.x_serial"/></td></tr><tr><td><strong>Посещение</strong></td><td><span t-field="o.x_planned_start"/></td></tr><tr><td><strong>Отговорен техник</strong></td><td><span t-field="o.x_technician_id"/></td></tr><tr><td><strong>Етап</strong></td><td><span t-field="o.x_state"/></td></tr></tbody></table>
+<h4>Заявена задача / неизправност</h4><p style="white-space: pre-wrap;" t-field="o.x_problem"/>
+<h4>Диагностика</h4><p style="white-space: pre-wrap;" t-field="o.x_diagnosis"/>
+<h4>Извършени дейности</h4><p style="white-space: pre-wrap;" t-field="o.x_work_done"/>
+<table class="table table-sm"><tbody><tr><td><strong>Отработени часове</strong></td><td><span t-field="o.x_labor_hours"/></td><td><strong>Пробег (км)</strong></td><td><span t-field="o.x_travel_km"/></td></tr><tr t-if="o.x_has_meter"><td><strong>Отчетени моточасове</strong></td><td colspan="3"><span t-field="o.x_meter_hours"/></td></tr><tr><td><strong>Заплащане / покритие</strong></td><td colspan="3"><span t-field="o.x_coverage"/></td></tr></tbody></table>
+<p style="white-space: pre-wrap;" t-field="o.x_coverage_note"/>
+<h4>Приемане от клиента</h4><p style="white-space: pre-wrap;" t-field="o.x_acceptance_note"/>
+<div style="page-break-inside: avoid; margin-top: 18px;"><p>Представител на клиента: <span t-field="o.x_signer_name"/></p><img t-if="o.x_customer_signature" t-att-src="image_data_uri(o.x_customer_signature)" style="max-height: 80px; max-width: 250px;"/><p t-if="not o.x_customer_signature">Подпис на клиента: __________________________</p><p style="margin-top: 28px;">Подпис на техника: __________________________</p></div>
+</div>
+        </t>
+      </t>
+    </t>
+  </t>
+    </field>
+  </record>
+  <record id="hydromotor_service.machine_list" model="ir.ui.view">
+    <field name="name">hydromotor_service.machine_list</field>
+    <field name="model">x_hm_machine</field>
+    <field name="type">list</field>
+    <field name="mode">primary</field>
+    <field name="priority" eval="16"/>
+    <field name="active" eval="True"/>
+    <field name="arch" type="xml">
+      <list string="Машини" decoration-muted="x_retired">
+ <field name="x_name"/><field name="x_partner_id"/><field name="x_serial"/><field name="x_site" optional="show"/><field name="x_hours"/><field name="x_last_meter_date" optional="show"/><field name="x_warranty_end" optional="show"/><field name="x_sale_order_id" optional="hide" groups="sales_team.group_sale_salesman"/><field name="x_company_id" groups="base.group_multi_company"/><field name="x_retired" optional="hide"/>
+</list>
+    </field>
+  </record>
+  <record id="hydromotor_service.machine_search" model="ir.ui.view">
+    <field name="name">hydromotor_service.machine_search</field>
+    <field name="model">x_hm_machine</field>
+    <field name="type">search</field>
+    <field name="mode">primary</field>
+    <field name="priority" eval="16"/>
+    <field name="active" eval="True"/>
+    <field name="arch" type="xml">
+      <search>
+        <field name="x_name"/>
+        <field name="x_serial"/>
+        <field name="x_partner_id"/>
+        <field name="x_vin"/>
+        <filter name="operating" string="В обслужване" domain="[('x_retired', '=', False)]"/>
+        <filter name="retired" string="Изведени" domain="[('x_retired', '=', True)]"/>
+        <separator/>
+        <filter name="by_client" string="По клиент" context="{'group_by': 'x_partner_id'}"/>
+        <filter name="by_model" string="По артикул" context="{'group_by': 'x_product_id'}"/>
+      </search>
+    </field>
+  </record>
+  <record id="hydromotor_service.job_list" model="ir.ui.view">
+    <field name="name">hydromotor_service.job_list</field>
+    <field name="model">x_hm_job</field>
+    <field name="type">list</field>
+    <field name="mode">primary</field>
+    <field name="priority" eval="16"/>
+    <field name="active" eval="True"/>
+    <field name="arch" type="xml">
+      <list string="Сервизни заявки" decoration-success="x_state == 'done'" decoration-muted="x_state == 'cancel'">
+<field name="x_reference"/><field name="x_name"/><field name="x_machine_id"/><field name="x_partner_id"/><field name="x_state" widget="badge"/><field name="x_due_date" optional="show"/><field name="x_planned_start"/><field name="x_technician_id"/><field name="x_coverage" optional="show"/><field name="x_sale_order_id" optional="hide" groups="sales_team.group_sale_salesman"/><field name="x_company_id" optional="hide" groups="base.group_multi_company"/></list>
+    </field>
+  </record>
+  <record id="hydromotor_service.job_search" model="ir.ui.view">
+    <field name="name">hydromotor_service.job_search</field>
+    <field name="model">x_hm_job</field>
+    <field name="type">search</field>
+    <field name="mode">primary</field>
+    <field name="priority" eval="16"/>
+    <field name="active" eval="True"/>
+    <field name="arch" type="xml">
+      <search>
+        <field name="x_reference"/>
+        <field name="x_name"/>
+        <field name="x_machine_id"/>
+        <field name="x_partner_id"/>
+        <field name="x_technician_id"/>
+        <filter name="open" string="Незавършени" domain="[('x_state', 'not in', ['done', 'cancel'])]"/>
+        <filter name="mine" string="Моите заявки" domain="[('x_technician_id', '=', uid)]"/>
+        <filter name="unscheduled" string="За планиране" domain="[('x_state', '=', 'new'), ('x_planned_start', '=', False)]"/>
+        <separator/>
+        <filter name="by_state" string="По етап" context="{'group_by': 'x_state'}"/>
+        <filter name="by_technician" string="По техник" context="{'group_by': 'x_technician_id'}"/>
+        <filter name="by_machine" string="По машина" context="{'group_by': 'x_machine_id'}"/>
+      </search>
+    </field>
+  </record>
+  <record id="hydromotor_service.job_calendar" model="ir.ui.view">
+    <field name="name">hydromotor_service.job_calendar</field>
+    <field name="model">x_hm_job</field>
+    <field name="type">calendar</field>
+    <field name="mode">primary</field>
+    <field name="priority" eval="16"/>
+    <field name="active" eval="True"/>
+    <field name="arch" type="xml">
+      <calendar string="Сервизни посещения" date_start="x_planned_start" date_stop="x_planned_end" color="x_technician_id" mode="week" quick_create="false">
+        <field name="x_name"/>
+        <field name="x_machine_id"/>
+        <field name="x_technician_id"/>
+        <field name="x_state"/>
+      </calendar>
+    </field>
+  </record>
+  <record id="hydromotor_service.job_kanban" model="ir.ui.view">
+    <field name="name">hydromotor_service.job_kanban</field>
+    <field name="model">x_hm_job</field>
+    <field name="type">kanban</field>
+    <field name="mode">primary</field>
+    <field name="priority" eval="16"/>
+    <field name="active" eval="True"/>
+    <field name="arch" type="xml">
+      <kanban default_group_by="x_state" records_draggable="false" quick_create="false">
+        <field name="x_reference"/>
+        <field name="x_machine_id"/>
+        <field name="x_name"/>
+        <field name="x_planned_start"/>
+        <field name="x_technician_id"/>
+        <templates>
+          <t t-name="card">
+            <div class="fw-bold"><field name="x_reference"/> · <field name="x_name"/></div>
+            <div>
+              <field name="x_machine_id"/>
+            </div>
+            <div class="text-muted">
+              <field name="x_planned_start"/>
+            </div>
+            <div>
+              <field name="x_technician_id" widget="many2one_avatar_user"/>
+            </div>
+          </t>
+        </templates>
+      </kanban>
+    </field>
+  </record>
+  <record id="hydromotor_service.plan_list" model="ir.ui.view">
+    <field name="name">hydromotor_service.plan_list</field>
+    <field name="model">x_hm_plan</field>
+    <field name="type">list</field>
+    <field name="mode">primary</field>
+    <field name="priority" eval="16"/>
+    <field name="active" eval="True"/>
+    <field name="arch" type="xml">
+      <list string="Сервизни планове" decoration-danger="x_due and not x_open_job_id" decoration-muted="not x_enabled">
+        <field name="x_name"/>
+        <field name="x_machine_id"/>
+        <field name="x_technician_id"/>
+        <field name="x_next_date"/>
+        <field name="x_next_hours"/>
+        <field name="x_due"/>
+        <field name="x_open_job_id"/>
+        <field name="x_enabled"/>
+      </list>
+    </field>
+  </record>
+  <record id="hydromotor_service.plan_search" model="ir.ui.view">
+    <field name="name">hydromotor_service.plan_search</field>
+    <field name="model">x_hm_plan</field>
+    <field name="type">search</field>
+    <field name="mode">primary</field>
+    <field name="priority" eval="16"/>
+    <field name="active" eval="True"/>
+    <field name="arch" type="xml">
+      <search>
+        <field name="x_name"/>
+        <field name="x_machine_id"/>
+        <field name="x_partner_id"/>
+        <filter name="enabled" string="Активни" domain="[('x_enabled', '=', True)]"/>
+        <filter name="by_machine" string="По машина" context="{'group_by': 'x_machine_id'}"/>
+      </search>
+    </field>
+  </record>
+  <record id="hydromotor_service.meter_list" model="ir.ui.view">
+    <field name="name">hydromotor_service.meter_list</field>
+    <field name="model">x_hm_meter</field>
+    <field name="type">list</field>
+    <field name="mode">primary</field>
+    <field name="priority" eval="16"/>
+    <field name="active" eval="True"/>
+    <field name="arch" type="xml">
+      <list string="Отчитания" default_order="x_date desc,id desc">
+        <field name="x_date"/>
+        <field name="x_machine_id"/>
+        <field name="x_hours"/>
+        <field name="x_job_id"/>
+        <field name="x_note"/>
+      </list>
+    </field>
+  </record>
+  <record id="hydromotor_service.meter_form" model="ir.ui.view">
+    <field name="name">hydromotor_service.meter_form</field>
+    <field name="model">x_hm_meter</field>
+    <field name="type">form</field>
+    <field name="mode">primary</field>
+    <field name="priority" eval="16"/>
+    <field name="active" eval="True"/>
+    <field name="arch" type="xml">
+      <form string="Отчитане на моточасове">
+        <sheet>
+          <group>
+            <field name="x_name"/>
+            <field name="x_machine_id"/>
+            <field name="x_date"/>
+            <field name="x_hours"/>
+            <field name="x_job_id" options="{'no_create': True}"/>
+            <field name="x_note"/>
+          </group>
+        </sheet>
+        <chatter/>
+      </form>
+    </field>
+  </record>
+  <record id="hydromotor_service.partner_service" model="ir.ui.view">
+    <field name="name">hydromotor_service.partner_service</field>
+    <field name="model">res.partner</field>
+    <field name="type">form</field>
+    <field name="mode">extension</field>
+    <field name="priority" eval="16"/>
+    <field name="active" eval="True"/>
+    <field name="inherit_id" ref="base.view_partner_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//form/sheet/notebook" position="inside">
+        <page string="Машини" groups="hydromotor_service.group_service_user">
+          <field name="x_hm_machine_ids" readonly="1">
+            <list>
+              <field name="x_name"/>
+              <field name="x_serial"/>
+              <field name="x_site"/>
+              <field name="x_hours"/>
+              <field name="x_warranty_end"/>
+            </list>
+          </field>
+        </page>
+      </xpath>
+    </field>
+  </record>
+  <record id="hydromotor_service.product_service" model="ir.ui.view">
+    <field name="name">hydromotor_service.product_service</field>
+    <field name="model">product.template</field>
+    <field name="type">form</field>
+    <field name="mode">extension</field>
+    <field name="priority" eval="16"/>
+    <field name="active" eval="True"/>
+    <field name="inherit_id" ref="product.product_template_only_form_view"/>
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='categ_id']" position="after">
+        <field name="x_hm_is_machine" groups="hydromotor_service.group_service_user"/>
+      </xpath>
+    </field>
+  </record>
+  <record id="hydromotor_service.open_machine" model="ir.actions.act_window">
+    <field name="name">Машини</field>
+    <field name="res_model">x_hm_machine</field>
+    <field name="target">current</field>
+    <field name="view_mode">list,form</field>
+    <field name="context">{'default_x_company_id': allowed_company_ids[0], 'search_default_operating': 1}</field>
+    <field name="binding_type">action</field>
+    <field name="binding_view_types">list,form</field>
+    <field name="limit" eval="80"/>
+    <field name="group_ids" eval="[(6, 0, [ref('hydromotor_service.group_service_user')])]"/>
+  </record>
+  <record id="hydromotor_service.open_job" model="ir.actions.act_window">
+    <field name="name">Сервизни заявки</field>
+    <field name="res_model">x_hm_job</field>
+    <field name="target">current</field>
+    <field name="view_mode">list,kanban,form,calendar</field>
+    <field name="context">{'default_x_technician_id': uid, 'search_default_open': 1}</field>
+    <field name="binding_type">action</field>
+    <field name="binding_view_types">list,form</field>
+    <field name="limit" eval="80"/>
+    <field name="group_ids" eval="[(6, 0, [ref('hydromotor_service.group_service_user')])]"/>
+  </record>
+  <record id="hydromotor_service.open_plan" model="ir.actions.act_window">
+    <field name="name">Сервизни планове</field>
+    <field name="res_model">x_hm_plan</field>
+    <field name="target">current</field>
+    <field name="view_mode">list,form</field>
+    <field name="context">{'default_x_technician_id': uid, 'search_default_enabled': 1}</field>
+    <field name="binding_type">action</field>
+    <field name="binding_view_types">list,form</field>
+    <field name="limit" eval="80"/>
+    <field name="group_ids" eval="[(6, 0, [ref('hydromotor_service.group_service_user')])]"/>
+  </record>
+  <record id="hydromotor_service.open_meter" model="ir.actions.act_window">
+    <field name="name">Моточасове</field>
+    <field name="res_model">x_hm_meter</field>
+    <field name="target">current</field>
+    <field name="view_mode">list,form</field>
+    <field name="context">{}</field>
+    <field name="binding_type">action</field>
+    <field name="binding_view_types">list,form</field>
+    <field name="limit" eval="80"/>
+    <field name="group_ids" eval="[(6, 0, [ref('hydromotor_service.group_service_user')])]"/>
+  </record>
+  <record id="hydromotor_service.menu_root" model="ir.ui.menu">
+    <field name="name">Машини и сервиз</field>
+    <field name="sequence" eval="35"/>
+    <field name="active" eval="True"/>
+    <field name="web_icon">hydromotor_service,static/description/icon.png</field>
+    <field name="group_ids" eval="[(6, 0, [ref('hydromotor_service.group_service_user')])]"/>
+  </record>
+  <record id="hydromotor_service.report_service_protocol" model="ir.actions.report">
+    <field name="name">Сервизен протокол</field>
+    <field name="print_report_name">'Servizen_protokol_%s' % (object.x_reference or object.id)</field>
+    <field name="model">x_hm_job</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">hydromotor_service.service_protocol</field>
+    <field name="report_file">hydromotor_service.service_protocol</field>
+    <field name="binding_type">report</field>
+    <field name="binding_view_types">list,form</field>
+    <field name="attachment_use" eval="False"/>
+    <field name="binding_model_id" ref="hydromotor_service.model_job"/>
+    <field name="paperformat_id" ref="hydromotor_service.paper_service"/>
+  </record>
+  <record id="hydromotor_service.machine_form" model="ir.ui.view">
+    <field name="name">hydromotor_service.machine_form</field>
+    <field name="model">x_hm_machine</field>
+    <field name="type">form</field>
+    <field name="mode">primary</field>
+    <field name="priority" eval="16"/>
+    <field name="active" eval="True"/>
+    <field name="arch" type="xml">
+      <form string="Досие на машина">
+<header><button name="%(hydromotor_service.action_new_job)d" type="action" string="Нова заявка" class="oe_highlight"/><button name="%(hydromotor_service.action_new_plan)d" type="action" string="Нов план"/><button name="%(hydromotor_service.action_new_meter)d" type="action" string="Отчети моточасове"/><button name="%(hydromotor_service.action_machine_repairs)d" type="action" string="Ремонти (Repairs)" groups="stock.group_stock_user"/></header>
+<sheet><div class="oe_title"><h1><field name="x_name" placeholder="Машина / сериен номер"/></h1></div>
+<group><group string="Машина и собственик"><field name="x_company_id" options="{'no_create': True}" readonly="x_identity_key"/><field name="x_identity_key" invisible="1"/><field name="x_partner_id"/><field name="x_lot_id" options="{'no_create': True}" domain="[('product_id.tracking', '=', 'serial'), '|', ('company_id', '=', False), ('company_id', '=', x_company_id)]" readonly="x_identity_key"/><field name="x_product_id"/><field name="x_brand"/><field name="x_model_label"/><field name="x_year"/><field name="x_vin"/></group>
+<group string="Експлоатация"><field name="x_site"/><field name="x_hours"/><field name="x_last_meter_date"/><field name="x_commission_date"/><field name="x_retired"/></group></group>
+<notebook><page string="Проектна книга"><field name="x_notes" placeholder="Конфигурация, пускови настройки и важни бележки. Приложете документи и снимки в историята отдолу."/></page>
+<page string="Сервизна история"><field name="x_job_ids" readonly="1"><list><field name="x_reference"/><field name="x_name"/><field name="x_partner_id"/><field name="x_state"/><field name="x_planned_start"/><field name="x_technician_id"/><field name="x_closed_at"/><field name="x_sale_order_id" groups="sales_team.group_sale_salesman"/></list></field></page>
+<page string="Сервизни планове"><field name="x_plan_ids" readonly="1"><list><field name="x_name"/><field name="x_enabled"/><field name="x_next_date"/><field name="x_next_hours"/><field name="x_due"/><field name="x_open_job_id"/></list></field></page>
+<page string="Моточасове"><field name="x_meter_ids" readonly="1"><list default_order="x_date desc,id desc"><field name="x_date"/><field name="x_hours"/><field name="x_job_id"/><field name="x_note"/></list></field></page>
+<page string="Гаранция"><group><group><field name="x_warranty_start"/><field name="x_warranty_end"/><field name="x_warranty_hours"/><field name="x_warranty_status"/></group><group><field name="x_warranty_terms" placeholder="Условия и изключения. Покритието на конкретна повреда се одобрява в сервизната заявка."/></group></group></page>
+<page string="Продажба и предаване" groups="sales_team.group_sale_salesman"><group><field name="x_sale_order_id" domain="[('company_id', '=', x_company_id)]"/><field name="x_delivery_id" domain="[('company_id', '=', x_company_id)]"/><field name="x_delivery_date"/></group></page>
+</notebook></sheet><chatter/></form>
+    </field>
+  </record>
+  <record id="hydromotor_service.plan_form" model="ir.ui.view">
+    <field name="name">hydromotor_service.plan_form</field>
+    <field name="model">x_hm_plan</field>
+    <field name="type">form</field>
+    <field name="mode">primary</field>
+    <field name="priority" eval="16"/>
+    <field name="active" eval="True"/>
+    <field name="arch" type="xml">
+      <form string="Сервизен план">
+        <header>
+          <button name="%(hydromotor_service.action_plan_job)d" type="action" string="Създай / отвори заявка" class="oe_highlight"/>
+        </header>
+        <sheet>
+          <div class="oe_title">
+            <h1>
+              <field name="x_name" placeholder="Периодично обслужване"/>
+            </h1>
+          </div>
+          <group>
+            <group>
+              <field name="x_machine_id" readonly="x_job_ids"/>
+              <field name="x_partner_id"/>
+              <field name="x_technician_id"/>
+              <field name="x_enabled"/>
+              <field name="x_due"/>
+              <field name="x_open_job_id"/>
+            </group>
+            <group string="Следващо обслужване — което настъпи първо">
+              <field name="x_interval_days"/>
+              <field name="x_next_date"/>
+              <field name="x_interval_hours"/>
+              <field name="x_next_hours"/>
+            </group>
+          </group>
+          <notebook>
+            <page string="Дейности">
+              <field name="x_instructions"/>
+            </page>
+            <page string="История">
+              <field name="x_job_ids" readonly="1">
+                <list>
+                  <field name="x_reference"/>
+                  <field name="x_name"/>
+                  <field name="x_state"/>
+                  <field name="x_closed_at"/>
+                </list>
+              </field>
+            </page>
+          </notebook>
+        </sheet>
+        <chatter/>
+      </form>
+    </field>
+  </record>
+  <record id="hydromotor_service.sale_service" model="ir.ui.view">
+    <field name="name">hydromotor_service.sale_service</field>
+    <field name="model">sale.order</field>
+    <field name="type">form</field>
+    <field name="mode">extension</field>
+    <field name="priority" eval="16"/>
+    <field name="active" eval="True"/>
+    <field name="inherit_id" ref="sale.view_order_form"/>
+    <field name="arch" type="xml">
+      <data>
+        <xpath expr="//form/sheet/notebook" position="inside">
+          <page string="Машини и сервиз" groups="hydromotor_service.group_service_user">
+            <button name="%(hydromotor_service.action_register_sale)d" type="action" string="Регистрирай доставените машини" class="btn-primary" invisible="state != 'sale'"/>
+            <group string="Машини от тази продажба">
+              <field name="x_hm_machine_ids" readonly="1" nolabel="1">
+                <list>
+                  <field name="x_name"/>
+                  <field name="x_serial"/>
+                  <field name="x_partner_id"/>
+                </list>
+              </field>
+            </group>
+            <group string="Сервизни заявки към тази оферта / поръчка">
+              <field name="x_hm_job_ids" readonly="1" nolabel="1">
+                <list>
+                  <field name="x_reference"/>
+                  <field name="x_name"/>
+                  <field name="x_machine_id"/>
+                  <field name="x_state"/>
+                </list>
+              </field>
+            </group>
+          </page>
+        </xpath>
+      </data>
+    </field>
+  </record>
+  <record id="hydromotor_service.menu_machine" model="ir.ui.menu">
+    <field name="name">Машини</field>
+    <field name="sequence" eval="10"/>
+    <field name="active" eval="True"/>
+    <field name="parent_id" ref="hydromotor_service.menu_root"/>
+    <field name="action" eval="'ir.actions.act_window,%d' % ref('hydromotor_service.open_machine')"/>
+  </record>
+  <record id="hydromotor_service.menu_job" model="ir.ui.menu">
+    <field name="name">Сервизни заявки</field>
+    <field name="sequence" eval="20"/>
+    <field name="active" eval="True"/>
+    <field name="parent_id" ref="hydromotor_service.menu_root"/>
+    <field name="action" eval="'ir.actions.act_window,%d' % ref('hydromotor_service.open_job')"/>
+  </record>
+  <record id="hydromotor_service.menu_plan" model="ir.ui.menu">
+    <field name="name">Планове</field>
+    <field name="sequence" eval="30"/>
+    <field name="active" eval="True"/>
+    <field name="parent_id" ref="hydromotor_service.menu_root"/>
+    <field name="action" eval="'ir.actions.act_window,%d' % ref('hydromotor_service.open_plan')"/>
+  </record>
+  <record id="hydromotor_service.menu_scan" model="ir.ui.menu">
+    <field name="name">Провери плановете</field>
+    <field name="sequence" eval="40"/>
+    <field name="active" eval="True"/>
+    <field name="parent_id" ref="hydromotor_service.menu_root"/>
+    <field name="action" eval="'ir.actions.server,%d' % ref('hydromotor_service.action_scan_plans')"/>
+  </record>
+  <record id="hydromotor_service.menu_meter" model="ir.ui.menu">
+    <field name="name">Моточасове</field>
+    <field name="sequence" eval="50"/>
+    <field name="active" eval="True"/>
+    <field name="parent_id" ref="hydromotor_service.menu_root"/>
+    <field name="action" eval="'ir.actions.act_window,%d' % ref('hydromotor_service.open_meter')"/>
+  </record>
+  <record id="hydromotor_service.job_form" model="ir.ui.view">
+    <field name="name">hydromotor_service.job_form</field>
+    <field name="model">x_hm_job</field>
+    <field name="type">form</field>
+    <field name="mode">primary</field>
+    <field name="priority" eval="16"/>
+    <field name="active" eval="True"/>
+    <field name="arch" type="xml">
+      <form string="Сервизна заявка">
+<header><button name="%(hydromotor_service.action_job_plan)d" type="action" string="Планирай" invisible="x_state not in ['new', 'planned']"/><button name="%(hydromotor_service.action_job_start)d" type="action" string="Започни" class="oe_highlight" invisible="x_state not in ['new', 'planned']"/><button name="%(hydromotor_service.action_job_done)d" type="action" string="Завърши" class="oe_highlight" invisible="x_state in ['done', 'cancel']"/><button name="%(hydromotor_service.action_job_quote)d" type="action" string="Сервизна оферта" invisible="x_state == 'cancel'" groups="sales_team.group_sale_salesman"/><button name="%(hydromotor_service.report_service_protocol)d" type="action" string="Протокол"/><button name="%(hydromotor_service.action_job_cancel)d" type="action" string="Откажи" invisible="x_state in ['done', 'cancel']"/><field name="x_state" widget="statusbar" statusbar_visible="new,planned,progress,done" readonly="1"/></header>
+<sheet><div class="oe_title"><h2><field name="x_reference"/></h2><h1><field name="x_name" placeholder="Задача / причина за посещението"/></h1></div><field name="x_company_id" invisible="1"/><field name="x_sale_order_id" invisible="1"/><field name="x_repair_id" invisible="1"/>
+<group><group string="Клиент и машина"><field name="x_machine_id" readonly="x_reference" domain="[('x_retired', '=', False)]"/><field name="x_partner_id"/><field name="x_kind"/><field name="x_plan_id" domain="[('x_machine_id', '=', x_machine_id)]" readonly="x_state in ['done', 'cancel']"/></group>
+<group string="Планиране"><field name="x_technician_id"/><field name="x_due_date"/><field name="x_planned_start"/><field name="x_planned_end"/><field name="x_closed_at"/></group></group>
+<notebook><page string="Задача и изпълнение"><group><field name="x_problem"/><field name="x_diagnosis"/><field name="x_work_done" readonly="x_state == 'done'"/></group></page>
+<page string="Отчет на посещението"><group><group><field name="x_labor_hours" readonly="x_state == 'done'"/><field name="x_travel_km" readonly="x_state == 'done'"/></group><group><field name="x_has_meter" readonly="x_state == 'done'"/><field name="x_meter_hours" invisible="not x_has_meter" readonly="x_state == 'done'"/></group></group></page>
+<page string="Гаранция и продажби"><group><group><field name="x_coverage"/><field name="x_coverage_note"/></group><group><field name="x_repair_id" domain="[('company_id', '=', x_company_id)]" options="{'no_create': True}" groups="stock.group_stock_user"/><field name="x_sale_order_id" domain="[('company_id', '=', x_company_id)]" options="{'no_create': True}" groups="sales_team.group_sale_salesman"/></group></group></page>
+<page string="Приемане от клиента"><group><field name="x_signer_name"/><field name="x_acceptance_note"/><field name="x_customer_signature" widget="signature"/></group></page></notebook>
+</sheet><chatter/></form>
+    </field>
+  </record>
+</odoo>

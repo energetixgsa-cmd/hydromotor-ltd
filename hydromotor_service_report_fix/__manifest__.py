@@ -1,0 +1,11 @@
+{'name': 'Hydromotor - Поправка на сервизния протокол',
+ 'version': '19.0.1.0.1',
+ 'summary': 'Recovered from latest Hydromotor backup; Odoo 19.0 development candidate',
+ 'author': 'Hydromotor',
+ 'license': 'LGPL-3',
+ 'depends': ['hydromotor_service'],
+ 'data': ['views/actions_and_views.xml', 'data/apply_report_format.xml'],
+ 'application': False,
+ 'installable': True,
+ 'auto_install': False,
+ 'pre_init_hook': 'pre_init_hook'}

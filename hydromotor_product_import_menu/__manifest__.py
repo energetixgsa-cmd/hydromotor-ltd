@@ -1,0 +1,11 @@
+{'name': 'Hydromotor — Меню за импорт на продукти',
+ 'version': '19.0.1.0.1',
+ 'summary': 'Recovered from latest Hydromotor backup; Odoo 19.0 development candidate',
+ 'author': 'Hydromotor',
+ 'license': 'LGPL-3',
+ 'depends': ['sale'],
+ 'data': ['views/actions_and_views.xml'],
+ 'application': False,
+ 'installable': True,
+ 'auto_install': False,
+ 'pre_init_hook': 'pre_init_hook'}

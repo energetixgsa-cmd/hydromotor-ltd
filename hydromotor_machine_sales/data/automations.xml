@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+  <record id="hydromotor_machine_sales.sale_sync" model="base.automation">
+    <field name="name">Hydromotor — sale_sync</field>
+    <field name="model_id" ref="sale.model_sale_order"/>
+    <field name="trigger">on_create_or_write</field>
+    <field name="active" eval="True"/>
+    <field name="trigger_field_ids" eval="[(6,0,[ref('sale.field_sale_order__state'), ref('sale.field_sale_order__partner_id'), ref('sale.field_sale_order__company_id'), ref('sale.field_sale_order__currency_id'), ref('sale_crm.field_sale_order__opportunity_id')])]"/>
+    <field name="action_server_ids" eval="[(6,0,[ref('hydromotor_machine_sales.sync_sale_auto')])]"/>
+  </record>
+  <record id="hydromotor_machine_sales.sale_line_guard" model="base.automation">
+    <field name="name">Hydromotor — sale_line_guard</field>
+    <field name="model_id" ref="sale.model_sale_order_line"/>
+    <field name="trigger">on_create_or_write</field>
+    <field name="active" eval="True"/>
+    <field name="trigger_field_ids" eval="[(6,0,[ref('sale.field_sale_order_line__product_id'), ref('sale.field_sale_order_line__product_uom_id'), ref('sale.field_sale_order_line__product_uom_qty'), ref('sale.field_sale_order_line__price_unit'), ref('sale.field_sale_order_line__discount'), ref('sale.field_sale_order_line__name'), ref('sale.field_sale_order_line__order_id'), ref('hydromotor_machine_sales.field_sale_order_line__x_hm_config_id'), ref('hydromotor_machine_sales.field_sale_order_line__x_hm_release_id'), ref('sale.field_sale_order_line__display_type')])]"/>
+    <field name="action_server_ids" eval="[(6,0,[ref('hydromotor_machine_sales.guard_sale_line')])]"/>
+  </record>
+  <record id="hydromotor_machine_sales.sale_line_unlink" model="base.automation">
+    <field name="name">Hydromotor — sale_line_unlink</field>
+    <field name="model_id" ref="sale.model_sale_order_line"/>
+    <field name="trigger">on_unlink</field>
+    <field name="active" eval="True"/>
+    <field name="action_server_ids" eval="[(6,0,[ref('hydromotor_machine_sales.guard_line_delete')])]"/>
+  </record>
+  <record id="hydromotor_machine_sales.config_guard" model="base.automation">
+    <field name="name">Hydromotor — config_guard</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+    <field name="trigger">on_create_or_write</field>
+    <field name="active" eval="True"/>
+    <field name="trigger_field_ids" eval="[(6,0,[ref('hydromotor_machine_sales.field_x_hm_config__x_base_id'), ref('hydromotor_machine_sales.field_x_hm_config__x_partner_id'), ref('hydromotor_machine_sales.field_x_hm_config__x_company_id'), ref('hydromotor_machine_sales.field_x_hm_config__x_lead_id'), ref('hydromotor_machine_sales.field_x_hm_config__x_order_id'), ref('hydromotor_machine_sales.field_x_hm_config__x_quantity'), ref('hydromotor_machine_sales.field_x_hm_config__x_discount'), ref('hydromotor_machine_sales.field_x_hm_config__x_chassis_price'), ref('hydromotor_machine_sales.field_x_hm_config__x_transport_price'), ref('hydromotor_machine_sales.field_x_hm_config__x_other_price'), ref('hydromotor_machine_sales.field_x_hm_config__x_other_note'), ref('hydromotor_machine_sales.field_x_hm_config__x_delivery_note'), ref('hydromotor_machine_sales.field_x_hm_config__x_warranty_months'), ref('hydromotor_machine_sales.field_x_hm_config__x_market'), ref('hydromotor_machine_sales.field_x_hm_config__x_chassis_type'), ref('hydromotor_machine_sales.field_x_hm_config__x_language'), ref('hydromotor_machine_sales.field_x_hm_config__x_release_id')])]"/>
+    <field name="action_server_ids" eval="[(6,0,[ref('hydromotor_machine_sales.guard_config')])]"/>
+  </record>
+  <record id="hydromotor_machine_sales.options_guard" model="base.automation">
+    <field name="name">Hydromotor — options_guard</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config_line"/>
+    <field name="trigger">on_create_or_write</field>
+    <field name="active" eval="True"/>
+    <field name="action_server_ids" eval="[(6, 0, [ref('hydromotor_machine_sales.guard_options_write')])]"/>
+  </record>
+  <record id="hydromotor_machine_sales.options_unlink" model="base.automation">
+    <field name="name">Hydromotor — options_unlink</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config_line"/>
+    <field name="trigger">on_unlink</field>
+    <field name="active" eval="True"/>
+    <field name="action_server_ids" eval="[(6,0,[ref('hydromotor_machine_sales.guard_options')])]"/>
+  </record>
+</odoo>
