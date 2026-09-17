@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+  <record id="hydromotor_service.automation_machine" model="base.automation">
+    <field name="name">Hydromotor: machine</field>
+    <field name="model_id" ref="hydromotor_service.model_machine"/>
+    <field name="trigger">on_create_or_write</field>
+    <field name="active" eval="True"/>
+    <field name="action_server_ids" eval="[(6,0,[ref('hydromotor_service.validate_machine')])]"/>
+  </record>
+  <record id="hydromotor_service.automation_job" model="base.automation">
+    <field name="name">Hydromotor: job</field>
+    <field name="model_id" ref="hydromotor_service.model_job"/>
+    <field name="trigger">on_create_or_write</field>
+    <field name="active" eval="True"/>
+    <field name="action_server_ids" eval="[(6,0,[ref('hydromotor_service.validate_job')])]"/>
+  </record>
+  <record id="hydromotor_service.automation_plan" model="base.automation">
+    <field name="name">Hydromotor: plan</field>
+    <field name="model_id" ref="hydromotor_service.model_plan"/>
+    <field name="trigger">on_create_or_write</field>
+    <field name="active" eval="True"/>
+    <field name="action_server_ids" eval="[(6,0,[ref('hydromotor_service.validate_plan')])]"/>
+  </record>
+  <record id="hydromotor_service.automation_meter" model="base.automation">
+    <field name="name">Hydromotor: meter</field>
+    <field name="model_id" ref="hydromotor_service.model_meter"/>
+    <field name="trigger">on_create_or_write</field>
+    <field name="active" eval="True"/>
+    <field name="action_server_ids" eval="[(6,0,[ref('hydromotor_service.validate_meter')])]"/>
+  </record>
+  <data noupdate="1"><record id="hydromotor_service.cron_service_plans" model="ir.cron">
+    <field name="ir_actions_server_id" ref="hydromotor_service.cron_service_plans_ir_actions_server"/>
+    <field name="user_id" ref="base.user_admin"/>
+    <field name="interval_number" eval="1"/>
+    <field name="priority" eval="5"/>
+    <field name="interval_type">days</field>
+    <field name="active" eval="False"/>
+  </record>
+</data></odoo>

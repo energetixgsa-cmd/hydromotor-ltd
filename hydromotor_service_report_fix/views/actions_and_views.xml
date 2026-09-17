@@ -1,0 +1,125 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+  <record id="hydromotor_service_report_fix.paper_service_portrait" model="report.paperformat">
+    <field name="name">Hydromotor - Сервизен протокол A4 Portrait</field>
+    <field name="format">A4</field>
+    <field name="orientation">Portrait</field>
+    <field name="page_height" eval="0"/>
+    <field name="page_width" eval="0"/>
+    <field name="margin_top" eval="12"/>
+    <field name="margin_bottom" eval="22"/>
+    <field name="margin_left" eval="12"/>
+    <field name="margin_right" eval="12"/>
+    <field name="header_spacing" eval="0"/>
+    <field name="dpi" eval="90"/>
+    <field name="default" eval="False"/>
+    <field name="header_line" eval="False"/>
+    <field name="css_margins" eval="False"/>
+  </record>
+  <record id="hydromotor_service_report_fix.service_protocol_layout" model="ir.ui.view">
+    <field name="name">Hydromotor service protocol layout</field>
+    <field name="type">qweb</field>
+    <field name="mode">primary</field>
+    <field name="key">hydromotor_service_report_fix.service_protocol_layout</field>
+    <field name="priority" eval="16"/>
+    <field name="active" eval="True"/>
+    <field name="arch" type="xml">
+      <t name="Hydromotor service protocol layout" t-name="hydromotor_service_report_fix.service_protocol_layout">
+        <t t-set="company" t-value="o.x_company_id or res_company"/>
+        <div class="article hm_service_protocol" t-att-data-oe-model="o._name" t-att-data-oe-id="o.id" t-att-data-oe-lang="o.env.context.get('lang')">
+            <style>
+                .hm_service_protocol { font-family: DejaVu Sans, sans-serif; }
+                .hm_service_protocol .hm_company_block {
+                    page-break-inside: avoid;
+                    break-inside: avoid;
+                    page-break-after: avoid;
+                    break-after: avoid;
+                    margin: 0 0 14px;
+                    padding: 0 0 10px;
+                    border-bottom: 1px solid #66717c;
+                }
+                .hm_service_protocol .hm_company_table {
+                    width: 100%;
+                    table-layout: fixed;
+                    border-collapse: collapse;
+                    margin: 0;
+                    font-size: 11px;
+                    line-height: 1.4;
+                }
+                .hm_service_protocol .hm_company_table td {
+                    vertical-align: top;
+                    border: 0;
+                    padding: 0;
+                    word-wrap: break-word;
+                    overflow-wrap: anywhere;
+                }
+                .hm_service_protocol .hm_company_table p,
+                .hm_service_protocol .hm_company_table address {
+                    margin: 0;
+                }
+                .hm_service_protocol .hm_company_logo {
+                    max-width: 220px;
+                    max-height: 68px;
+                    width: auto;
+                    height: auto;
+                }
+                .hm_service_protocol h2 { page-break-after: avoid; break-after: avoid; }
+                .hm_service_protocol h4 { page-break-after: avoid; break-after: avoid; }
+                .hm_service_protocol tr { page-break-inside: avoid; break-inside: avoid; }
+                .hm_service_protocol .page {
+                    min-height: 0;
+                    word-wrap: break-word;
+                    overflow-wrap: anywhere;
+                }
+                .hm_service_protocol .page:last-child {
+                    page-break-after: auto;
+                    break-after: auto;
+                }
+            </style>
+            <div class="hm_company_block">
+                <table class="hm_company_table">
+                    <tbody>
+                        <tr>
+                            <td style="width: 40%; padding-right: 16px;">
+                                <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" class="hm_company_logo" alt="Фирмено лого"/>
+                                <strong t-else="" t-field="company.name"/>
+                            </td>
+                            <td style="width: 60%; text-align: right;">
+                                <div t-if="not company.is_company_details_empty" t-field="company.company_details"/>
+                                <div t-else="" t-field="company.partner_id" t-options="{'widget': 'contact', 'fields': ['address', 'name'], 'no_marker': True}"/>
+                                <div t-if="company.vat">ДДС: <span t-field="company.vat"/></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <t t-out="0"/>
+        </div>
+        <div class="footer hm_service_protocol_footer" style="font-family: DejaVu Sans, sans-serif; font-size: 10px; line-height: 1.3;">
+            <div style="border-top: 1px solid #66717c; padding-top: 5px;">
+                <div t-field="company.report_footer"/>
+                <div t-if="report_type == 'pdf'" style="text-align: right;">
+                    Страница <span class="page"/> / <span class="topage"/>
+                </div>
+            </div>
+        </div>
+    </t>
+    </field>
+  </record>
+  <record id="hydromotor_service_report_fix.service_protocol_use_flow_layout" model="ir.ui.view">
+    <field name="name">Hydromotor service protocol - company block in document flow</field>
+    <field name="type">qweb</field>
+    <field name="mode">extension</field>
+    <field name="key">hydromotor_service_report_fix.service_protocol_use_flow_layout</field>
+    <field name="priority" eval="90"/>
+    <field name="active" eval="True"/>
+    <field name="inherit_id" ref="hydromotor_service.service_protocol"/>
+    <field name="arch" type="xml">
+      <data name="Hydromotor service protocol - company block in document flow">
+        <xpath expr="//t[@t-call='web.external_layout']" position="attributes">
+            <attribute name="t-call">hydromotor_service_report_fix.service_protocol_layout</attribute>
+        </xpath>
+    </data>
+    </field>
+  </record>
+</odoo>

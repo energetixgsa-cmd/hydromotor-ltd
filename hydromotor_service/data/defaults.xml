@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+  <data noupdate="1"><record id="hydromotor_service.default_field_job_state" model="ir.default">
+    <field name="field_id" ref="hydromotor_service.field_job_state"/>
+    <field name="json_value">"new"</field>
+  </record>
+  <record id="hydromotor_service.default_field_job_kind" model="ir.default">
+    <field name="field_id" ref="hydromotor_service.field_job_kind"/>
+    <field name="json_value">"onsite"</field>
+  </record>
+  <record id="hydromotor_service.default_field_job_coverage" model="ir.default">
+    <field name="field_id" ref="hydromotor_service.field_job_coverage"/>
+    <field name="json_value">"review"</field>
+  </record>
+  <record id="hydromotor_service.default_field_plan_enabled" model="ir.default">
+    <field name="field_id" ref="hydromotor_service.field_plan_enabled"/>
+    <field name="json_value">true</field>
+  </record>
+  <record id="hydromotor_service.default_field_meter_name" model="ir.default">
+    <field name="field_id" ref="hydromotor_service.field_meter_name"/>
+    <field name="json_value">"Отчитане"</field>
+  </record>
+</data></odoo>

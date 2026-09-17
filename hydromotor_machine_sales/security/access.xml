@@ -1,0 +1,431 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+  <record id="hydromotor_machine_sales.access_base_sales" model="ir.model.access">
+    <field name="name">Hydromotor base sales</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_base"/>
+    <field name="group_id" ref="sales_team.group_sale_salesman"/>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="False"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="False"/>
+    <field name="perm_unlink" eval="False"/>
+  </record>
+  <record id="hydromotor_machine_sales.access_base_sales_scope" model="ir.rule">
+    <field name="name">Hydromotor base sales - record scope</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_base"/>
+    <field name="groups" eval="[(4, ref('sales_team.group_sale_salesman'))]"/>
+    <field name="domain_force">[]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="False"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="False"/>
+    <field name="perm_unlink" eval="False"/>
+  </record>
+  <record id="hydromotor_machine_sales.access_base_admin" model="ir.model.access">
+    <field name="name">Hydromotor base admin</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_base"/>
+    <field name="group_id" ref="base.group_system"/>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_machine_sales.access_base_admin_scope" model="ir.rule">
+    <field name="name">Hydromotor base admin - record scope</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_base"/>
+    <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+    <field name="domain_force">[]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_machine_sales.access_option_sales" model="ir.model.access">
+    <field name="name">Hydromotor option sales</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_option"/>
+    <field name="group_id" ref="sales_team.group_sale_salesman"/>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="False"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="False"/>
+    <field name="perm_unlink" eval="False"/>
+  </record>
+  <record id="hydromotor_machine_sales.access_option_sales_scope" model="ir.rule">
+    <field name="name">Hydromotor option sales - record scope</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_option"/>
+    <field name="groups" eval="[(4, ref('sales_team.group_sale_salesman'))]"/>
+    <field name="domain_force">[]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="False"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="False"/>
+    <field name="perm_unlink" eval="False"/>
+  </record>
+  <record id="hydromotor_machine_sales.access_option_admin" model="ir.model.access">
+    <field name="name">Hydromotor option admin</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_option"/>
+    <field name="group_id" ref="base.group_system"/>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_machine_sales.access_option_admin_scope" model="ir.rule">
+    <field name="name">Hydromotor option admin - record scope</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_option"/>
+    <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+    <field name="domain_force">[]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_machine_sales.access_config_sales" model="ir.model.access">
+    <field name="name">Hydromotor config sales</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+    <field name="group_id" ref="sales_team.group_sale_salesman"/>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_machine_sales.access_config_sales_scope" model="ir.rule">
+    <field name="name">Hydromotor config sales - record scope</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+    <field name="groups" eval="[(4, ref('sales_team.group_sale_salesman'))]"/>
+    <field name="domain_force">['|','|',('create_uid','=',user.id),('x_order_id.user_id','=',user.id),('x_lead_id.user_id','=',user.id)]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_machine_sales.access_config_admin" model="ir.model.access">
+    <field name="name">Hydromotor config admin</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+    <field name="group_id" ref="base.group_system"/>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_machine_sales.access_config_admin_scope" model="ir.rule">
+    <field name="name">Hydromotor config admin - record scope</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+    <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+    <field name="domain_force">[]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_machine_sales.company_rule_config" model="ir.rule">
+    <field name="name">Hydromotor: дружество — config</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+    <field name="domain_force">[('x_company_id', 'in', company_ids)]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_machine_sales.all_rule_config" model="ir.model.access">
+    <field name="name">Hydromotor: всички документи — config</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+    <field name="group_id" ref="sales_team.group_sale_salesman_all_leads"/>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_machine_sales.all_rule_config_scope" model="ir.rule">
+    <field name="name">Hydromotor: всички документи — config - record scope</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+    <field name="groups" eval="[(4, ref('sales_team.group_sale_salesman_all_leads'))]"/>
+    <field name="domain_force">[]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_machine_sales.access_config_line_sales" model="ir.model.access">
+    <field name="name">Hydromotor config_line sales</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config_line"/>
+    <field name="group_id" ref="sales_team.group_sale_salesman"/>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_machine_sales.access_config_line_sales_scope" model="ir.rule">
+    <field name="name">Hydromotor config_line sales - record scope</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config_line"/>
+    <field name="groups" eval="[(4, ref('sales_team.group_sale_salesman'))]"/>
+    <field name="domain_force">['|','|',('x_config_id.create_uid','=',user.id),('x_config_id.x_order_id.user_id','=',user.id),('x_config_id.x_lead_id.user_id','=',user.id)]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_machine_sales.access_config_line_admin" model="ir.model.access">
+    <field name="name">Hydromotor config_line admin</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config_line"/>
+    <field name="group_id" ref="base.group_system"/>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_machine_sales.access_config_line_admin_scope" model="ir.rule">
+    <field name="name">Hydromotor config_line admin - record scope</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config_line"/>
+    <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+    <field name="domain_force">[]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_machine_sales.company_rule_config_line" model="ir.rule">
+    <field name="name">Hydromotor: дружество — config_line</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config_line"/>
+    <field name="domain_force">[('x_company_id', 'in', company_ids)]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_machine_sales.all_rule_config_line" model="ir.model.access">
+    <field name="name">Hydromotor: всички документи — config_line</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config_line"/>
+    <field name="group_id" ref="sales_team.group_sale_salesman_all_leads"/>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_machine_sales.all_rule_config_line_scope" model="ir.rule">
+    <field name="name">Hydromotor: всички документи — config_line - record scope</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config_line"/>
+    <field name="groups" eval="[(4, ref('sales_team.group_sale_salesman_all_leads'))]"/>
+    <field name="domain_force">[]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_machine_sales.access_release_sales" model="ir.model.access">
+    <field name="name">Hydromotor release sales</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_release"/>
+    <field name="group_id" ref="sales_team.group_sale_salesman"/>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="False"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="False"/>
+    <field name="perm_unlink" eval="False"/>
+  </record>
+  <record id="hydromotor_machine_sales.access_release_sales_scope" model="ir.rule">
+    <field name="name">Hydromotor release sales - record scope</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_release"/>
+    <field name="groups" eval="[(4, ref('sales_team.group_sale_salesman'))]"/>
+    <field name="domain_force">['|','|',('x_config_id.create_uid','=',user.id),('x_config_id.x_order_id.user_id','=',user.id),('x_config_id.x_lead_id.user_id','=',user.id)]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="False"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="False"/>
+    <field name="perm_unlink" eval="False"/>
+  </record>
+  <record id="hydromotor_machine_sales.access_release_admin" model="ir.model.access">
+    <field name="name">Hydromotor release admin</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_release"/>
+    <field name="group_id" ref="base.group_system"/>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_machine_sales.access_release_admin_scope" model="ir.rule">
+    <field name="name">Hydromotor release admin - record scope</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_release"/>
+    <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+    <field name="domain_force">[]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_machine_sales.company_rule_release" model="ir.rule">
+    <field name="name">Hydromotor: дружество — release</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_release"/>
+    <field name="domain_force">[('x_company_id', 'in', company_ids)]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_machine_sales.all_rule_release" model="ir.model.access">
+    <field name="name">Hydromotor: всички документи — release</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_release"/>
+    <field name="group_id" ref="sales_team.group_sale_salesman_all_leads"/>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="False"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="False"/>
+    <field name="perm_unlink" eval="False"/>
+  </record>
+  <record id="hydromotor_machine_sales.all_rule_release_scope" model="ir.rule">
+    <field name="name">Hydromotor: всички документи — release - record scope</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_release"/>
+    <field name="groups" eval="[(4, ref('sales_team.group_sale_salesman_all_leads'))]"/>
+    <field name="domain_force">[]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="False"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="False"/>
+    <field name="perm_unlink" eval="False"/>
+  </record>
+  <record id="hydromotor_machine_sales.access_bridge_sales" model="ir.model.access">
+    <field name="name">Hydromotor bridge sales</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_bridge"/>
+    <field name="group_id" ref="sales_team.group_sale_salesman"/>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="False"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="False"/>
+    <field name="perm_unlink" eval="False"/>
+  </record>
+  <record id="hydromotor_machine_sales.access_bridge_sales_scope" model="ir.rule">
+    <field name="name">Hydromotor bridge sales - record scope</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_bridge"/>
+    <field name="groups" eval="[(4, ref('sales_team.group_sale_salesman'))]"/>
+    <field name="domain_force">['|','|',('x_config_id.create_uid','=',user.id),('x_config_id.x_order_id.user_id','=',user.id),('x_config_id.x_lead_id.user_id','=',user.id)]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="False"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="False"/>
+    <field name="perm_unlink" eval="False"/>
+  </record>
+  <record id="hydromotor_machine_sales.access_bridge_admin" model="ir.model.access">
+    <field name="name">Hydromotor bridge admin</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_bridge"/>
+    <field name="group_id" ref="base.group_system"/>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_machine_sales.access_bridge_admin_scope" model="ir.rule">
+    <field name="name">Hydromotor bridge admin - record scope</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_bridge"/>
+    <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+    <field name="domain_force">[]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_machine_sales.company_rule_bridge" model="ir.rule">
+    <field name="name">Hydromotor: дружество — bridge</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_bridge"/>
+    <field name="domain_force">[('x_company_id', 'in', company_ids)]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_machine_sales.all_rule_bridge" model="ir.model.access">
+    <field name="name">Hydromotor: всички документи — bridge</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_bridge"/>
+    <field name="group_id" ref="sales_team.group_sale_salesman_all_leads"/>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="False"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="False"/>
+    <field name="perm_unlink" eval="False"/>
+  </record>
+  <record id="hydromotor_machine_sales.all_rule_bridge_scope" model="ir.rule">
+    <field name="name">Hydromotor: всички документи — bridge - record scope</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_bridge"/>
+    <field name="groups" eval="[(4, ref('sales_team.group_sale_salesman_all_leads'))]"/>
+    <field name="domain_force">[]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="False"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="False"/>
+    <field name="perm_unlink" eval="False"/>
+  </record>
+  <record id="hydromotor_machine_sales.access_settings_sales" model="ir.model.access">
+    <field name="name">Hydromotor settings sales</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_settings"/>
+    <field name="group_id" ref="sales_team.group_sale_salesman"/>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="False"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="False"/>
+    <field name="perm_unlink" eval="False"/>
+  </record>
+  <record id="hydromotor_machine_sales.access_settings_sales_scope" model="ir.rule">
+    <field name="name">Hydromotor settings sales - record scope</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_settings"/>
+    <field name="groups" eval="[(4, ref('sales_team.group_sale_salesman'))]"/>
+    <field name="domain_force">[]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="False"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="False"/>
+    <field name="perm_unlink" eval="False"/>
+  </record>
+  <record id="hydromotor_machine_sales.access_settings_admin" model="ir.model.access">
+    <field name="name">Hydromotor settings admin</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_settings"/>
+    <field name="group_id" ref="base.group_system"/>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_machine_sales.access_settings_admin_scope" model="ir.rule">
+    <field name="name">Hydromotor settings admin - record scope</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_settings"/>
+    <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+    <field name="domain_force">[]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_machine_sales.company_rule_settings" model="ir.rule">
+    <field name="name">Hydromotor: дружество — settings</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_settings"/>
+    <field name="domain_force">[('x_company_id', 'in', company_ids)]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+</odoo>

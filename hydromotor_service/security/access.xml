@@ -1,0 +1,251 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+  <record id="hydromotor_service.service_privilege" model="res.groups.privilege">
+    <field name="name">Машини и сервиз</field>
+    <field name="sequence" eval="100"/>
+  </record>
+  <record id="hydromotor_service.group_service_user" model="res.groups">
+    <field name="name">Сервизен служител</field>
+    <field name="sequence" eval="10"/>
+    <field name="privilege_id" ref="hydromotor_service.service_privilege"/>
+    <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+  </record>
+  <record id="hydromotor_service.group_service_manager" model="res.groups">
+    <field name="name">Ръководител сервиз</field>
+    <field name="sequence" eval="20"/>
+    <field name="privilege_id" ref="hydromotor_service.service_privilege"/>
+    <field name="implied_ids" eval="[(4, ref('hydromotor_service.group_service_user'))]"/>
+  </record>
+  <record id="hydromotor_service.access_machine_user" model="ir.model.access">
+    <field name="name">Hydromotor machine service user</field>
+    <field name="model_id" ref="hydromotor_service.model_machine"/>
+    <field name="group_id" ref="hydromotor_service.group_service_user"/>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="False"/>
+  </record>
+  <record id="hydromotor_service.access_machine_user_scope" model="ir.rule">
+    <field name="name">Hydromotor machine service user - record scope</field>
+    <field name="model_id" ref="hydromotor_service.model_machine"/>
+    <field name="groups" eval="[(4, ref('hydromotor_service.group_service_user'))]"/>
+    <field name="domain_force">[]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="False"/>
+  </record>
+  <record id="hydromotor_service.access_machine_manager" model="ir.model.access">
+    <field name="name">Hydromotor machine manager</field>
+    <field name="model_id" ref="hydromotor_service.model_machine"/>
+    <field name="group_id" ref="hydromotor_service.group_service_manager"/>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_service.access_machine_manager_scope" model="ir.rule">
+    <field name="name">Hydromotor machine manager - record scope</field>
+    <field name="model_id" ref="hydromotor_service.model_machine"/>
+    <field name="groups" eval="[(4, ref('hydromotor_service.group_service_manager'))]"/>
+    <field name="domain_force">[]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_service.access_machine_company" model="ir.rule">
+    <field name="name">Hydromotor machine allowed companies</field>
+    <field name="model_id" ref="hydromotor_service.model_machine"/>
+    <field name="domain_force">[('x_company_id', 'in', company_ids)]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_service.access_job_user" model="ir.model.access">
+    <field name="name">Hydromotor job service user</field>
+    <field name="model_id" ref="hydromotor_service.model_job"/>
+    <field name="group_id" ref="hydromotor_service.group_service_user"/>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="False"/>
+  </record>
+  <record id="hydromotor_service.access_job_user_scope" model="ir.rule">
+    <field name="name">Hydromotor job service user - record scope</field>
+    <field name="model_id" ref="hydromotor_service.model_job"/>
+    <field name="groups" eval="[(4, ref('hydromotor_service.group_service_user'))]"/>
+    <field name="domain_force">[]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="False"/>
+  </record>
+  <record id="hydromotor_service.access_job_manager" model="ir.model.access">
+    <field name="name">Hydromotor job manager</field>
+    <field name="model_id" ref="hydromotor_service.model_job"/>
+    <field name="group_id" ref="hydromotor_service.group_service_manager"/>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_service.access_job_manager_scope" model="ir.rule">
+    <field name="name">Hydromotor job manager - record scope</field>
+    <field name="model_id" ref="hydromotor_service.model_job"/>
+    <field name="groups" eval="[(4, ref('hydromotor_service.group_service_manager'))]"/>
+    <field name="domain_force">[]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_service.access_job_company" model="ir.rule">
+    <field name="name">Hydromotor job allowed companies</field>
+    <field name="model_id" ref="hydromotor_service.model_job"/>
+    <field name="domain_force">[('x_company_id', 'in', company_ids)]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_service.access_plan_user" model="ir.model.access">
+    <field name="name">Hydromotor plan service user</field>
+    <field name="model_id" ref="hydromotor_service.model_plan"/>
+    <field name="group_id" ref="hydromotor_service.group_service_user"/>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="False"/>
+  </record>
+  <record id="hydromotor_service.access_plan_user_scope" model="ir.rule">
+    <field name="name">Hydromotor plan service user - record scope</field>
+    <field name="model_id" ref="hydromotor_service.model_plan"/>
+    <field name="groups" eval="[(4, ref('hydromotor_service.group_service_user'))]"/>
+    <field name="domain_force">[]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="False"/>
+  </record>
+  <record id="hydromotor_service.access_plan_manager" model="ir.model.access">
+    <field name="name">Hydromotor plan manager</field>
+    <field name="model_id" ref="hydromotor_service.model_plan"/>
+    <field name="group_id" ref="hydromotor_service.group_service_manager"/>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_service.access_plan_manager_scope" model="ir.rule">
+    <field name="name">Hydromotor plan manager - record scope</field>
+    <field name="model_id" ref="hydromotor_service.model_plan"/>
+    <field name="groups" eval="[(4, ref('hydromotor_service.group_service_manager'))]"/>
+    <field name="domain_force">[]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_service.access_plan_company" model="ir.rule">
+    <field name="name">Hydromotor plan allowed companies</field>
+    <field name="model_id" ref="hydromotor_service.model_plan"/>
+    <field name="domain_force">[('x_company_id', 'in', company_ids)]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_service.access_meter_user" model="ir.model.access">
+    <field name="name">Hydromotor meter service user</field>
+    <field name="model_id" ref="hydromotor_service.model_meter"/>
+    <field name="group_id" ref="hydromotor_service.group_service_user"/>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="False"/>
+  </record>
+  <record id="hydromotor_service.access_meter_user_scope" model="ir.rule">
+    <field name="name">Hydromotor meter service user - record scope</field>
+    <field name="model_id" ref="hydromotor_service.model_meter"/>
+    <field name="groups" eval="[(4, ref('hydromotor_service.group_service_user'))]"/>
+    <field name="domain_force">[]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="False"/>
+  </record>
+  <record id="hydromotor_service.access_meter_manager" model="ir.model.access">
+    <field name="name">Hydromotor meter manager</field>
+    <field name="model_id" ref="hydromotor_service.model_meter"/>
+    <field name="group_id" ref="hydromotor_service.group_service_manager"/>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_service.access_meter_manager_scope" model="ir.rule">
+    <field name="name">Hydromotor meter manager - record scope</field>
+    <field name="model_id" ref="hydromotor_service.model_meter"/>
+    <field name="groups" eval="[(4, ref('hydromotor_service.group_service_manager'))]"/>
+    <field name="domain_force">[]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_service.access_meter_company" model="ir.rule">
+    <field name="name">Hydromotor meter allowed companies</field>
+    <field name="model_id" ref="hydromotor_service.model_meter"/>
+    <field name="domain_force">[('x_company_id', 'in', company_ids)]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="True"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="True"/>
+    <field name="perm_unlink" eval="True"/>
+  </record>
+  <record id="hydromotor_service.access_lot_service_read" model="ir.model.access">
+    <field name="name">Hydromotor service read serials</field>
+    <field name="model_id" ref="stock.model_stock_lot"/>
+    <field name="group_id" ref="hydromotor_service.group_service_user"/>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="False"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="False"/>
+    <field name="perm_unlink" eval="False"/>
+  </record>
+  <record id="hydromotor_service.access_lot_service_read_scope" model="ir.rule">
+    <field name="name">Hydromotor service read serials - record scope</field>
+    <field name="model_id" ref="stock.model_stock_lot"/>
+    <field name="groups" eval="[(4, ref('hydromotor_service.group_service_user'))]"/>
+    <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    <field name="active" eval="True"/>
+    <field name="perm_create" eval="False"/>
+    <field name="perm_read" eval="True"/>
+    <field name="perm_write" eval="False"/>
+    <field name="perm_unlink" eval="False"/>
+  </record>
+  <record id="base.group_system" model="res.groups">
+    <field name="implied_ids" eval="[(4, ref('hydromotor_service.group_service_manager'))]"/>
+  </record>
+</odoo>

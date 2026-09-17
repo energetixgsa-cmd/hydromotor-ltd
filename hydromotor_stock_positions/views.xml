@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+  <record id="product_template_positions" model="ir.ui.view">
+    <field name="name">hydromotor.product_template_positions</field>
+    <field name="model">product.template</field>
+    <field name="inherit_id" ref="product.product_template_only_form_view"/>
+    <field name="priority" eval="90"/>
+    <field name="arch" type="xml">
+      <xpath expr="//sheet/notebook" position="inside">
+        <page name="hm_stock_positions" string="Stock positions" groups="stock.group_stock_user">
+          <group>
+            <field name="x_studio_stock_positions" readonly="1"/>
+          </group>
+        </page>
+      </xpath>
+    </field>
+  </record>
+  <record id="product_variant_positions" model="ir.ui.view">
+    <field name="name">hydromotor.product_variant_positions</field>
+    <field name="model">product.product</field>
+    <field name="inherit_id" ref="product.product_normal_form_view"/>
+    <field name="priority" eval="90"/>
+    <field name="arch" type="xml">
+      <xpath expr="//sheet/notebook" position="inside">
+        <page name="hm_stock_positions" string="Stock positions" groups="stock.group_stock_user">
+          <group>
+            <field name="x_studio_stock_positions" readonly="1"/>
+          </group>
+        </page>
+      </xpath>
+    </field>
+  </record>
+  <record id="sale_order_stock_positions" model="ir.ui.view">
+    <field name="name">hydromotor.sale.order.stock.positions</field>
+    <field name="model">sale.order</field>
+    <field name="inherit_id" ref="sale.view_order_form"/>
+    <field name="priority" eval="90"/>
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='order_line']/list/field[@name='name']" position="after">
+        <field name="x_studio_order_stock_positions" readonly="1" optional="show" groups="stock.group_stock_user"/>
+      </xpath>
+    </field>
+  </record>
+</odoo>

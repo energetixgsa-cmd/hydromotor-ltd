@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+  <record id="hydromotor_service.report_service_protocol" model="ir.actions.report">
+    <field name="paperformat_id" ref="hydromotor_service_report_fix.paper_service_portrait"/>
+  </record>
+</odoo>
