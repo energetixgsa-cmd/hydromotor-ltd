@@ -6,11 +6,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-
+#. module: hydromotor_product_import_menu
 #: model:ir.actions.act_window,name:hydromotor_product_import_menu.action_product_import
 msgid "Продукти за импорт / Product Import"
 msgstr "Артикули за импорт"
 
+#. module: hydromotor_product_import_menu
 #: model:ir.ui.menu,name:hydromotor_product_import_menu.menu_product_import
 msgid "Продукти за импорт / Product Import"
 msgstr "Артикули за импорт"
