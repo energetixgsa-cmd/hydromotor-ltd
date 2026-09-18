@@ -6,31 +6,37 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-
+#. module: hydromotor_machine_sales
 #: model:base.automation,name:hydromotor_machine_sales.config_guard
 msgid "Hydromotor — config_guard"
 msgstr "Hydromotor — проверка на конфигурацията"
 
+#. module: hydromotor_machine_sales
 #: model:base.automation,name:hydromotor_machine_sales.options_guard
 msgid "Hydromotor — options_guard"
 msgstr "Hydromotor — проверка на опциите"
 
+#. module: hydromotor_machine_sales
 #: model:base.automation,name:hydromotor_machine_sales.options_unlink
 msgid "Hydromotor — options_unlink"
 msgstr "Hydromotor — изтриване на опции"
 
+#. module: hydromotor_machine_sales
 #: model:base.automation,name:hydromotor_machine_sales.sale_line_guard
 msgid "Hydromotor — sale_line_guard"
 msgstr "Hydromotor — проверка на реда на продажбата"
 
+#. module: hydromotor_machine_sales
 #: model:base.automation,name:hydromotor_machine_sales.sale_line_unlink
 msgid "Hydromotor — sale_line_unlink"
 msgstr "Hydromotor — изтриване на ред на продажбата"
 
+#. module: hydromotor_machine_sales
 #: model:base.automation,name:hydromotor_machine_sales.sale_sync
 msgid "Hydromotor — sale_sync"
 msgstr "Hydromotor — синхронизиране на продажбите"
 
+#. module: hydromotor_machine_sales
 #: model:ir.model.fields.selection,name:hydromotor_machine_sales.field_x_hm_config__x_language_en
 msgid "English"
 msgstr "Английски"
