@@ -1,0 +1,1821 @@
+This XML file does not appear to have any style information associated with it. The document tree is shown below.
+<odoo>
+<record id="hydromotor_machine_sales.model_x_hm_base" model="ir.model">
+<field name="name">Базови машини</field>
+<field name="model">x_hm_base</field>
+<field name="field_id" eval="[]"/>
+<field name="order">id</field>
+<field name="info">Main super-class for regular database-persisted Odoo models. Odoo models are created by inheriting from this class:: class ResUsers(Model): ... The system will later instantiate the class once per database (on which the class' module is installed). </field>
+<field name="transient" eval="False"/>
+<field name="is_mail_thread" eval="False"/>
+<field name="is_mail_activity" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.model_x_hm_option" model="ir.model">
+<field name="name">Пакети и опции</field>
+<field name="model">x_hm_option</field>
+<field name="field_id" eval="[]"/>
+<field name="order">id</field>
+<field name="info">Main super-class for regular database-persisted Odoo models. Odoo models are created by inheriting from this class:: class ResUsers(Model): ... The system will later instantiate the class once per database (on which the class' module is installed). </field>
+<field name="transient" eval="False"/>
+<field name="is_mail_thread" eval="False"/>
+<field name="is_mail_activity" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.model_x_hm_config" model="ir.model">
+<field name="name">Конфигурации за оферта</field>
+<field name="model">x_hm_config</field>
+<field name="field_id" eval="[]"/>
+<field name="order">id</field>
+<field name="info">Main super-class for regular database-persisted Odoo models. Odoo models are created by inheriting from this class:: class ResUsers(Model): ... The system will later instantiate the class once per database (on which the class' module is installed). </field>
+<field name="transient" eval="False"/>
+<field name="is_mail_thread" eval="False"/>
+<field name="is_mail_activity" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.model_x_hm_config_line" model="ir.model">
+<field name="name">Избрано оборудване</field>
+<field name="model">x_hm_config_line</field>
+<field name="field_id" eval="[]"/>
+<field name="order">id</field>
+<field name="info">Main super-class for regular database-persisted Odoo models. Odoo models are created by inheriting from this class:: class ResUsers(Model): ... The system will later instantiate the class once per database (on which the class' module is installed). </field>
+<field name="transient" eval="False"/>
+<field name="is_mail_thread" eval="False"/>
+<field name="is_mail_activity" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.model_x_hm_release" model="ir.model">
+<field name="name">Фиксирани конфигурации</field>
+<field name="model">x_hm_release</field>
+<field name="field_id" eval="[]"/>
+<field name="order">id</field>
+<field name="info">Main super-class for regular database-persisted Odoo models. Odoo models are created by inheriting from this class:: class ResUsers(Model): ... The system will later instantiate the class once per database (on which the class' module is installed). </field>
+<field name="transient" eval="False"/>
+<field name="is_mail_thread" eval="False"/>
+<field name="is_mail_activity" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.model_x_hm_bridge" model="ir.model">
+<field name="name">Машини от продажби</field>
+<field name="model">x_hm_bridge</field>
+<field name="field_id" eval="[]"/>
+<field name="order">id</field>
+<field name="info">Main super-class for regular database-persisted Odoo models. Odoo models are created by inheriting from this class:: class ResUsers(Model): ... The system will later instantiate the class once per database (on which the class' module is installed). </field>
+<field name="transient" eval="False"/>
+<field name="is_mail_thread" eval="False"/>
+<field name="is_mail_activity" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.model_x_hm_settings" model="ir.model">
+<field name="name">Връзка към регистъра</field>
+<field name="model">x_hm_settings</field>
+<field name="field_id" eval="[]"/>
+<field name="order">id</field>
+<field name="info">Main super-class for regular database-persisted Odoo models. Odoo models are created by inheriting from this class:: class ResUsers(Model): ... The system will later instantiate the class once per database (on which the class' module is installed). </field>
+<field name="transient" eval="False"/>
+<field name="is_mail_thread" eval="False"/>
+<field name="is_mail_activity" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_base__x_name" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_base"/>
+<field name="name">x_name</field>
+<field name="ttype">char</field>
+<field name="domain">[]</field>
+<field name="field_description">Наименование</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="True"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_option__x_name" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_option"/>
+<field name="name">x_name</field>
+<field name="ttype">char</field>
+<field name="domain">[]</field>
+<field name="field_description">Наименование</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="True"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_name" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+<field name="name">x_name</field>
+<field name="ttype">char</field>
+<field name="domain">[]</field>
+<field name="field_description">Наименование</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="True"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config_line__x_name" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config_line"/>
+<field name="name">x_name</field>
+<field name="ttype">char</field>
+<field name="domain">[]</field>
+<field name="field_description">Наименование</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="True"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_release__x_name" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_release"/>
+<field name="name">x_name</field>
+<field name="ttype">char</field>
+<field name="domain">[]</field>
+<field name="field_description">Наименование</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="True"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_bridge__x_name" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_bridge"/>
+<field name="name">x_name</field>
+<field name="ttype">char</field>
+<field name="domain">[]</field>
+<field name="field_description">Наименование</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="True"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_settings__x_name" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_settings"/>
+<field name="name">x_name</field>
+<field name="ttype">char</field>
+<field name="domain">[]</field>
+<field name="field_description">Наименование</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="True"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_base__x_code" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_base"/>
+<field name="name">x_code</field>
+<field name="ttype">char</field>
+<field name="domain">[]</field>
+<field name="field_description">Производителски код</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="True"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="True"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_base__x_version" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_base"/>
+<field name="name">x_version</field>
+<field name="ttype">char</field>
+<field name="domain">[]</field>
+<field name="field_description">Версия на ценовата листа</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="True"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="True"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_base__x_price" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_base"/>
+<field name="name">x_price</field>
+<field name="ttype">float</field>
+<field name="domain">[]</field>
+<field name="field_description">Каталожна цена EUR</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_base__x_source_page" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_base"/>
+<field name="name">x_source_page</field>
+<field name="ttype">integer</field>
+<field name="domain">[]</field>
+<field name="field_description">Страница в PDF</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_base__x_name_en" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_base"/>
+<field name="name">x_name_en</field>
+<field name="ttype">text</field>
+<field name="domain">[]</field>
+<field name="field_description">Описание EN</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_base__x_name_de" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_base"/>
+<field name="name">x_name_de</field>
+<field name="ttype">text</field>
+<field name="domain">[]</field>
+<field name="field_description">Описание DE</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_option__x_code" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_option"/>
+<field name="name">x_code</field>
+<field name="ttype">char</field>
+<field name="domain">[]</field>
+<field name="field_description">Производителски код</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="True"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="True"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_option__x_version" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_option"/>
+<field name="name">x_version</field>
+<field name="ttype">char</field>
+<field name="domain">[]</field>
+<field name="field_description">Версия на ценовата листа</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="True"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="True"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_option__x_price" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_option"/>
+<field name="name">x_price</field>
+<field name="ttype">float</field>
+<field name="domain">[]</field>
+<field name="field_description">Каталожна цена EUR</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_option__x_source_page" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_option"/>
+<field name="name">x_source_page</field>
+<field name="ttype">integer</field>
+<field name="domain">[]</field>
+<field name="field_description">Страница в PDF</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_option__x_name_en" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_option"/>
+<field name="name">x_name_en</field>
+<field name="ttype">text</field>
+<field name="domain">[]</field>
+<field name="field_description">Описание EN</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_option__x_name_de" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_option"/>
+<field name="name">x_name_de</field>
+<field name="ttype">text</field>
+<field name="domain">[]</field>
+<field name="field_description">Описание DE</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_base__x_family" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_base"/>
+<field name="name">x_family</field>
+<field name="ttype">char</field>
+<field name="domain">[]</field>
+<field name="field_description">Серия</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="True"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="True"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_base__x_needs_iontron" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_base"/>
+<field name="name">x_needs_iontron</field>
+<field name="ttype">boolean</field>
+<field name="domain">[]</field>
+<field name="field_description">Изисква iONTRON</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_base__x_standard_codes" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_base"/>
+<field name="name">x_standard_codes</field>
+<field name="ttype">text</field>
+<field name="domain">[]</field>
+<field name="field_description">Стандартно оборудване — кодове</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_base__x_standard_text" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_base"/>
+<field name="name">x_standard_text</field>
+<field name="ttype">text</field>
+<field name="domain">[]</field>
+<field name="field_description">Стандартно оборудване EN</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_base__x_product_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_base"/>
+<field name="name">x_product_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">product.product</field>
+<field name="domain">[]</field>
+<field name="on_delete">restrict</field>
+<field name="field_description">Продукт в Продажби</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_option__x_families" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_option"/>
+<field name="name">x_families</field>
+<field name="ttype">text</field>
+<field name="domain">[]</field>
+<field name="field_description">Налична за серии</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_option__x_conditional_families" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_option"/>
+<field name="name">x_conditional_families</field>
+<field name="ttype">text</field>
+<field name="domain">[]</field>
+<field name="field_description">Зависима от конфигурацията за серии</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_option__x_requires_all" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_option"/>
+<field name="name">x_requires_all</field>
+<field name="ttype">text</field>
+<field name="domain">[]</field>
+<field name="field_description">Задължителни кодове</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_option__x_requires_any" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_option"/>
+<field name="name">x_requires_any</field>
+<field name="ttype">text</field>
+<field name="domain">[]</field>
+<field name="field_description">Един от кодовете</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_option__x_excludes" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_option"/>
+<field name="name">x_excludes</field>
+<field name="ttype">text</field>
+<field name="domain">[]</field>
+<field name="field_description">Несъвместими кодове</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_option__x_includes" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_option"/>
+<field name="name">x_includes</field>
+<field name="ttype">text</field>
+<field name="domain">[]</field>
+<field name="field_description">Съдържание на пакет по серии</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_option__x_review_note" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_option"/>
+<field name="name">x_review_note</field>
+<field name="ttype">text</field>
+<field name="domain">[]</field>
+<field name="field_description">Техническо уточнение</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_option__x_on_request" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_option"/>
+<field name="name">x_on_request</field>
+<field name="ttype">boolean</field>
+<field name="domain">[]</field>
+<field name="field_description">Индивидуална цена</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_option__x_blocked_eu" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_option"/>
+<field name="name">x_blocked_eu</field>
+<field name="ttype">boolean</field>
+<field name="domain">[]</field>
+<field name="field_description">Не е за ЕС/ЕИП</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_option__x_blocked_de" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_option"/>
+<field name="name">x_blocked_de</field>
+<field name="ttype">boolean</field>
+<field name="domain">[]</field>
+<field name="field_description">Не е за Германия</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_company_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+<field name="name">x_company_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">res.company</field>
+<field name="domain">[]</field>
+<field name="on_delete">restrict</field>
+<field name="field_description">Дружество</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="True"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="True"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_release__x_company_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_release"/>
+<field name="name">x_company_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">res.company</field>
+<field name="domain">[]</field>
+<field name="on_delete">restrict</field>
+<field name="field_description">Дружество</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="True"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="True"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_bridge__x_company_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_bridge"/>
+<field name="name">x_company_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">res.company</field>
+<field name="domain">[]</field>
+<field name="on_delete">restrict</field>
+<field name="field_description">Дружество</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="True"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="True"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_settings__x_company_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_settings"/>
+<field name="name">x_company_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">res.company</field>
+<field name="domain">[]</field>
+<field name="on_delete">restrict</field>
+<field name="field_description">Дружество</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="True"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="True"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_partner_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+<field name="name">x_partner_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">res.partner</field>
+<field name="domain">[]</field>
+<field name="on_delete">restrict</field>
+<field name="field_description">Клиент</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="True"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_lead_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+<field name="name">x_lead_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">crm.lead</field>
+<field name="domain">[]</field>
+<field name="on_delete">set null</field>
+<field name="field_description">CRM възможност</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_order_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+<field name="name">x_order_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">sale.order</field>
+<field name="domain">[]</field>
+<field name="on_delete">set null</field>
+<field name="field_description">Оферта / поръчка</field>
+<field name="copied" eval="False"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_base_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+<field name="name">x_base_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">x_hm_base</field>
+<field name="domain">[]</field>
+<field name="on_delete">restrict</field>
+<field name="field_description">Базова машина</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="True"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_family" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+<field name="name">x_family</field>
+<field name="ttype">char</field>
+<field name="domain">[]</field>
+<field name="field_description">Серия</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="True"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_version" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+<field name="name">x_version</field>
+<field name="ttype">char</field>
+<field name="domain">[]</field>
+<field name="field_description">Ценова листа</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="True"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_quantity" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+<field name="name">x_quantity</field>
+<field name="ttype">integer</field>
+<field name="domain">[]</field>
+<field name="field_description">Брой машини</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="True"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_discount" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+<field name="name">x_discount</field>
+<field name="ttype">float</field>
+<field name="domain">[]</field>
+<field name="field_description">Отстъпка от производителската сума (%)</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_chassis_price" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+<field name="name">x_chassis_price</field>
+<field name="ttype">float</field>
+<field name="domain">[]</field>
+<field name="field_description">Шаси — продажна цена EUR</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_transport_price" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+<field name="name">x_transport_price</field>
+<field name="ttype">float</field>
+<field name="domain">[]</field>
+<field name="field_description">Транспорт — продажна цена EUR</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_other_price" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+<field name="name">x_other_price</field>
+<field name="ttype">float</field>
+<field name="domain">[]</field>
+<field name="field_description">Други доставки / услуги EUR</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_other_note" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+<field name="name">x_other_note</field>
+<field name="ttype">text</field>
+<field name="domain">[]</field>
+<field name="field_description">Описание на други доставки / услуги</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_delivery_note" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+<field name="name">x_delivery_note</field>
+<field name="ttype">text</field>
+<field name="domain">[]</field>
+<field name="field_description">Условие / срок за доставка</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_warranty_months" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+<field name="name">x_warranty_months</field>
+<field name="ttype">integer</field>
+<field name="domain">[]</field>
+<field name="field_description">Гаранция от пускането (месеци)</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_market" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+<field name="name">x_market</field>
+<field name="ttype">selection</field>
+<field name="domain">[]</field>
+<field name="field_description">Пазар</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="True"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_chassis_type" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+<field name="name">x_chassis_type</field>
+<field name="ttype">selection</field>
+<field name="domain">[]</field>
+<field name="field_description">Вид шаси</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="True"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_language" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+<field name="name">x_language</field>
+<field name="ttype">selection</field>
+<field name="domain">[]</field>
+<field name="field_description">Език на описанието</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="True"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_release_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+<field name="name">x_release_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">x_hm_release</field>
+<field name="domain">[]</field>
+<field name="on_delete">set null</field>
+<field name="field_description">Фиксирана конфигурация</field>
+<field name="copied" eval="False"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="True"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_result" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+<field name="name">x_result</field>
+<field name="ttype">text</field>
+<field name="domain">[]</field>
+<field name="field_description">Проверка и изчисление</field>
+<field name="copied" eval="False"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="True"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_unit_price" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+<field name="name">x_unit_price</field>
+<field name="ttype">float</field>
+<field name="domain">[]</field>
+<field name="field_description">Продажна цена / машина EUR</field>
+<field name="copied" eval="False"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="True"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_total" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+<field name="name">x_total</field>
+<field name="ttype">float</field>
+<field name="domain">[]</field>
+<field name="field_description">Общо EUR</field>
+<field name="copied" eval="False"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="True"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_build_revision" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+<field name="name">x_build_revision</field>
+<field name="ttype">integer</field>
+<field name="domain">[]</field>
+<field name="field_description">Контрол на записите</field>
+<field name="copied" eval="False"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="True"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config_line__x_config_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config_line"/>
+<field name="name">x_config_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">x_hm_config</field>
+<field name="domain">[]</field>
+<field name="on_delete">cascade</field>
+<field name="field_description">Конфигурация</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="True"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config_line__x_company_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config_line"/>
+<field name="name">x_company_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">res.company</field>
+<field name="domain">[]</field>
+<field name="on_delete">set null</field>
+<field name="field_description">Дружество</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="True"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config_line__x_option_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config_line"/>
+<field name="name">x_option_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">x_hm_option</field>
+<field name="domain">[]</field>
+<field name="on_delete">restrict</field>
+<field name="field_description">Опция / пакет</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="True"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config_line__x_agreed_price" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config_line"/>
+<field name="name">x_agreed_price</field>
+<field name="ttype">float</field>
+<field name="domain">[]</field>
+<field name="field_description">Потвърдена индивидуална цена EUR</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config_line__x_price_confirmed" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config_line"/>
+<field name="name">x_price_confirmed</field>
+<field name="ttype">boolean</field>
+<field name="domain">[]</field>
+<field name="field_description">Цената е потвърдена</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config_line__x_on_request" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config_line"/>
+<field name="name">x_on_request</field>
+<field name="ttype">boolean</field>
+<field name="domain">[]</field>
+<field name="field_description">Индивидуална цена</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="True"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config_line__x_list_price" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config_line"/>
+<field name="name">x_list_price</field>
+<field name="ttype">float</field>
+<field name="domain">[]</field>
+<field name="field_description">Каталожна цена EUR</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="True"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_release__x_config_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_release"/>
+<field name="name">x_config_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">x_hm_config</field>
+<field name="domain">[]</field>
+<field name="on_delete">restrict</field>
+<field name="field_description">Конфигурация</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_release__x_order_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_release"/>
+<field name="name">x_order_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">sale.order</field>
+<field name="domain">[]</field>
+<field name="on_delete">restrict</field>
+<field name="field_description">Поръчка</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_release__x_line_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_release"/>
+<field name="name">x_line_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">sale.order.line</field>
+<field name="domain">[]</field>
+<field name="on_delete">set null</field>
+<field name="field_description">Ред на поръчката</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_release__x_product_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_release"/>
+<field name="name">x_product_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">product.product</field>
+<field name="domain">[]</field>
+<field name="on_delete">restrict</field>
+<field name="field_description">Продукт</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_release__x_uom_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_release"/>
+<field name="name">x_uom_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">uom.uom</field>
+<field name="domain">[]</field>
+<field name="on_delete">restrict</field>
+<field name="field_description">Мерна единица</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_release__x_currency_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_release"/>
+<field name="name">x_currency_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">res.currency</field>
+<field name="domain">[]</field>
+<field name="on_delete">restrict</field>
+<field name="field_description">Валута</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_release__x_approved_by" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_release"/>
+<field name="name">x_approved_by</field>
+<field name="ttype">many2one</field>
+<field name="relation">res.users</field>
+<field name="domain">[]</field>
+<field name="on_delete">set null</field>
+<field name="field_description">Технически потвърдил</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_release__x_quantity" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_release"/>
+<field name="name">x_quantity</field>
+<field name="ttype">float</field>
+<field name="domain">[]</field>
+<field name="field_description">Брой</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_release__x_unit_price" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_release"/>
+<field name="name">x_unit_price</field>
+<field name="ttype">float</field>
+<field name="domain">[]</field>
+<field name="field_description">Единична цена</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_release__x_manufacturer_total" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_release"/>
+<field name="name">x_manufacturer_total</field>
+<field name="ttype">float</field>
+<field name="domain">[]</field>
+<field name="field_description">Производителска сума</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_release__x_version" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_release"/>
+<field name="name">x_version</field>
+<field name="ttype">text</field>
+<field name="domain">[]</field>
+<field name="field_description">Версия на листата</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_release__x_fingerprint" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_release"/>
+<field name="name">x_fingerprint</field>
+<field name="ttype">text</field>
+<field name="domain">[]</field>
+<field name="field_description">Фиксирани входни данни</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_release__x_description" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_release"/>
+<field name="name">x_description</field>
+<field name="ttype">text</field>
+<field name="domain">[]</field>
+<field name="field_description">Описание в офертата</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_release__x_check_report" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_release"/>
+<field name="name">x_check_report</field>
+<field name="ttype">text</field>
+<field name="domain">[]</field>
+<field name="field_description">Резултат от проверката</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_machine__x_hms_source_key" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_service.model_machine"/>
+<field name="name">x_hms_source_key</field>
+<field name="ttype">char</field>
+<field name="domain">[]</field>
+<field name="field_description">Източник от конфигуратора</field>
+<field name="copied" eval="False"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="True"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_machine__x_hms_order_state" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_service.model_machine"/>
+<field name="name">x_hms_order_state</field>
+<field name="ttype">char</field>
+<field name="domain">[]</field>
+<field name="field_description">Статус на поръчката от конфигуратора</field>
+<field name="copied" eval="False"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_machine__x_hms_quote_description" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_service.model_machine"/>
+<field name="name">x_hms_quote_description</field>
+<field name="ttype">text</field>
+<field name="domain">[]</field>
+<field name="field_description">Оборудване от конфигуратора</field>
+<field name="copied" eval="False"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_bridge__x_order_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_bridge"/>
+<field name="name">x_order_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">sale.order</field>
+<field name="domain">[]</field>
+<field name="on_delete">restrict</field>
+<field name="field_description">Продажба</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="True"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="True"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_bridge__x_line_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_bridge"/>
+<field name="name">x_line_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">sale.order.line</field>
+<field name="domain">[]</field>
+<field name="on_delete">restrict</field>
+<field name="field_description">Ред на продажбата</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="True"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="True"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_bridge__x_config_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_bridge"/>
+<field name="name">x_config_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">x_hm_config</field>
+<field name="domain">[]</field>
+<field name="on_delete">restrict</field>
+<field name="field_description">Конфигурация</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="True"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="True"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_bridge__x_release_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_bridge"/>
+<field name="name">x_release_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">x_hm_release</field>
+<field name="domain">[]</field>
+<field name="on_delete">restrict</field>
+<field name="field_description">Фиксирана конфигурация</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="True"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="True"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_bridge__x_source_key" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_bridge"/>
+<field name="name">x_source_key</field>
+<field name="ttype">char</field>
+<field name="domain">[]</field>
+<field name="field_description">Уникален източник</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="True"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_bridge__x_target_model" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_bridge"/>
+<field name="name">x_target_model</field>
+<field name="ttype">char</field>
+<field name="domain">[]</field>
+<field name="field_description">Модел на регистъра</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_bridge__x_state_field" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_bridge"/>
+<field name="name">x_state_field</field>
+<field name="ttype">char</field>
+<field name="domain">[]</field>
+<field name="field_description">Поле за статус</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_bridge__x_target_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_bridge"/>
+<field name="name">x_target_id</field>
+<field name="ttype">integer</field>
+<field name="domain">[]</field>
+<field name="field_description">Запис в регистъра</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_bridge__x_unit_number" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_bridge"/>
+<field name="name">x_unit_number</field>
+<field name="ttype">integer</field>
+<field name="domain">[]</field>
+<field name="field_description">Пореден брой</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_settings__x_enabled" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_settings"/>
+<field name="name">x_enabled</field>
+<field name="ttype">boolean</field>
+<field name="domain">[]</field>
+<field name="field_description">Автоматично добавяне при продажба</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_settings__x_target_model_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_settings"/>
+<field name="name">x_target_model_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">ir.model</field>
+<field name="domain">[]</field>
+<field name="on_delete">set null</field>
+<field name="field_description">Модел на регистъра</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_settings__x_name_field_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_settings"/>
+<field name="name">x_name_field_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">ir.model.fields</field>
+<field name="domain">[]</field>
+<field name="on_delete">set null</field>
+<field name="field_description">Поле за наименование</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_settings__x_partner_field_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_settings"/>
+<field name="name">x_partner_field_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">ir.model.fields</field>
+<field name="domain">[]</field>
+<field name="on_delete">set null</field>
+<field name="field_description">Клиент</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_settings__x_company_field_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_settings"/>
+<field name="name">x_company_field_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">ir.model.fields</field>
+<field name="domain">[]</field>
+<field name="on_delete">set null</field>
+<field name="field_description">Поле за дружество</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_settings__x_key_field_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_settings"/>
+<field name="name">x_key_field_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">ir.model.fields</field>
+<field name="domain">[]</field>
+<field name="on_delete">set null</field>
+<field name="field_description">Уникален източник</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_settings__x_product_field_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_settings"/>
+<field name="name">x_product_field_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">ir.model.fields</field>
+<field name="domain">[]</field>
+<field name="on_delete">set null</field>
+<field name="field_description">Продукт</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_settings__x_order_field_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_settings"/>
+<field name="name">x_order_field_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">ir.model.fields</field>
+<field name="domain">[]</field>
+<field name="on_delete">set null</field>
+<field name="field_description">Продажба</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_settings__x_line_field_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_settings"/>
+<field name="name">x_line_field_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">ir.model.fields</field>
+<field name="domain">[]</field>
+<field name="on_delete">set null</field>
+<field name="field_description">Ред на продажбата</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_settings__x_lead_field_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_settings"/>
+<field name="name">x_lead_field_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">ir.model.fields</field>
+<field name="domain">[]</field>
+<field name="on_delete">set null</field>
+<field name="field_description">CRM възможност</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_settings__x_summary_field_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_settings"/>
+<field name="name">x_summary_field_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">ir.model.fields</field>
+<field name="domain">[]</field>
+<field name="on_delete">set null</field>
+<field name="field_description">Конфигурация</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_settings__x_state_field_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_settings"/>
+<field name="name">x_state_field_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">ir.model.fields</field>
+<field name="domain">[]</field>
+<field name="on_delete">set null</field>
+<field name="field_description">Статус на поръчката</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_settings__x_warranty_field_id" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_settings"/>
+<field name="name">x_warranty_field_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">ir.model.fields</field>
+<field name="domain">[]</field>
+<field name="on_delete">set null</field>
+<field name="field_description">Гаранция в месеци</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_product_product__x_hm_base_id" model="ir.model.fields">
+<field name="model_id" ref="product.model_product_product"/>
+<field name="name">x_hm_base_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">x_hm_base</field>
+<field name="domain">[]</field>
+<field name="on_delete">set null</field>
+<field name="field_description">Базова машина Hydromotor</field>
+<field name="copied" eval="False"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_sale_order_line__x_hm_config_id" model="ir.model.fields">
+<field name="model_id" ref="sale.model_sale_order_line"/>
+<field name="name">x_hm_config_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">x_hm_config</field>
+<field name="domain">[]</field>
+<field name="on_delete">restrict</field>
+<field name="field_description">Конфигурация на машина</field>
+<field name="copied" eval="False"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_sale_order_line__x_hm_release_id" model="ir.model.fields">
+<field name="model_id" ref="sale.model_sale_order_line"/>
+<field name="name">x_hm_release_id</field>
+<field name="ttype">many2one</field>
+<field name="relation">x_hm_release</field>
+<field name="domain">[]</field>
+<field name="on_delete">restrict</field>
+<field name="field_description">Фиксирана конфигурация</field>
+<field name="copied" eval="False"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_sale_order__x_hm_sync_revision" model="ir.model.fields">
+<field name="model_id" ref="sale.model_sale_order"/>
+<field name="name">x_hm_sync_revision</field>
+<field name="ttype">integer</field>
+<field name="domain">[]</field>
+<field name="field_description">Контрол на синхронизацията</field>
+<field name="copied" eval="False"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="True"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_option_line_ids" model="ir.model.fields">
+<field name="model_id" ref="hydromotor_machine_sales.model_x_hm_config"/>
+<field name="name">x_option_line_ids</field>
+<field name="ttype">one2many</field>
+<field name="relation">x_hm_config_line</field>
+<field name="relation_field">x_config_id</field>
+<field name="domain">[]</field>
+<field name="field_description">Оборудване</field>
+<field name="copied" eval="True"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_sale_order__x_hm_config_ids" model="ir.model.fields">
+<field name="model_id" ref="sale.model_sale_order"/>
+<field name="name">x_hm_config_ids</field>
+<field name="ttype">one2many</field>
+<field name="relation">x_hm_config</field>
+<field name="relation_field">x_order_id</field>
+<field name="domain">[]</field>
+<field name="field_description">Конфигурации на машини</field>
+<field name="copied" eval="False"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_sale_order__x_hm_bridge_ids" model="ir.model.fields">
+<field name="model_id" ref="sale.model_sale_order"/>
+<field name="name">x_hm_bridge_ids</field>
+<field name="ttype">one2many</field>
+<field name="relation">x_hm_bridge</field>
+<field name="relation_field">x_order_id</field>
+<field name="domain">[]</field>
+<field name="field_description">Машини от тази продажба</field>
+<field name="copied" eval="False"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_crm_lead__x_hm_config_ids" model="ir.model.fields">
+<field name="model_id" ref="crm.model_crm_lead"/>
+<field name="name">x_hm_config_ids</field>
+<field name="ttype">one2many</field>
+<field name="relation">x_hm_config</field>
+<field name="relation_field">x_lead_id</field>
+<field name="domain">[]</field>
+<field name="field_description">Конфигурации на машини</field>
+<field name="copied" eval="False"/>
+<field name="required" eval="False"/>
+<field name="readonly" eval="False"/>
+<field name="index" eval="False"/>
+<field name="store" eval="True"/>
+<field name="selectable" eval="True"/>
+<field name="company_dependent" eval="False"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_market_EU" model="ir.model.fields.selection">
+<field name="field_id" ref="hydromotor_machine_sales.field_x_hm_config__x_market"/>
+<field name="value">EU</field>
+<field name="name">България / ЕС / ЕИП</field>
+<field name="sequence" eval="0"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_market_DE" model="ir.model.fields.selection">
+<field name="field_id" ref="hydromotor_machine_sales.field_x_hm_config__x_market"/>
+<field name="value">DE</field>
+<field name="name">Германия</field>
+<field name="sequence" eval="1"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_market_OTHER" model="ir.model.fields.selection">
+<field name="field_id" ref="hydromotor_machine_sales.field_x_hm_config__x_market"/>
+<field name="value">OTHER</field>
+<field name="name">Извън ЕС / ЕИП</field>
+<field name="sequence" eval="2"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_chassis_type_unspecified" model="ir.model.fields.selection">
+<field name="field_id" ref="hydromotor_machine_sales.field_x_hm_config__x_chassis_type"/>
+<field name="value">unspecified</field>
+<field name="name">Уточнява се</field>
+<field name="sequence" eval="0"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_chassis_type_arocs" model="ir.model.fields.selection">
+<field name="field_id" ref="hydromotor_machine_sales.field_x_hm_config__x_chassis_type"/>
+<field name="value">arocs</field>
+<field name="name">Mercedes-Benz Arocs</field>
+<field name="sequence" eval="1"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_chassis_type_other" model="ir.model.fields.selection">
+<field name="field_id" ref="hydromotor_machine_sales.field_x_hm_config__x_chassis_type"/>
+<field name="value">other</field>
+<field name="name">Друго</field>
+<field name="sequence" eval="2"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_language_bg" model="ir.model.fields.selection">
+<field name="field_id" ref="hydromotor_machine_sales.field_x_hm_config__x_language"/>
+<field name="value">bg</field>
+<field name="name">Български</field>
+<field name="sequence" eval="0"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_language_en" model="ir.model.fields.selection">
+<field name="field_id" ref="hydromotor_machine_sales.field_x_hm_config__x_language"/>
+<field name="value">en</field>
+<field name="name">English</field>
+<field name="sequence" eval="1"/>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config_line__x_name" model="ir.model.fields">
+<field name="related">x_option_id.x_name</field>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_family" model="ir.model.fields">
+<field name="related">x_base_id.x_family</field>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config__x_version" model="ir.model.fields">
+<field name="related">x_base_id.x_version</field>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config_line__x_company_id" model="ir.model.fields">
+<field name="related">x_config_id.x_company_id</field>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config_line__x_on_request" model="ir.model.fields">
+<field name="related">x_option_id.x_on_request</field>
+</record>
+<record id="hydromotor_machine_sales.field_x_hm_config_line__x_list_price" model="ir.model.fields">
+<field name="related">x_option_id.x_price</field>
+</record>
+</odoo>
