@@ -1,4 +1,3 @@
-
 <odoo>
 <record id="hydromotor_machine_sales.model_x_hm_base" model="ir.model">
 <field name="name">Базови машини</field>
