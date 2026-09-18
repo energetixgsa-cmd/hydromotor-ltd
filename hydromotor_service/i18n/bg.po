@@ -6,39 +6,47 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-
+#. module: hydromotor_service
 #: model:base.automation,name:hydromotor_service.automation_job
 msgid "Hydromotor: job"
 msgstr "Hydromotor: сервизна заявка"
 
+#. module: hydromotor_service
 #: model:base.automation,name:hydromotor_service.automation_machine
 msgid "Hydromotor: machine"
 msgstr "Hydromotor: машина"
 
+#. module: hydromotor_service
 #: model:base.automation,name:hydromotor_service.automation_meter
 msgid "Hydromotor: meter"
 msgstr "Hydromotor: отчитане на моточасове"
 
+#. module: hydromotor_service
 #: model:base.automation,name:hydromotor_service.automation_plan
 msgid "Hydromotor: plan"
 msgstr "Hydromotor: сервизен план"
 
+#. module: hydromotor_service
 #: model:ir.actions.server,name:hydromotor_service.validate_job
 msgid "Проверки: job"
 msgstr "Проверки: сервизна заявка"
 
+#. module: hydromotor_service
 #: model:ir.actions.server,name:hydromotor_service.validate_machine
 msgid "Проверки: machine"
 msgstr "Проверки: машина"
 
+#. module: hydromotor_service
 #: model:ir.actions.server,name:hydromotor_service.validate_meter
 msgid "Проверки: meter"
 msgstr "Проверки: отчитане на моточасове"
 
+#. module: hydromotor_service
 #: model:ir.actions.server,name:hydromotor_service.validate_plan
 msgid "Проверки: plan"
 msgstr "Проверки: сервизен план"
 
+#. module: hydromotor_service
 #: model:ir.model.fields,field_description:hydromotor_service.field_job_repair_id
 msgid "Свързан ремонт (Repairs)"
 msgstr "Свързан ремонт"
