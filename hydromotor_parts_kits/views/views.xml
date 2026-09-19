@@ -139,7 +139,7 @@ action = {'type': 'ir.actions.act_window', 'res_model': 'sale.order', 'view_mode
     <field name="inherit_id" ref="hydromotor_service.job_form"/>
     <field name="mode">extension</field>
     <field name="arch" type="xml">
-      <xpath expr="//page[@string='Гаранция и продажби']/group/group[1]" position="inside">
+      <xpath expr="//field[@name='x_coverage_note']/parent::group" position="inside">
         <field name="x_parts_kit_id" options="{'no_create': True}"/>
         <button name="%(hydromotor_parts_kits.action_add_parts_kit)d" type="action" string="Добави комплекта към офертата" class="btn-primary" invisible="not x_parts_kit_id or x_state == 'cancel'" groups="sales_team.group_sale_salesman"/>
       </xpath>
