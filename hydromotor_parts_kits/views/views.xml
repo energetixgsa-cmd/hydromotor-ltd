@@ -1,0 +1,148 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+  <record id="parts_kit_list" model="ir.ui.view">
+    <field name="name">hydromotor_parts_kits.parts_kit_list</field>
+    <field name="model">x_hm_parts_kit</field>
+    <field name="type">list</field>
+    <field name="mode">primary</field>
+    <field name="arch" type="xml">
+      <list string="Комплекти части">
+        <field name="x_name"/>
+        <field name="x_machine_product_id"/>
+        <field name="x_company_id" groups="base.group_multi_company"/>
+        <field name="x_active"/>
+      </list>
+    </field>
+  </record>
+
+  <record id="parts_kit_form" model="ir.ui.view">
+    <field name="name">hydromotor_parts_kits.parts_kit_form</field>
+    <field name="model">x_hm_parts_kit</field>
+    <field name="type">form</field>
+    <field name="mode">primary</field>
+    <field name="arch" type="xml">
+      <form string="Комплект части">
+        <sheet>
+          <div class="oe_title"><h1><field name="x_name" placeholder="Напр. 1000 h Service Kit"/></h1></div>
+          <group>
+            <group>
+              <field name="x_company_id" options="{'no_create': True}"/>
+              <field name="x_machine_product_id"/>
+              <field name="x_active"/>
+            </group>
+            <group>
+              <field name="x_note" placeholder="Приложение, версия, сериен диапазон и други бележки."/>
+            </group>
+          </group>
+          <notebook>
+            <page string="Части">
+              <field name="x_line_ids">
+                <list editable="bottom">
+                  <field name="x_product_id"/>
+                  <field name="x_qty"/>
+                  <field name="x_name" optional="show"/>
+                </list>
+              </field>
+            </page>
+          </notebook>
+        </sheet>
+        <chatter/>
+      </form>
+    </field>
+  </record>
+
+  <record id="open_parts_kits" model="ir.actions.act_window">
+    <field name="name">Комплекти части</field>
+    <field name="res_model">x_hm_parts_kit</field>
+    <field name="view_mode">list,form</field>
+    <field name="target">current</field>
+  </record>
+
+  <record id="menu_parts_kits" model="ir.ui.menu">
+    <field name="name">Комплекти части</field>
+    <field name="sequence" eval="35"/>
+    <field name="parent_id" ref="hydromotor_service.menu_root"/>
+    <field name="action" eval="'ir.actions.act_window,%d' % ref('hydromotor_parts_kits.open_parts_kits')"/>
+    <field name="group_ids" eval="[(6, 0, [ref('hydromotor_service.group_service_user')])]"/>
+  </record>
+
+  <record id="machine_form_parts_kits" model="ir.ui.view">
+    <field name="name">hydromotor_parts_kits.machine_form</field>
+    <field name="model">x_hm_machine</field>
+    <field name="inherit_id" ref="hydromotor_service.machine_form"/>
+    <field name="mode">extension</field>
+    <field name="arch" type="xml">
+      <xpath expr="//form/sheet/notebook" position="inside">
+        <page string="Комплекти части">
+          <field name="x_parts_kit_ids" widget="many2many_tags" domain="[('x_active', '=', True)]"/>
+          <p class="text-muted">Тук се задават комплектите, разрешени за конкретната машина.</p>
+        </page>
+      </xpath>
+    </field>
+  </record>
+
+  <record id="job_form_parts_kit" model="ir.ui.view">
+    <field name="name">hydromotor_parts_kits.job_form</field>
+    <field name="model">x_hm_job</field>
+    <field name="inherit_id" ref="hydromotor_service.job_form"/>
+    <field name="mode">extension</field>
+    <field name="arch" type="xml">
+      <xpath expr="//page[@string='Гаранция и продажби']/group/group[1]" position="inside">
+        <field name="x_parts_kit_id" options="{'no_create': True}"/>
+        <button name="%(hydromotor_parts_kits.action_add_parts_kit)d" type="action" string="Добави комплекта към офертата" class="btn-primary" invisible="not x_parts_kit_id or x_state == 'cancel'" groups="sales_team.group_sale_salesman"/>
+      </xpath>
+    </field>
+  </record>
+
+  <record id="action_add_parts_kit" model="ir.actions.server">
+    <field name="name">Добави комплект части към офертата</field>
+    <field name="model_id" ref="hydromotor_service.model_job"/>
+    <field name="state">code</field>
+    <field name="binding_type">action</field>
+    <field name="binding_view_types">form</field>
+    <field name="code">record.ensure_one()
+job = record
+kit = job.x_parts_kit_id
+if not kit:
+    raise UserError('Изберете комплект части.')
+if kit not in job.x_machine_id.x_parts_kit_ids:
+    raise UserError('Избраният комплект не е зададен за тази машина.')
+if job.x_state == 'cancel':
+    raise UserError('Отказана заявка не може да добавя части към оферта.')
+order = job.x_sale_order_id
+repair = job.x_repair_id
+if order and order.state == 'cancel':
+    raise UserError('Свързаната оферта е отказана.')
+if not order:
+    if repair:
+        if not repair.sale_order_id:
+            repair.action_create_sale_order()
+        order = repair.sale_order_id
+    else:
+        order = env['sale.order'].with_company(job.x_company_id).with_context(mail_create_nosubscribe=True).create({
+            'partner_id': job.x_partner_id.id,
+            'company_id': job.x_company_id.id,
+            'origin': '%s / %s' % (job.x_reference or job.x_name, job.x_machine_id.x_name),
+        })
+    job.write({'x_sale_order_id': order.id})
+if env['sale.order.line'].search_count([
+    ('order_id', '=', order.id),
+    ('x_hm_job_id', '=', job.id),
+    ('x_hm_parts_kit_id', '=', kit.id),
+]):
+    raise UserError('Този комплект вече е добавен към сервизната оферта.')
+if not kit.x_line_ids:
+    raise UserError('Комплектът няма въведени части.')
+for line in kit.x_line_ids:
+    env['sale.order.line'].create({
+        'order_id': order.id,
+        'product_id': line.x_product_id.id,
+        'product_uom_qty': line.x_qty or 1.0,
+        'x_hm_parts_kit_id': kit.id,
+        'x_hm_job_id': job.id,
+    })
+action = {'type': 'ir.actions.act_window', 'res_model': 'sale.order', 'view_mode': 'form', 'res_id': order.id, 'target': 'current'}
+</field>
+    <field name="group_ids" eval="[(6, 0, [ref('hydromotor_service.group_service_user')])]"/>
+  </record>
+</odoo>
