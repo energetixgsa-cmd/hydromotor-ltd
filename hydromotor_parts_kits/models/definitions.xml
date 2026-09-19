@@ -4,7 +4,7 @@
     <field name="name">Комплект части</field>
     <field name="model">x_hm_parts_kit</field>
     <field name="field_id" eval="[]"/>
-    <field name="order">x_name</field>
+    <field name="order">id</field>
     <field name="transient" eval="False"/>
     <field name="is_mail_thread" eval="True"/>
     <field name="is_mail_activity" eval="True"/>
