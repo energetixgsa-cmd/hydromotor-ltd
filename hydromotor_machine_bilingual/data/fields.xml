@@ -1,0 +1,16 @@
+<odoo>
+  <record id="base_standard_en" model="ir.model.fields">
+    <field name="name">x_standard_text_en</field>
+    <field name="field_description">Standard equipment (EN)</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_base"/>
+    <field name="ttype">text</field>
+    <field name="state">manual</field>
+  </record>
+  <record id="option_review_en" model="ir.model.fields">
+    <field name="name">x_review_note_en</field>
+    <field name="field_description">Review note (EN)</field>
+    <field name="model_id" ref="hydromotor_machine_sales.model_x_hm_option"/>
+    <field name="ttype">text</field>
+    <field name="state">manual</field>
+  </record>
+</odoo>

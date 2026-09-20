@@ -1,0 +1,3 @@
+<odoo>
+    <function model="hydromotor.machine.bilingual.patch" name="apply_patch"/>
+</odoo>
