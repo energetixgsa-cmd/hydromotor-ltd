@@ -1,0 +1,479 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+  <record id="machine_list" model="ir.ui.view">
+    <field name="name">hydromotor_service.machine_list</field>
+    <field name="model">x_hm_machine</field>
+    <field name="arch" type="xml">
+      <list string="Машини" decoration-muted="x_retired">
+        <field name="x_name"/>
+        <field name="x_partner_id"/>
+        <field name="x_serial"/>
+        <field name="x_site" optional="show"/>
+        <field name="x_hours"/>
+        <field name="x_last_meter_date" optional="show"/>
+        <field name="x_warranty_end" optional="show"/>
+        <field name="x_sale_order_id" optional="hide" groups="sales_team.group_sale_salesman"/>
+        <field name="x_company_id" groups="base.group_multi_company"/>
+        <field name="x_retired" optional="hide"/>
+      </list>
+    </field>
+  </record>
+  <record id="machine_form" model="ir.ui.view">
+    <field name="name">hydromotor_service.machine_form</field>
+    <field name="model">x_hm_machine</field>
+    <field name="arch" type="xml">
+      <form string="Досие на машина">
+        <header>
+          <button name="%(hydromotor_service.action_new_job)d" type="action" string="Нова заявка" class="oe_highlight"/>
+          <button name="%(hydromotor_service.action_new_plan)d" type="action" string="Нов план"/>
+          <button name="%(hydromotor_service.action_new_meter)d" type="action" string="Отчети моточасове"/>
+          <button name="%(hydromotor_service.action_machine_repairs)d" type="action" string="Ремонти (Repairs)" groups="stock.group_stock_user"/>
+        </header>
+        <sheet>
+          <div class="oe_title">
+            <h1>
+              <field name="x_name" placeholder="Машина / сериен номер"/>
+            </h1>
+          </div>
+          <group>
+            <group string="Машина и собственик">
+              <field name="x_company_id" options="{'no_create': True}" readonly="x_identity_key"/>
+              <field name="x_identity_key" invisible="1"/>
+              <field name="x_partner_id"/>
+              <field name="x_lot_id" options="{'no_create': True}" domain="[('product_id.tracking', '=', 'serial'), '|', ('company_id', '=', False), ('company_id', '=', x_company_id)]" readonly="x_identity_key"/>
+              <field name="x_product_id"/>
+              <field name="x_brand"/>
+              <field name="x_model_label"/>
+              <field name="x_year"/>
+              <field name="x_vin"/>
+            </group>
+            <group string="Експлоатация">
+              <field name="x_site"/>
+              <field name="x_hours"/>
+              <field name="x_last_meter_date"/>
+              <field name="x_commission_date"/>
+              <field name="x_retired"/>
+            </group>
+          </group>
+          <notebook>
+            <page string="Проектна книга">
+              <field name="x_notes" placeholder="Конфигурация, пускови настройки и важни бележки. Приложете документи и снимки в историята отдолу."/>
+            </page>
+            <page string="Сервизна история">
+              <field name="x_job_ids" readonly="1">
+                <list>
+                  <field name="x_reference"/>
+                  <field name="x_name"/>
+                  <field name="x_partner_id"/>
+                  <field name="x_state"/>
+                  <field name="x_planned_start"/>
+                  <field name="x_technician_id"/>
+                  <field name="x_closed_at"/>
+                  <field name="x_sale_order_id" groups="sales_team.group_sale_salesman"/>
+                </list>
+              </field>
+            </page>
+            <page string="Сервизни планове">
+              <field name="x_plan_ids" readonly="1">
+                <list>
+                  <field name="x_name"/>
+                  <field name="x_enabled"/>
+                  <field name="x_next_date"/>
+                  <field name="x_next_hours"/>
+                  <field name="x_due"/>
+                  <field name="x_open_job_id"/>
+                </list>
+              </field>
+            </page>
+            <page string="Моточасове">
+              <field name="x_meter_ids" readonly="1">
+                <list default_order="x_date desc,id desc">
+                  <field name="x_date"/>
+                  <field name="x_hours"/>
+                  <field name="x_job_id"/>
+                  <field name="x_note"/>
+                </list>
+              </field>
+            </page>
+            <page string="Гаранция">
+              <group>
+                <group>
+                  <field name="x_warranty_start"/>
+                  <field name="x_warranty_end"/>
+                  <field name="x_warranty_hours"/>
+                  <field name="x_warranty_status"/>
+                </group>
+                <group>
+                  <field name="x_warranty_terms" placeholder="Условия и изключения. Покритието на конкретна повреда се одобрява в сервизната заявка."/>
+                </group>
+              </group>
+            </page>
+            <page string="Продажба и предаване" groups="sales_team.group_sale_salesman">
+              <group>
+                <field name="x_sale_order_id" domain="[('company_id', '=', x_company_id)]"/>
+                <field name="x_delivery_id" domain="[('company_id', '=', x_company_id)]"/>
+                <field name="x_delivery_date"/>
+              </group>
+            </page>
+          </notebook>
+        </sheet>
+        <chatter/>
+      </form>
+    </field>
+  </record>
+  <record id="machine_search" model="ir.ui.view">
+    <field name="name">hydromotor_service.machine_search</field>
+    <field name="model">x_hm_machine</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="x_name"/>
+        <field name="x_serial"/>
+        <field name="x_partner_id"/>
+        <field name="x_vin"/>
+        <filter name="operating" string="В обслужване" domain="[('x_retired', '=', False)]"/>
+        <filter name="retired" string="Изведени" domain="[('x_retired', '=', True)]"/>
+        <separator/>
+        <filter name="by_client" string="По клиент" context="{'group_by': 'x_partner_id'}"/>
+        <filter name="by_model" string="По артикул" context="{'group_by': 'x_product_id'}"/>
+      </search>
+    </field>
+  </record>
+  <record id="job_list" model="ir.ui.view">
+    <field name="name">hydromotor_service.job_list</field>
+    <field name="model">x_hm_job</field>
+    <field name="arch" type="xml">
+      <list string="Сервизни заявки" decoration-success="x_state == 'done'" decoration-muted="x_state == 'cancel'">
+        <field name="x_reference"/>
+        <field name="x_name"/>
+        <field name="x_machine_id"/>
+        <field name="x_partner_id"/>
+        <field name="x_state" widget="badge"/>
+        <field name="x_due_date" optional="show"/>
+        <field name="x_planned_start"/>
+        <field name="x_technician_id"/>
+        <field name="x_coverage" optional="show"/>
+        <field name="x_sale_order_id" optional="hide" groups="sales_team.group_sale_salesman"/>
+        <field name="x_company_id" optional="hide" groups="base.group_multi_company"/>
+      </list>
+    </field>
+  </record>
+  <record id="job_form" model="ir.ui.view">
+    <field name="name">hydromotor_service.job_form</field>
+    <field name="model">x_hm_job</field>
+    <field name="arch" type="xml">
+      <form string="Сервизна заявка">
+        <header>
+          <button name="%(hydromotor_service.action_job_plan)d" type="action" string="Планирай" invisible="x_state not in ['new', 'planned']"/>
+          <button name="%(hydromotor_service.action_job_start)d" type="action" string="Започни" class="oe_highlight" invisible="x_state not in ['new', 'planned']"/>
+          <button name="%(hydromotor_service.action_job_done)d" type="action" string="Завърши" class="oe_highlight" invisible="x_state in ['done', 'cancel']"/>
+          <button name="%(hydromotor_service.action_job_quote)d" type="action" string="Сервизна оферта" invisible="x_state == 'cancel'" groups="sales_team.group_sale_salesman"/>
+          <button name="%(hydromotor_service.report_service_protocol)d" type="action" string="Протокол"/>
+          <button name="%(hydromotor_service.action_job_cancel)d" type="action" string="Откажи" invisible="x_state in ['done', 'cancel']"/>
+          <field name="x_state" widget="statusbar" statusbar_visible="new,planned,progress,done" readonly="1"/>
+        </header>
+        <sheet>
+          <div class="oe_title">
+            <h2>
+              <field name="x_reference"/>
+            </h2>
+            <h1>
+              <field name="x_name" placeholder="Задача / причина за посещението"/>
+            </h1>
+          </div>
+          <field name="x_company_id" invisible="1"/>
+          <group>
+            <group string="Клиент и машина">
+              <field name="x_machine_id" readonly="x_reference" domain="[('x_retired', '=', False)]"/>
+              <field name="x_partner_id"/>
+              <field name="x_kind"/>
+              <field name="x_plan_id" domain="[('x_machine_id', '=', x_machine_id)]" readonly="x_state in ['done', 'cancel']"/>
+            </group>
+            <group string="Планиране">
+              <field name="x_technician_id"/>
+              <field name="x_due_date"/>
+              <field name="x_planned_start"/>
+              <field name="x_planned_end"/>
+              <field name="x_closed_at"/>
+            </group>
+          </group>
+          <notebook>
+            <page string="Задача и изпълнение">
+              <group>
+                <field name="x_problem"/>
+                <field name="x_diagnosis"/>
+                <field name="x_work_done" readonly="x_state == 'done'"/>
+              </group>
+            </page>
+            <page string="Отчет на посещението">
+              <group>
+                <group>
+                  <field name="x_labor_hours" readonly="x_state == 'done'"/>
+                  <field name="x_travel_km" readonly="x_state == 'done'"/>
+                </group>
+                <group>
+                  <field name="x_has_meter" readonly="x_state == 'done'"/>
+                  <field name="x_meter_hours" invisible="not x_has_meter" readonly="x_state == 'done'"/>
+                </group>
+              </group>
+            </page>
+            <page string="Гаранция и продажби">
+              <group>
+                <group>
+                  <field name="x_coverage"/>
+                  <field name="x_coverage_note"/>
+                </group>
+                <group>
+                  <field name="x_repair_id" domain="[('company_id', '=', x_company_id)]" options="{'no_create': True}" groups="stock.group_stock_user"/>
+                  <field name="x_sale_order_id" domain="[('company_id', '=', x_company_id)]" options="{'no_create': True}" groups="sales_team.group_sale_salesman"/>
+                </group>
+              </group>
+            </page>
+            <page string="Приемане от клиента">
+              <group>
+                <field name="x_signer_name"/>
+                <field name="x_acceptance_note"/>
+                <field name="x_customer_signature" widget="signature"/>
+              </group>
+            </page>
+          </notebook>
+        </sheet>
+        <chatter/>
+      </form>
+    </field>
+  </record>
+  <record id="job_search" model="ir.ui.view">
+    <field name="name">hydromotor_service.job_search</field>
+    <field name="model">x_hm_job</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="x_reference"/>
+        <field name="x_name"/>
+        <field name="x_machine_id"/>
+        <field name="x_partner_id"/>
+        <field name="x_technician_id"/>
+        <filter name="open" string="Незавършени" domain="[('x_state', 'not in', ['done', 'cancel'])]"/>
+        <filter name="mine" string="Моите заявки" domain="[('x_technician_id', '=', uid)]"/>
+        <filter name="unscheduled" string="За планиране" domain="[('x_state', '=', 'new'), ('x_planned_start', '=', False)]"/>
+        <separator/>
+        <filter name="by_state" string="По етап" context="{'group_by': 'x_state'}"/>
+        <filter name="by_technician" string="По техник" context="{'group_by': 'x_technician_id'}"/>
+        <filter name="by_machine" string="По машина" context="{'group_by': 'x_machine_id'}"/>
+      </search>
+    </field>
+  </record>
+  <record id="job_calendar" model="ir.ui.view">
+    <field name="name">hydromotor_service.job_calendar</field>
+    <field name="model">x_hm_job</field>
+    <field name="arch" type="xml">
+      <calendar string="Сервизни посещения" date_start="x_planned_start" date_stop="x_planned_end" color="x_technician_id" mode="week" quick_create="false">
+        <field name="x_name"/>
+        <field name="x_machine_id"/>
+        <field name="x_technician_id"/>
+        <field name="x_state"/>
+      </calendar>
+    </field>
+  </record>
+  <record id="job_kanban" model="ir.ui.view">
+    <field name="name">hydromotor_service.job_kanban</field>
+    <field name="model">x_hm_job</field>
+    <field name="arch" type="xml">
+      <kanban default_group_by="x_state" records_draggable="false" quick_create="false">
+        <field name="x_reference"/>
+        <field name="x_machine_id"/>
+        <field name="x_name"/>
+        <field name="x_planned_start"/>
+        <field name="x_technician_id"/>
+        <templates>
+          <t t-name="card">
+            <div class="fw-bold"><field name="x_reference"/> · <field name="x_name"/></div>
+            <div>
+              <field name="x_machine_id"/>
+            </div>
+            <div class="text-muted">
+              <field name="x_planned_start"/>
+            </div>
+            <div>
+              <field name="x_technician_id" widget="many2one_avatar_user"/>
+            </div>
+          </t>
+        </templates>
+      </kanban>
+    </field>
+  </record>
+  <record id="plan_list" model="ir.ui.view">
+    <field name="name">hydromotor_service.plan_list</field>
+    <field name="model">x_hm_plan</field>
+    <field name="arch" type="xml">
+      <list string="Сервизни планове" decoration-danger="x_due and not x_open_job_id" decoration-muted="not x_enabled">
+        <field name="x_name"/>
+        <field name="x_machine_id"/>
+        <field name="x_technician_id"/>
+        <field name="x_next_date"/>
+        <field name="x_next_hours"/>
+        <field name="x_due"/>
+        <field name="x_open_job_id"/>
+        <field name="x_enabled"/>
+      </list>
+    </field>
+  </record>
+  <record id="plan_form" model="ir.ui.view">
+    <field name="name">hydromotor_service.plan_form</field>
+    <field name="model">x_hm_plan</field>
+    <field name="arch" type="xml">
+      <form string="Сервизен план">
+        <header>
+          <button name="%(hydromotor_service.action_plan_job)d" type="action" string="Създай / отвори заявка" class="oe_highlight"/>
+        </header>
+        <sheet>
+          <div class="oe_title">
+            <h1>
+              <field name="x_name" placeholder="Периодично обслужване"/>
+            </h1>
+          </div>
+          <group>
+            <group>
+              <field name="x_machine_id" readonly="x_job_ids"/>
+              <field name="x_partner_id"/>
+              <field name="x_technician_id"/>
+              <field name="x_enabled"/>
+              <field name="x_due"/>
+              <field name="x_open_job_id"/>
+            </group>
+            <group string="Следващо обслужване — което настъпи първо">
+              <field name="x_interval_days"/>
+              <field name="x_next_date"/>
+              <field name="x_interval_hours"/>
+              <field name="x_next_hours"/>
+            </group>
+          </group>
+          <notebook>
+            <page string="Дейности">
+              <field name="x_instructions"/>
+            </page>
+            <page string="История">
+              <field name="x_job_ids" readonly="1">
+                <list>
+                  <field name="x_reference"/>
+                  <field name="x_name"/>
+                  <field name="x_state"/>
+                  <field name="x_closed_at"/>
+                </list>
+              </field>
+            </page>
+          </notebook>
+        </sheet>
+        <chatter/>
+      </form>
+    </field>
+  </record>
+  <record id="plan_search" model="ir.ui.view">
+    <field name="name">hydromotor_service.plan_search</field>
+    <field name="model">x_hm_plan</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="x_name"/>
+        <field name="x_machine_id"/>
+        <field name="x_partner_id"/>
+        <filter name="enabled" string="Активни" domain="[('x_enabled', '=', True)]"/>
+        <filter name="by_machine" string="По машина" context="{'group_by': 'x_machine_id'}"/>
+      </search>
+    </field>
+  </record>
+  <record id="meter_list" model="ir.ui.view">
+    <field name="name">hydromotor_service.meter_list</field>
+    <field name="model">x_hm_meter</field>
+    <field name="arch" type="xml">
+      <list string="Отчитания" default_order="x_date desc,id desc">
+        <field name="x_date"/>
+        <field name="x_machine_id"/>
+        <field name="x_hours"/>
+        <field name="x_job_id"/>
+        <field name="x_note"/>
+      </list>
+    </field>
+  </record>
+  <record id="meter_form" model="ir.ui.view">
+    <field name="name">hydromotor_service.meter_form</field>
+    <field name="model">x_hm_meter</field>
+    <field name="arch" type="xml">
+      <form string="Отчитане на моточасове">
+        <sheet>
+          <group>
+            <field name="x_name"/>
+            <field name="x_machine_id"/>
+            <field name="x_date"/>
+            <field name="x_hours"/>
+            <field name="x_job_id" options="{'no_create': True}"/>
+            <field name="x_note"/>
+          </group>
+        </sheet>
+        <chatter/>
+      </form>
+    </field>
+  </record>
+  <record id="partner_service" model="ir.ui.view">
+    <field name="name">hydromotor_service.partner_service</field>
+    <field name="model">res.partner</field>
+    <field name="inherit_id" ref="base.view_partner_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//form/sheet/notebook" position="inside">
+        <page string="Машини" groups="hydromotor_service.group_service_user">
+          <field name="x_hm_machine_ids" readonly="1">
+            <list>
+              <field name="x_name"/>
+              <field name="x_serial"/>
+              <field name="x_site"/>
+              <field name="x_hours"/>
+              <field name="x_warranty_end"/>
+            </list>
+          </field>
+        </page>
+      </xpath>
+    </field>
+  </record>
+  <record id="sale_service" model="ir.ui.view">
+    <field name="name">hydromotor_service.sale_service</field>
+    <field name="model">sale.order</field>
+    <field name="inherit_id" ref="sale.view_order_form"/>
+    <field name="arch" type="xml">
+      <data>
+        <xpath expr="//form/sheet/notebook" position="inside">
+          <page string="Машини и сервиз" groups="hydromotor_service.group_service_user">
+            <button name="%(hydromotor_service.action_register_sale)d" type="action" string="Регистрирай доставените машини" class="btn-primary" invisible="state != 'sale'"/>
+            <div class="w-100">
+              <separator string="Машини от тази продажба"/>
+              <field name="x_hm_machine_ids" readonly="1" nolabel="1" class="w-100">
+                <list>
+                  <field name="x_name"/>
+                  <field name="x_serial"/>
+                  <field name="x_partner_id"/>
+                </list>
+              </field>
+            </div>
+            <div class="w-100">
+              <separator string="Сервизни заявки към тази оферта / поръчка"/>
+              <field name="x_hm_job_ids" readonly="1" nolabel="1" class="w-100">
+                <list>
+                  <field name="x_reference"/>
+                  <field name="x_name"/>
+                  <field name="x_machine_id"/>
+                  <field name="x_state"/>
+                </list>
+              </field>
+            </div>
+          </page>
+        </xpath>
+      </data>
+    </field>
+  </record>
+  <record id="product_service" model="ir.ui.view">
+    <field name="name">hydromotor_service.product_service</field>
+    <field name="model">product.template</field>
+    <field name="inherit_id" ref="product.product_template_only_form_view"/>
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='categ_id']" position="after">
+        <field name="x_hm_is_machine" groups="hydromotor_service.group_service_user"/>
+      </xpath>
+    </field>
+  </record>
+</odoo>
