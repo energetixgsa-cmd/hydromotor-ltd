@@ -66,7 +66,7 @@ if len(result_ids) == 1:
     <field name="code">record.ensure_one()
 if record.x_retired:
     raise UserError('Машината е изведена от обслужване.')
-action = {'type': 'ir.actions.act_window', 'name': 'Нова сервизна заявка', 'res_model': 'x_hm_job', 'view_mode': 'form', 'target': 'current', 'context': {'default_x_machine_id': record.id, 'default_x_technician_id': env.uid}}
+action = {'type': 'ir.actions.act_window', 'name': 'Нова сервизна заявка', 'res_model': 'x_hm_job', 'view_mode': 'form', 'target': 'current', 'context': {'default_x_machine_id': record.id, 'default_x_partner_id': record.x_partner_id.id, 'default_x_technician_id': env.uid}}
 </field>
     <field name="group_ids" eval="[(6, 0, [ref('hydromotor_service.group_service_user')])]"/>
   </record>
@@ -126,6 +126,7 @@ for plan in records:
     if not job:
         job = env['x_hm_job'].with_company(plan.x_company_id).with_context(mail_create_nosubscribe=True).create({
             'x_name': plan.x_name, 'x_machine_id': plan.x_machine_id.id,
+            'x_partner_id': plan.x_machine_id.x_partner_id.id,
             'x_plan_id': plan.id, 'x_technician_id': plan.x_technician_id.id,
             'x_due_date': plan.x_next_date, 'x_problem': plan.x_instructions or plan.x_name,
             'x_state': 'new', 'x_kind': 'onsite', 'x_coverage': 'review',
@@ -465,7 +466,7 @@ action = {'type': 'ir.actions.act_window', 'res_model': 'sale.order', 'view_mode
     <field name="active" eval="True"/>
     <field name="arch" type="xml">
       <list string="Машини" decoration-muted="x_retired">
- <field name="x_name"/><field name="x_partner_id"/><field name="x_serial"/><field name="x_site" optional="show"/><field name="x_hours"/><field name="x_last_meter_date" optional="show"/><field name="x_warranty_end" optional="show"/><field name="x_sale_order_id" optional="hide" groups="sales_team.group_sale_salesman"/><field name="x_company_id" groups="base.group_multi_company"/><field name="x_retired" optional="hide"/>
+ <field name="x_name"/><field name="x_partner_id"/><field name="x_serial" string="Сериен номер"/><field name="x_site" optional="show"/><field name="x_hours"/><field name="x_last_meter_date" optional="show"/><field name="x_warranty_end" optional="show"/><field name="x_sale_order_id" optional="hide" groups="sales_team.group_sale_salesman"/><field name="x_company_id" groups="base.group_multi_company"/><field name="x_retired" optional="hide"/>
 </list>
     </field>
   </record>
@@ -479,7 +480,7 @@ action = {'type': 'ir.actions.act_window', 'res_model': 'sale.order', 'view_mode
     <field name="arch" type="xml">
       <search>
         <field name="x_name"/>
-        <field name="x_serial"/>
+        <field name="x_serial" string="Сериен номер"/>
         <field name="x_partner_id"/>
         <field name="x_vin"/>
         <filter name="operating" string="В обслужване" domain="[('x_retired', '=', False)]"/>
@@ -664,7 +665,7 @@ action = {'type': 'ir.actions.act_window', 'res_model': 'sale.order', 'view_mode
           <field name="x_hm_machine_ids" readonly="1">
             <list>
               <field name="x_name"/>
-              <field name="x_serial"/>
+              <field name="x_serial" string="Сериен номер"/>
               <field name="x_site"/>
               <field name="x_hours"/>
               <field name="x_warranty_end"/>
@@ -841,17 +842,19 @@ action = {'type': 'ir.actions.act_window', 'res_model': 'sale.order', 'view_mode
         <xpath expr="//form/sheet/notebook" position="inside">
           <page string="Машини и сервиз" groups="hydromotor_service.group_service_user">
             <button name="%(hydromotor_service.action_register_sale)d" type="action" string="Регистрирай доставените машини" class="btn-primary" invisible="state != 'sale'"/>
-            <group string="Машини от тази продажба">
-              <field name="x_hm_machine_ids" readonly="1" nolabel="1">
+            <div class="w-100">
+              <separator string="Машини от тази продажба"/>
+              <field name="x_hm_machine_ids" readonly="1" nolabel="1" class="w-100">
                 <list>
                   <field name="x_name"/>
-                  <field name="x_serial"/>
+                  <field name="x_serial" string="Сериен номер"/>
                   <field name="x_partner_id"/>
                 </list>
               </field>
-            </group>
-            <group string="Сервизни заявки към тази оферта / поръчка">
-              <field name="x_hm_job_ids" readonly="1" nolabel="1">
+            </div>
+            <div class="w-100">
+              <separator string="Сервизни заявки към тази оферта / поръчка"/>
+              <field name="x_hm_job_ids" readonly="1" nolabel="1" class="w-100">
                 <list>
                   <field name="x_reference"/>
                   <field name="x_name"/>
@@ -859,7 +862,7 @@ action = {'type': 'ir.actions.act_window', 'res_model': 'sale.order', 'view_mode
                   <field name="x_state"/>
                 </list>
               </field>
-            </group>
+            </div>
           </page>
         </xpath>
       </data>

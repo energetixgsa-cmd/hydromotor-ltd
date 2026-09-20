@@ -7,7 +7,7 @@
       <list string="Машини" decoration-muted="x_retired">
         <field name="x_name"/>
         <field name="x_partner_id"/>
-        <field name="x_serial"/>
+        <field name="x_serial" string="Сериен номер"/>
         <field name="x_site" optional="show"/>
         <field name="x_hours"/>
         <field name="x_last_meter_date" optional="show"/>
@@ -127,7 +127,7 @@
     <field name="arch" type="xml">
       <search>
         <field name="x_name"/>
-        <field name="x_serial"/>
+        <field name="x_serial" string="Сериен номер"/>
         <field name="x_partner_id"/>
         <field name="x_vin"/>
         <filter name="operating" string="В обслужване" domain="[('x_retired', '=', False)]"/>
@@ -421,7 +421,7 @@
           <field name="x_hm_machine_ids" readonly="1">
             <list>
               <field name="x_name"/>
-              <field name="x_serial"/>
+              <field name="x_serial" string="Сериен номер"/>
               <field name="x_site"/>
               <field name="x_hours"/>
               <field name="x_warranty_end"/>
@@ -445,7 +445,7 @@
               <field name="x_hm_machine_ids" readonly="1" nolabel="1" class="w-100">
                 <list>
                   <field name="x_name"/>
-                  <field name="x_serial"/>
+                  <field name="x_serial" string="Сериен номер"/>
                   <field name="x_partner_id"/>
                 </list>
               </field>
@@ -477,3 +477,4 @@
     </field>
   </record>
 </odoo>
+
