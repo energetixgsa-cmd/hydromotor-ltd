@@ -66,7 +66,7 @@ if len(result_ids) == 1:
     <field name="code">record.ensure_one()
 if record.x_retired:
     raise UserError('Машината е изведена от обслужване.')
-action = {'type': 'ir.actions.act_window', 'name': 'Нова сервизна заявка', 'res_model': 'x_hm_job', 'view_mode': 'form', 'target': 'current', 'context': {'default_x_machine_id': record.id, 'default_x_technician_id': env.uid}}
+action = {'type': 'ir.actions.act_window', 'name': 'Нова сервизна заявка', 'res_model': 'x_hm_job', 'view_mode': 'form', 'target': 'current', 'context': {'default_x_machine_id': record.id, 'default_x_partner_id': record.x_partner_id.id, 'default_x_technician_id': env.uid}}
 </field>
     <field name="group_ids" eval="[(6, 0, [ref('hydromotor_service.group_service_user')])]"/>
   </record>
@@ -126,6 +126,7 @@ for plan in records:
     if not job:
         job = env['x_hm_job'].with_company(plan.x_company_id).with_context(mail_create_nosubscribe=True).create({
             'x_name': plan.x_name, 'x_machine_id': plan.x_machine_id.id,
+            'x_partner_id': plan.x_machine_id.x_partner_id.id,
             'x_plan_id': plan.id, 'x_technician_id': plan.x_technician_id.id,
             'x_due_date': plan.x_next_date, 'x_problem': plan.x_instructions or plan.x_name,
             'x_state': 'new', 'x_kind': 'onsite', 'x_coverage': 'review',
