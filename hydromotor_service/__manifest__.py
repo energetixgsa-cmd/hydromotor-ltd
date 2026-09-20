@@ -1,5 +1,5 @@
 {'name': 'Hydromotor — Машини и сервиз',
- 'version': '19.0.1.0.3',
+ 'version': '19.0.1.0.4',
  'summary': 'Recovered from latest Hydromotor backup; Odoo 19.0 development candidate',
  'author': 'Hydromotor',
  'license': 'LGPL-3',

@@ -217,7 +217,7 @@ which the class' module is installed).
     <field name="name">x_serial</field>
     <field name="ttype">char</field>
     <field name="domain">[]</field>
-    <field name="field_description">Сериен номер</field>
+    <field name="field_description">Сериен номер (текст)</field>
     <field name="copied" eval="False"/>
     <field name="required" eval="False"/>
     <field name="readonly" eval="True"/>
