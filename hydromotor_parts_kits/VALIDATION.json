@@ -1,0 +1,12 @@
+{
+  "module_version": "19.0.1.1.0",
+  "original_XML_IDs_retained": 25,
+  "original_field_definitions_unchanged": true,
+  "Python_XML_and_ordered_references": "pass",
+  "service_view_XPath_against_saved_parent": "pass",
+  "isolated_behavioral_checks_executed": 20,
+  "odoo_integration_tests_included_not_executed": 8,
+  "live_odoo_install_and_UI_test": "not performed",
+  "new_assembly_products": 59,
+  "XLSX_values_match_prepared_data": true
+}

@@ -1,0 +1,176 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+  <record id="parts_kit_list" model="ir.ui.view">
+    <field name="name">hydromotor_parts_kits.parts_kit_list</field>
+    <field name="model">x_hm_parts_kit</field>
+    <field name="arch" type="xml">
+      <list string="Комплекти части">
+  <field name="x_name"/><field name="x_catalog_code"/><field name="x_line_count"/>
+  <field name="x_machine_product_id" optional="hide"/>
+  <field name="x_company_id" groups="base.group_multi_company"/><field name="x_active"/>
+  <button name="%(hydromotor_parts_kits.action_open_kit)d" type="action" string="Отвори" icon="fa-external-link"/>
+  <button name="%(hydromotor_parts_kits.action_quote_parts)d" type="action" string="Оферта за части" groups="sales_team.group_sale_salesman"/>
+</list>
+    </field>
+  </record>
+  <record id="parts_kit_form" model="ir.ui.view">
+    <field name="name">hydromotor_parts_kits.parts_kit_form</field>
+    <field name="model">x_hm_parts_kit</field>
+    <field name="arch" type="xml">
+      <form string="Комплект части">
+  <header>
+    <button name="%(hydromotor_parts_kits.action_quote_parts)d" type="action" string="Оферта за части" class="oe_highlight" groups="sales_team.group_sale_salesman" invisible="not x_active"/>
+    <button name="%(hydromotor_parts_kits.action_quote_assembly)d" type="action" string="Оферта за възел" groups="sales_team.group_sale_salesman" invisible="not x_active"/>
+  </header>
+  <sheet>
+    <div class="oe_title"><h1><field name="x_name"/></h1></div>
+    <group><group>
+      <field name="x_company_id" options="{'no_create': True}"/>
+      <field name="x_catalog_code"/>
+      <field name="x_catalog_product_id"/>
+      <field name="x_assembly_product_id" string="Ръчно зададен артикул на възела" invisible="x_catalog_product_id and not x_assembly_product_id" options="{'no_create': True}" domain="[('sale_ok','=',True), '|', ('company_id','=',False), ('company_id','=',x_company_id)]"/>
+      <field name="x_machine_product_id" string="Модел машина (общ артикул)" invisible="not x_machine_product_id"/>
+      <field name="x_active"/>
+    </group><group><field name="x_note"/></group></group>
+    <group string="Свързани машини" col="1">
+      <field name="x_machine_ids" nolabel="1" readonly="1">
+        <list create="false" edit="false" delete="false">
+          <field name="x_name"/><field name="x_serial"/><field name="x_partner_id"/>
+          <button name="%(hydromotor_parts_kits.action_open_machine)d" type="action" string="Отвори машина" icon="fa-external-link"/>
+        </list>
+      </field>
+    </group>
+    <notebook><page string="Части">
+      <field name="x_line_ids">
+        <list editable="bottom" open_form_view="true">
+          <field name="x_product_id"/><field name="x_qty"/><field name="x_name" optional="show"/>
+          <button name="%(hydromotor_parts_kits.action_quote_single_part)d" type="action" string="Оферта" icon="fa-file-text-o" groups="sales_team.group_sale_salesman"/>
+        </list>
+      </field>
+    </page></notebook>
+  </sheet><chatter/>
+</form>
+    </field>
+  </record>
+  <record id="parts_kit_search" model="ir.ui.view">
+    <field name="name">hydromotor_parts_kits.parts_kit_search</field>
+    <field name="model">x_hm_parts_kit</field>
+    <field name="arch" type="xml">
+      <search>
+  <field name="x_name"/><field name="x_assembly_product_id"/>
+  <filter name="active_kits" string="Активни" domain="[('x_active','=',True)]"/>
+</search>
+    </field>
+  </record>
+  <record id="open_parts_kits" model="ir.actions.act_window">
+    <field name="name">Комплекти части</field>
+    <field name="res_model">x_hm_parts_kit</field>
+    <field name="view_mode">list,form</field>
+    <field name="target">current</field>
+    <field name="search_view_id" ref="parts_kit_search"/>
+  </record>
+  <record id="menu_parts_kits" model="ir.ui.menu">
+    <field name="name">Комплекти части</field>
+    <field name="sequence" eval="35"/>
+    <field name="parent_id" ref="hydromotor_service.menu_root"/>
+    <field name="action" eval="'ir.actions.act_window,%d' % ref('hydromotor_parts_kits.open_parts_kits')"/>
+    <field name="group_ids" eval="[(6, 0, [ref('hydromotor_service.group_service_user')])]"/>
+  </record>
+  <record id="machine_form_parts_kits" model="ir.ui.view">
+    <field name="name">hydromotor_parts_kits.machine_form_parts_kits</field>
+    <field name="model">x_hm_machine</field>
+    <field name="inherit_id" ref="hydromotor_service.machine_form"/>
+    <field name="mode">extension</field>
+    <field name="arch" type="xml">
+      <data>
+  <xpath expr="//form/header" position="inside">
+    <button name="%(hydromotor_parts_kits.action_machine_kits)d" type="action" string="Комплекти части"/>
+    <button name="%(hydromotor_parts_kits.action_machine_parts_quotes)d" type="action" string="Оферти за части" groups="sales_team.group_sale_salesman"/>
+  </xpath>
+  <xpath expr="//form/sheet/notebook" position="inside">
+    <page string="Комплекти части" name="hm_parts_kits">
+      <field name="x_parts_kit_ids" nolabel="1" options="{'no_create': True}" context="{'hm_machine_id': id}" domain="[('x_active', '=', True), ('x_company_id', '=', x_company_id)]">
+        <list edit="false">
+          <field name="x_name"/><field name="x_catalog_code"/><field name="x_line_count"/>
+          <button name="%(hydromotor_parts_kits.action_open_kit)d" type="action" string="Отвори" icon="fa-external-link" context="{'hm_machine_id': parent.id}"/>
+          <button name="%(hydromotor_parts_kits.action_quote_parts)d" type="action" string="Оферта за части" context="{'hm_machine_id': parent.id}" groups="sales_team.group_sale_salesman"/>
+          <button name="%(hydromotor_parts_kits.action_quote_assembly)d" type="action" string="Оферта за възел" context="{'hm_machine_id': parent.id}" groups="sales_team.group_sale_salesman"/>
+        </list>
+      </field>
+    </page>
+  </xpath>
+</data>
+    </field>
+  </record>
+  <record id="job_form_parts_kit" model="ir.ui.view">
+    <field name="name">hydromotor_parts_kits.job_form_parts_kit</field>
+    <field name="model">x_hm_job</field>
+    <field name="inherit_id" ref="hydromotor_service.job_form"/>
+    <field name="mode">extension</field>
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='x_coverage_note']/parent::group" position="inside">
+  <field name="x_allowed_parts_kit_ids" invisible="1"/>
+  <field name="x_parts_kit_id" options="{'no_create': True}" domain="[('id','in',x_allowed_parts_kit_ids),('x_active','=',True)]"/>
+  <button name="%(hydromotor_parts_kits.action_add_parts_kit)d" type="action" string="Избери части за оферта" class="btn-primary" invisible="not x_parts_kit_id or x_state == 'cancel'" groups="sales_team.group_sale_salesman"/>
+</xpath>
+    </field>
+  </record>
+  <record id="parts_quote_wizard_form" model="ir.ui.view">
+    <field name="name">hydromotor_parts_kits.parts_quote_wizard_form</field>
+    <field name="model">x_hm_parts_quote_wizard</field>
+    <field name="arch" type="xml">
+      <form string="Подготовка на оферта" create="false" delete="false">
+  <field name="x_allowed_machine_ids" invisible="1"/>
+  <field name="x_company_id" invisible="1"/><field name="x_result_order_id" invisible="1"/>
+  <group><group>
+    <field name="x_kit_id"/><field name="x_mode"/>
+    <field name="x_machine_id" required="1" readonly="x_job_id" domain="[('id','in',x_allowed_machine_ids)]" options="{'no_create': True}"/>
+    <field name="x_partner_id"/><field name="x_job_id" invisible="not x_job_id"/>
+  </group><group>
+    <field name="x_sale_order_id" domain="[('state','=','draft'),('partner_id','=',x_partner_id),('company_id','=',x_company_id)]" options="{'no_create': True}"/>
+    <div class="text-muted">Оставете офертата празна, за да създадете нова чернова. Цените се определят по ценовата листа на клиента.</div>
+    <field name="x_allow_repeat"/>
+  </group></group>
+  <group invisible="x_mode != 'assembly'">
+    <field name="x_catalog_code"/>
+    <field name="x_assembly_product_id" required="x_mode == 'assembly'" options="{'no_create': True}" domain="[('sale_ok','=',True), '|', ('company_id','=',False), ('company_id','=',x_company_id)] + ([('default_code','=',x_catalog_code)] if x_catalog_code else [])"/>
+    <field name="x_assembly_qty"/>
+    <div class="text-muted">Добавя се целият възел като един артикул с неговата продажна цена.</div>
+  </group>
+  <div invisible="x_mode != 'parts'">
+    <button name="%(hydromotor_parts_kits.action_quote_select_all)d" type="action" string="Маркирай всички" class="btn-secondary"/>
+    <button name="%(hydromotor_parts_kits.action_quote_select_none)d" type="action" string="Изчисти избора" class="btn-secondary"/>
+    <field name="x_line_ids" nolabel="1">
+      <list editable="bottom" create="false" delete="false" limit="200">
+        <field name="x_selected"/><field name="x_source_line_id" column_invisible="True"/>
+        <field name="x_product_id"/><field name="x_qty"/><field name="x_uom_id"/><field name="x_note" optional="show"/>
+      </list>
+    </field>
+  </div>
+  <footer>
+    <button name="%(hydromotor_parts_kits.action_quote_apply)d" type="action" string="Създай / допълни оферта" class="btn-primary"/>
+    <button string="Отказ" special="cancel" class="btn-secondary"/>
+  </footer>
+</form>
+    </field>
+  </record>
+  <record id="sale_order_parts_navigation" model="ir.ui.view">
+    <field name="name">hydromotor_parts_kits.sale_order_parts_navigation</field>
+    <field name="model">sale.order</field>
+    <field name="inherit_id" ref="sale.view_order_form"/>
+    <field name="mode">extension</field>
+    <field name="arch" type="xml">
+      <xpath expr="//form/sheet/notebook" position="inside">
+  <page string="Машини и комплекти" groups="hydromotor_service.group_service_user">
+    <field name="order_line" nolabel="1" readonly="1">
+      <list create="false" edit="false" delete="false">
+        <field name="product_id"/><field name="product_uom_qty"/>
+        <field name="x_hm_parts_machine_id"/><field name="x_hm_parts_kit_id"/>
+        <field name="x_hm_kit_source_line_id" optional="hide"/><field name="x_hm_job_id" optional="hide"/>
+      </list>
+    </field>
+  </page>
+</xpath>
+    </field>
+  </record>
+</odoo>

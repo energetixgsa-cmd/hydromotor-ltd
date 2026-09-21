@@ -1,0 +1,173 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+  <record id="model_parts_kit" model="ir.model">
+    <field name="name">Комплект части</field>
+    <field name="model">x_hm_parts_kit</field>
+    <field name="field_id" eval="[]"/>
+    <field name="order">id</field>
+    <field name="transient" eval="False"/>
+    <field name="is_mail_thread" eval="True"/>
+    <field name="is_mail_activity" eval="True"/>
+  </record>
+
+  <record id="model_parts_kit_line" model="ir.model">
+    <field name="name">Ред от комплект части</field>
+    <field name="model">x_hm_parts_kit_line</field>
+    <field name="field_id" eval="[]"/>
+    <field name="order">id</field>
+    <field name="transient" eval="False"/>
+    <field name="is_mail_thread" eval="False"/>
+    <field name="is_mail_activity" eval="False"/>
+  </record>
+
+  <record id="field_parts_kit_name" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_kit"/>
+    <field name="name">x_name</field>
+    <field name="ttype">char</field>
+    <field name="field_description">Наименование</field>
+    <field name="required" eval="True"/>
+    <field name="copied" eval="True"/>
+    <field name="store" eval="True"/>
+  </record>
+
+  <record id="field_parts_kit_company" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_kit"/>
+    <field name="name">x_company_id</field>
+    <field name="ttype">many2one</field>
+    <field name="relation">res.company</field>
+    <field name="on_delete">restrict</field>
+    <field name="field_description">Фирма</field>
+    <field name="required" eval="True"/>
+    <field name="copied" eval="True"/>
+    <field name="store" eval="True"/>
+  </record>
+
+  <record id="field_parts_kit_machine_product" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_kit"/>
+    <field name="name">x_machine_product_id</field>
+    <field name="ttype">many2one</field>
+    <field name="relation">product.product</field>
+    <field name="on_delete">restrict</field>
+    <field name="field_description">Модел машина</field>
+    <field name="required" eval="False"/>
+    <field name="copied" eval="True"/>
+    <field name="store" eval="True"/>
+  </record>
+
+  <record id="field_parts_kit_active" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_kit"/>
+    <field name="name">x_active</field>
+    <field name="ttype">boolean</field>
+    <field name="field_description">Активен</field>
+    <field name="copied" eval="True"/>
+    <field name="store" eval="True"/>
+  </record>
+
+  <record id="field_parts_kit_note" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_kit"/>
+    <field name="name">x_note</field>
+    <field name="ttype">text</field>
+    <field name="field_description">Бележки</field>
+    <field name="copied" eval="True"/>
+    <field name="store" eval="True"/>
+  </record>
+
+
+  <record id="field_parts_kit_line_name" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_kit_line"/>
+    <field name="name">x_name</field>
+    <field name="ttype">char</field>
+    <field name="field_description">Бележка / позиция</field>
+    <field name="required" eval="False"/>
+    <field name="copied" eval="True"/>
+    <field name="store" eval="True"/>
+  </record>
+
+  <record id="field_parts_kit_line_kit" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_kit_line"/>
+    <field name="name">x_kit_id</field>
+    <field name="ttype">many2one</field>
+    <field name="relation">x_hm_parts_kit</field>
+    <field name="on_delete">cascade</field>
+    <field name="field_description">Комплект</field>
+    <field name="required" eval="True"/>
+    <field name="copied" eval="True"/>
+    <field name="store" eval="True"/>
+  </record>
+
+  <record id="field_parts_kit_lines" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_kit"/>
+    <field name="name">x_line_ids</field>
+    <field name="ttype">one2many</field>
+    <field name="relation">x_hm_parts_kit_line</field>
+    <field name="relation_field">x_kit_id</field>
+    <field name="field_description">Части</field>
+    <field name="copied" eval="True"/>
+    <field name="store" eval="True"/>
+  </record>
+
+  <record id="field_parts_kit_line_product" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_kit_line"/>
+    <field name="name">x_product_id</field>
+    <field name="ttype">many2one</field>
+    <field name="relation">product.product</field>
+    <field name="on_delete">restrict</field>
+    <field name="field_description">Артикул</field>
+    <field name="required" eval="True"/>
+    <field name="copied" eval="True"/>
+    <field name="store" eval="True"/>
+  </record>
+
+  <record id="field_parts_kit_line_qty" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_kit_line"/>
+    <field name="name">x_qty</field>
+    <field name="ttype">float</field>
+    <field name="field_description">Количество</field>
+    <field name="required" eval="True"/>
+    <field name="copied" eval="True"/>
+    <field name="store" eval="True"/>
+  </record>
+
+  <record id="field_machine_parts_kits" model="ir.model.fields">
+    <field name="model_id" ref="hydromotor_service.model_machine"/>
+    <field name="name">x_parts_kit_ids</field>
+    <field name="ttype">many2many</field>
+    <field name="relation">x_hm_parts_kit</field>
+    <field name="field_description">Комплекти части</field>
+    <field name="copied" eval="True"/>
+    <field name="store" eval="True"/>
+  </record>
+
+  <record id="field_job_parts_kit" model="ir.model.fields">
+    <field name="model_id" ref="hydromotor_service.model_job"/>
+    <field name="name">x_parts_kit_id</field>
+    <field name="ttype">many2one</field>
+    <field name="relation">x_hm_parts_kit</field>
+    <field name="on_delete">restrict</field>
+    <field name="field_description">Комплект части</field>
+    <field name="copied" eval="True"/>
+    <field name="store" eval="True"/>
+  </record>
+
+  <record id="field_sale_line_parts_kit" model="ir.model.fields">
+    <field name="model_id" ref="sale.model_sale_order_line"/>
+    <field name="name">x_hm_parts_kit_id</field>
+    <field name="ttype">many2one</field>
+    <field name="relation">x_hm_parts_kit</field>
+    <field name="on_delete">set null</field>
+    <field name="field_description">Hydromotor комплект части</field>
+    <field name="copied" eval="True"/>
+    <field name="store" eval="True"/>
+  </record>
+
+  <record id="field_sale_line_service_job" model="ir.model.fields">
+    <field name="model_id" ref="sale.model_sale_order_line"/>
+    <field name="name">x_hm_job_id</field>
+    <field name="ttype">many2one</field>
+    <field name="relation">x_hm_job</field>
+    <field name="on_delete">set null</field>
+    <field name="field_description">Hydromotor сервизна заявка</field>
+    <field name="copied" eval="True"/>
+    <field name="store" eval="True"/>
+  </record>
+</odoo>

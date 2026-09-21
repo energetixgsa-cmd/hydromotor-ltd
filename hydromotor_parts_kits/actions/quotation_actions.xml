@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+  <record id="action_open_kit" model="ir.actions.server">
+    <field name="name">Отвори комплект</field>
+    <field name="model_id" ref="model_parts_kit"/>
+    <field name="state">code</field>
+    <field name="code">record.ensure_one()
+action = env['hydromotor.parts.quotation.service'].action_open_kit(record.id)</field>
+    <field name="group_ids" eval="[(6, 0, [ref('hydromotor_service.group_service_user')])]"/>
+  </record>
+  <record id="action_open_machine" model="ir.actions.server">
+    <field name="name">Отвори машина</field>
+    <field name="model_id" ref="hydromotor_service.model_machine"/>
+    <field name="state">code</field>
+    <field name="code">record.ensure_one()
+action = env['hydromotor.parts.quotation.service'].action_open_machine(record.id)</field>
+    <field name="group_ids" eval="[(6, 0, [ref('hydromotor_service.group_service_user')])]"/>
+  </record>
+  <record id="action_machine_kits" model="ir.actions.server">
+    <field name="name">Комплекти части</field>
+    <field name="model_id" ref="hydromotor_service.model_machine"/>
+    <field name="state">code</field>
+    <field name="code">record.ensure_one()
+action = env['hydromotor.parts.quotation.service'].action_machine_kits(record.id)</field>
+    <field name="group_ids" eval="[(6, 0, [ref('hydromotor_service.group_service_user')])]"/>
+  </record>
+  <record id="action_machine_parts_quotes" model="ir.actions.server">
+    <field name="name">Оферти за части</field>
+    <field name="model_id" ref="hydromotor_service.model_machine"/>
+    <field name="state">code</field>
+    <field name="code">record.ensure_one()
+action = env['hydromotor.parts.quotation.service'].action_machine_quotes(record.id)</field>
+    <field name="group_ids" eval="[(6, 0, [ref('sales_team.group_sale_salesman')])]"/>
+  </record>
+  <record id="action_quote_parts" model="ir.actions.server">
+    <field name="name">Оферта за избрани части</field>
+    <field name="model_id" ref="model_parts_kit"/>
+    <field name="state">code</field>
+    <field name="code">record.ensure_one()
+action = env['hydromotor.parts.quotation.service'].action_start_kit(record.id)</field>
+    <field name="group_ids" eval="[(6, 0, [ref('sales_team.group_sale_salesman')])]"/>
+  </record>
+  <record id="action_quote_assembly" model="ir.actions.server">
+    <field name="name">Оферта за възел</field>
+    <field name="model_id" ref="model_parts_kit"/>
+    <field name="state">code</field>
+    <field name="code">record.ensure_one()
+action = env['hydromotor.parts.quotation.service'].action_start_kit(record.id, 'assembly')</field>
+    <field name="group_ids" eval="[(6, 0, [ref('sales_team.group_sale_salesman')])]"/>
+  </record>
+  <record id="action_quote_single_part" model="ir.actions.server">
+    <field name="name">Оферта за този артикул</field>
+    <field name="model_id" ref="model_parts_kit_line"/>
+    <field name="state">code</field>
+    <field name="code">record.ensure_one()
+action = env['hydromotor.parts.quotation.service'].action_start_line(record.id)</field>
+    <field name="group_ids" eval="[(6, 0, [ref('sales_team.group_sale_salesman')])]"/>
+  </record>
+  <record id="action_add_parts_kit" model="ir.actions.server">
+    <field name="name">Избери части за оферта</field>
+    <field name="model_id" ref="hydromotor_service.model_job"/>
+    <field name="state">code</field>
+    <field name="code">record.ensure_one()
+action = env['hydromotor.parts.quotation.service'].action_start_job(record.id)</field>
+    <field name="group_ids" eval="[(6, 0, [ref('sales_team.group_sale_salesman')])]"/>
+  </record>
+  <record id="action_quote_select_all" model="ir.actions.server">
+    <field name="name">Маркирай всички</field>
+    <field name="model_id" ref="model_parts_quote_wizard"/>
+    <field name="state">code</field>
+    <field name="code">record.ensure_one()
+action = env['hydromotor.parts.quotation.service'].action_select_lines(record.id, True)</field>
+    <field name="group_ids" eval="[(6, 0, [ref('sales_team.group_sale_salesman')])]"/>
+  </record>
+  <record id="action_quote_select_none" model="ir.actions.server">
+    <field name="name">Изчисти избора</field>
+    <field name="model_id" ref="model_parts_quote_wizard"/>
+    <field name="state">code</field>
+    <field name="code">record.ensure_one()
+action = env['hydromotor.parts.quotation.service'].action_select_lines(record.id, False)</field>
+    <field name="group_ids" eval="[(6, 0, [ref('sales_team.group_sale_salesman')])]"/>
+  </record>
+  <record id="action_quote_apply" model="ir.actions.server">
+    <field name="name">Създай / допълни оферта</field>
+    <field name="model_id" ref="model_parts_quote_wizard"/>
+    <field name="state">code</field>
+    <field name="code">record.ensure_one()
+action = env['hydromotor.parts.quotation.service'].action_apply(record.id)</field>
+    <field name="group_ids" eval="[(6, 0, [ref('sales_team.group_sale_salesman')])]"/>
+  </record>
+</odoo>

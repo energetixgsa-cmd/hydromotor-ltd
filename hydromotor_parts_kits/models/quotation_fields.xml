@@ -1,0 +1,327 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+  <record id="field_kit_linked_machines" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_kit"/>
+    <field name="name">x_machine_ids</field>
+    <field name="ttype">many2many</field>
+    <field name="field_description">Свързани машини</field>
+    <field name="copied" eval="False"/>
+    <field name="relation">x_hm_machine</field>
+    <field name="store" eval="False"/>
+    <field name="readonly" eval="True"/>
+    <field name="compute">for record in self:
+    record['x_machine_ids'] = self.env['hydromotor.parts.quotation.service']._linked_machines(record)</field>
+  </record>
+  <record id="field_kit_catalog_code" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_kit"/>
+    <field name="name">x_catalog_code</field>
+    <field name="ttype">char</field>
+    <field name="field_description">Каталожен № на възела</field>
+    <field name="copied" eval="False"/>
+    <field name="store" eval="False"/>
+    <field name="readonly" eval="True"/>
+    <field name="depends">x_note</field>
+    <field name="compute">for record in self:
+    record['x_catalog_code'] = self.env['hydromotor.parts.quotation.service']._catalog_code(record)</field>
+  </record>
+  <record id="field_kit_assembly_product" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_kit"/>
+    <field name="name">x_assembly_product_id</field>
+    <field name="ttype">many2one</field>
+    <field name="field_description">Артикул за целия възел</field>
+    <field name="copied" eval="False"/>
+    <field name="relation">product.product</field>
+    <field name="on_delete">restrict</field>
+  </record>
+  <record id="field_kit_catalog_product" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_kit"/>
+    <field name="name">x_catalog_product_id</field>
+    <field name="ttype">many2one</field>
+    <field name="field_description">Артикул на възела</field>
+    <field name="copied" eval="False"/>
+    <field name="relation">product.product</field>
+    <field name="readonly" eval="True"/>
+    <field name="store" eval="False"/>
+    <field name="depends">x_assembly_product_id,x_note</field>
+    <field name="compute">for record in self:
+    record['x_catalog_product_id'] = self.env['hydromotor.parts.quotation.service']._assembly_product(record)</field>
+  </record>
+  <record id="field_kit_line_count" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_kit"/>
+    <field name="name">x_line_count</field>
+    <field name="ttype">integer</field>
+    <field name="field_description">Позиции</field>
+    <field name="copied" eval="False"/>
+    <field name="readonly" eval="True"/>
+    <field name="store" eval="False"/>
+    <field name="depends">x_line_ids</field>
+    <field name="compute">for record in self:
+    record['x_line_count'] = len(record.x_line_ids)</field>
+  </record>
+  <record id="field_job_allowed_kits" model="ir.model.fields">
+    <field name="model_id" ref="hydromotor_service.model_job"/>
+    <field name="name">x_allowed_parts_kit_ids</field>
+    <field name="ttype">many2many</field>
+    <field name="field_description">Допустими комплекти</field>
+    <field name="copied" eval="False"/>
+    <field name="relation">x_hm_parts_kit</field>
+    <field name="related">x_machine_id.x_parts_kit_ids</field>
+    <field name="readonly" eval="True"/>
+    <field name="store" eval="False"/>
+  </record>
+  <record id="field_sale_line_parts_machine" model="ir.model.fields">
+    <field name="model_id" ref="sale.model_sale_order_line"/>
+    <field name="name">x_hm_parts_machine_id</field>
+    <field name="ttype">many2one</field>
+    <field name="field_description">Машина за частите</field>
+    <field name="copied" eval="False"/>
+    <field name="relation">x_hm_machine</field>
+    <field name="on_delete">restrict</field>
+    <field name="index" eval="True"/>
+  </record>
+  <record id="field_sale_line_kit_source" model="ir.model.fields">
+    <field name="model_id" ref="sale.model_sale_order_line"/>
+    <field name="name">x_hm_kit_source_line_id</field>
+    <field name="ttype">many2one</field>
+    <field name="field_description">Позиция в комплекта</field>
+    <field name="copied" eval="False"/>
+    <field name="relation">x_hm_parts_kit_line</field>
+    <field name="on_delete">set null</field>
+  </record>
+  <record id="model_parts_quote_wizard" model="ir.model">
+    <field name="name">Подготовка на оферта за части</field>
+    <field name="model">x_hm_parts_quote_wizard</field>
+    <field name="field_id" eval="[]"/>
+    <field name="transient" eval="True"/>
+  </record>
+  <record id="model_parts_quote_wizard_line" model="ir.model">
+    <field name="name">Избор на позиция за оферта</field>
+    <field name="model">x_hm_parts_quote_wizard_line</field>
+    <field name="field_id" eval="[]"/>
+    <field name="transient" eval="True"/>
+  </record>
+  <record id="field_pqw_name" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_quote_wizard"/>
+    <field name="name">x_name</field>
+    <field name="ttype">char</field>
+    <field name="field_description">Наименование</field>
+    <field name="copied" eval="False"/>
+  </record>
+  <record id="field_pqw_kit" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_quote_wizard"/>
+    <field name="name">x_kit_id</field>
+    <field name="ttype">many2one</field>
+    <field name="field_description">Комплект</field>
+    <field name="copied" eval="False"/>
+    <field name="relation">x_hm_parts_kit</field>
+    <field name="required" eval="True"/>
+    <field name="readonly" eval="True"/>
+    <field name="on_delete">cascade</field>
+  </record>
+  <record id="field_pqw_allowed_machines" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_quote_wizard"/>
+    <field name="name">x_allowed_machine_ids</field>
+    <field name="ttype">many2many</field>
+    <field name="field_description">Свързани машини</field>
+    <field name="copied" eval="False"/>
+    <field name="relation">x_hm_machine</field>
+    <field name="store" eval="False"/>
+    <field name="readonly" eval="True"/>
+    <field name="depends">x_kit_id</field>
+    <field name="compute">for record in self:
+    record['x_allowed_machine_ids'] = self.env['hydromotor.parts.quotation.service']._linked_machines(record.x_kit_id) if record.x_kit_id else []</field>
+  </record>
+  <record id="field_pqw_machine" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_quote_wizard"/>
+    <field name="name">x_machine_id</field>
+    <field name="ttype">many2one</field>
+    <field name="field_description">Машина</field>
+    <field name="copied" eval="False"/>
+    <field name="relation">x_hm_machine</field>
+    <field name="on_delete">cascade</field>
+  </record>
+  <record id="field_pqw_job" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_quote_wizard"/>
+    <field name="name">x_job_id</field>
+    <field name="ttype">many2one</field>
+    <field name="field_description">Сервизна заявка</field>
+    <field name="copied" eval="False"/>
+    <field name="relation">x_hm_job</field>
+    <field name="readonly" eval="True"/>
+    <field name="on_delete">cascade</field>
+  </record>
+  <record id="field_pqw_company" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_quote_wizard"/>
+    <field name="name">x_company_id</field>
+    <field name="ttype">many2one</field>
+    <field name="field_description">Фирма</field>
+    <field name="copied" eval="False"/>
+    <field name="relation">res.company</field>
+    <field name="related">x_kit_id.x_company_id</field>
+    <field name="readonly" eval="True"/>
+    <field name="store" eval="False"/>
+  </record>
+  <record id="field_pqw_partner" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_quote_wizard"/>
+    <field name="name">x_partner_id</field>
+    <field name="ttype">many2one</field>
+    <field name="field_description">Клиент</field>
+    <field name="copied" eval="False"/>
+    <field name="relation">res.partner</field>
+    <field name="readonly" eval="True"/>
+    <field name="store" eval="False"/>
+    <field name="depends">x_machine_id.x_partner_id,x_job_id.x_partner_id</field>
+    <field name="compute">for record in self:
+    record['x_partner_id'] = record.x_job_id.x_partner_id if record.x_job_id else record.x_machine_id.x_partner_id</field>
+  </record>
+  <record id="field_pqw_mode" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_quote_wizard"/>
+    <field name="name">x_mode</field>
+    <field name="ttype">selection</field>
+    <field name="field_description">Офериране</field>
+    <field name="copied" eval="False"/>
+    <field name="required" eval="True"/>
+    <field name="readonly" eval="True"/>
+  </record>
+  <record id="selection_pqw_mode_parts" model="ir.model.fields.selection">
+    <field name="field_id" ref="field_pqw_mode"/>
+    <field name="value">parts</field>
+    <field name="name">Избрани части</field>
+    <field name="sequence" eval="0"/>
+  </record>
+  <record id="selection_pqw_mode_assembly" model="ir.model.fields.selection">
+    <field name="field_id" ref="field_pqw_mode"/>
+    <field name="value">assembly</field>
+    <field name="name">Цял възел като артикул</field>
+    <field name="sequence" eval="1"/>
+  </record>
+  <record id="field_pqw_order" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_quote_wizard"/>
+    <field name="name">x_sale_order_id</field>
+    <field name="ttype">many2one</field>
+    <field name="field_description">Добави към съществуваща чернова</field>
+    <field name="copied" eval="False"/>
+    <field name="relation">sale.order</field>
+    <field name="on_delete">set null</field>
+  </record>
+  <record id="field_pqw_result" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_quote_wizard"/>
+    <field name="name">x_result_order_id</field>
+    <field name="ttype">many2one</field>
+    <field name="field_description">Създадена / допълнена оферта</field>
+    <field name="copied" eval="False"/>
+    <field name="relation">sale.order</field>
+    <field name="readonly" eval="True"/>
+    <field name="on_delete">set null</field>
+  </record>
+  <record id="field_pqw_repeat" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_quote_wizard"/>
+    <field name="name">x_allow_repeat</field>
+    <field name="ttype">boolean</field>
+    <field name="field_description">Разреши повторно добавяне на вече оферирани позиции</field>
+    <field name="copied" eval="False"/>
+  </record>
+  <record id="field_pqw_catalog_code" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_quote_wizard"/>
+    <field name="name">x_catalog_code</field>
+    <field name="ttype">char</field>
+    <field name="field_description">Каталожен № на възела</field>
+    <field name="copied" eval="False"/>
+    <field name="related">x_kit_id.x_catalog_code</field>
+    <field name="readonly" eval="True"/>
+    <field name="store" eval="False"/>
+  </record>
+  <record id="field_pqw_assembly_product" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_quote_wizard"/>
+    <field name="name">x_assembly_product_id</field>
+    <field name="ttype">many2one</field>
+    <field name="field_description">Артикул за целия възел</field>
+    <field name="copied" eval="False"/>
+    <field name="relation">product.product</field>
+    <field name="on_delete">restrict</field>
+  </record>
+  <record id="field_pqw_assembly_qty" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_quote_wizard"/>
+    <field name="name">x_assembly_qty</field>
+    <field name="ttype">float</field>
+    <field name="field_description">Брой възли</field>
+    <field name="copied" eval="False"/>
+  </record>
+  <record id="field_pqwl_parent" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_quote_wizard_line"/>
+    <field name="name">x_wizard_id</field>
+    <field name="ttype">many2one</field>
+    <field name="field_description">Подготовка на оферта</field>
+    <field name="copied" eval="False"/>
+    <field name="relation">x_hm_parts_quote_wizard</field>
+    <field name="required" eval="True"/>
+    <field name="on_delete">cascade</field>
+  </record>
+  <record id="field_pqw_lines" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_quote_wizard"/>
+    <field name="name">x_line_ids</field>
+    <field name="ttype">one2many</field>
+    <field name="field_description">Части за избор</field>
+    <field name="copied" eval="False"/>
+    <field name="relation">x_hm_parts_quote_wizard_line</field>
+    <field name="relation_field">x_wizard_id</field>
+  </record>
+  <record id="field_pqwl_source" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_quote_wizard_line"/>
+    <field name="name">x_source_line_id</field>
+    <field name="ttype">many2one</field>
+    <field name="field_description">Позиция</field>
+    <field name="copied" eval="False"/>
+    <field name="relation">x_hm_parts_kit_line</field>
+    <field name="required" eval="True"/>
+    <field name="readonly" eval="True"/>
+    <field name="on_delete">cascade</field>
+  </record>
+  <record id="field_pqwl_selected" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_quote_wizard_line"/>
+    <field name="name">x_selected</field>
+    <field name="ttype">boolean</field>
+    <field name="field_description">Включи</field>
+    <field name="copied" eval="False"/>
+  </record>
+  <record id="field_pqwl_product" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_quote_wizard_line"/>
+    <field name="name">x_product_id</field>
+    <field name="ttype">many2one</field>
+    <field name="field_description">Артикул</field>
+    <field name="copied" eval="False"/>
+    <field name="relation">product.product</field>
+    <field name="related">x_source_line_id.x_product_id</field>
+    <field name="readonly" eval="True"/>
+    <field name="store" eval="False"/>
+  </record>
+  <record id="field_pqwl_qty" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_quote_wizard_line"/>
+    <field name="name">x_qty</field>
+    <field name="ttype">float</field>
+    <field name="field_description">Количество</field>
+    <field name="copied" eval="False"/>
+    <field name="required" eval="True"/>
+  </record>
+  <record id="field_pqwl_note" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_quote_wizard_line"/>
+    <field name="name">x_note</field>
+    <field name="ttype">char</field>
+    <field name="field_description">Позиция / PDF страница</field>
+    <field name="copied" eval="False"/>
+    <field name="related">x_source_line_id.x_name</field>
+    <field name="readonly" eval="True"/>
+    <field name="store" eval="False"/>
+  </record>
+  <record id="field_pqwl_unit" model="ir.model.fields">
+    <field name="model_id" ref="model_parts_quote_wizard_line"/>
+    <field name="name">x_uom_id</field>
+    <field name="ttype">many2one</field>
+    <field name="field_description">Мярка</field>
+    <field name="copied" eval="False"/>
+    <field name="relation">uom.uom</field>
+    <field name="related">x_source_line_id.x_product_id.uom_id</field>
+    <field name="readonly" eval="True"/>
+    <field name="store" eval="False"/>
+  </record>
+</odoo>
