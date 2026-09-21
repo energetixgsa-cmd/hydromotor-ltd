@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_tremol" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.tremol</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app string="TREMOL" name="hydromotor_tremol_fiscal">
+                    <block title="TREMOL M23 / ZFPLabServer">
+                        <setting string="Enable fiscal connection"
+                                 help="Connect this browser to the local ZFPLabServer.">
+                            <field name="tremol_enabled"/>
+                        </setting>
+                        <setting string="Local server" help="Usually http://127.0.0.1:4444/">
+                            <div class="content-group">
+                                <label for="tremol_server_url"/>
+                                <field name="tremol_server_url" class="w-50"/>
+                            </div>
+                        </setting>
+                        <setting string="Serial connection">
+                            <div class="row mt16">
+                                <label for="tremol_com_port" class="col-lg-3 o_light_label"/>
+                                <field name="tremol_com_port" class="col-lg-3"/>
+                            </div>
+                            <div class="row mt16">
+                                <label for="tremol_baud_rate" class="col-lg-3 o_light_label"/>
+                                <field name="tremol_baud_rate" class="col-lg-3"/>
+                            </div>
+                            <div class="row mt16">
+                                <label for="tremol_keep_port_open" class="col-lg-3 o_light_label"/>
+                                <field name="tremol_keep_port_open"/>
+                            </div>
+                        </setting>
+                        <setting string="Fiscal operator">
+                            <div class="row mt16">
+                                <label for="tremol_operator_number" class="col-lg-3 o_light_label"/>
+                                <field name="tremol_operator_number" class="col-lg-3"/>
+                            </div>
+                            <div class="row mt16">
+                                <label for="tremol_operator_password" class="col-lg-3 o_light_label"/>
+                                <field name="tremol_operator_password" password="True" class="col-lg-3"/>
+                            </div>
+                            <div class="row mt16">
+                                <label for="tremol_device_number" class="col-lg-3 o_light_label"/>
+                                <field name="tremol_device_number" class="col-lg-3"/>
+                            </div>
+                            <div class="row mt16">
+                                <label for="tremol_operator_code" class="col-lg-3 o_light_label"/>
+                                <field name="tremol_operator_code" class="col-lg-3"/>
+                            </div>
+                        </setting>
+                        <setting string="VAT and payment mapping">
+                            <div class="row mt16">
+                                <label for="tremol_vat_group" class="col-lg-3 o_light_label"/>
+                                <field name="tremol_vat_group" class="col-lg-3"/>
+                            </div>
+                            <div class="row mt16">
+                                <label for="tremol_cash_payment_code" class="col-lg-3 o_light_label"/>
+                                <field name="tremol_cash_payment_code" class="col-lg-3"/>
+                            </div>
+                            <div class="row mt16">
+                                <label for="tremol_card_payment_code" class="col-lg-3 o_light_label"/>
+                                <field name="tremol_card_payment_code" class="col-lg-3"/>
+                            </div>
+                        </setting>
+                        <setting string="Last successful test">
+                            <field name="tremol_last_test_at" readonly="1"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>

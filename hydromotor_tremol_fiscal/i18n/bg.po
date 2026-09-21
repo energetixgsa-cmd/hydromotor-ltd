@@ -1,0 +1,83 @@
+# Translation of Odoo Server.
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Language: bg\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "TREMOL integration enabled"
+msgstr "Интеграцията с TREMOL е включена"
+
+msgid "ZFPLabServer address"
+msgstr "Адрес на ZFPLabServer"
+
+msgid "COM port"
+msgstr "COM порт"
+
+msgid "Baud rate"
+msgstr "Скорост (Baud)"
+
+msgid "Keep port open"
+msgstr "Поддържай порта отворен"
+
+msgid "Operator number"
+msgstr "Номер на оператор"
+
+msgid "Operator password"
+msgstr "Парола на оператор"
+
+msgid "Fiscal device number"
+msgstr "Индивидуален номер на фискалното устройство"
+
+msgid "URN operator code"
+msgstr "Код на оператор за УНП"
+
+msgid "Default VAT group"
+msgstr "Данъчна група по подразбиране"
+
+msgid "Cash payment code"
+msgstr "Код за плащане в брой"
+
+msgid "Card payment code"
+msgstr "Код за плащане с карта"
+
+msgid "Fiscal receipt status"
+msgstr "Статус на фискалния бон"
+
+msgid "Not issued"
+msgstr "Не е издаден"
+
+msgid "Processing"
+msgstr "Обработва се"
+
+msgid "Issued"
+msgstr "Издаден"
+
+msgid "Error"
+msgstr "Грешка"
+
+msgid "Fiscal receipt number"
+msgstr "Номер на фискалния бон"
+
+msgid "Issued at"
+msgstr "Издаден на"
+
+msgid "Last TREMOL response"
+msgstr "Последен отговор от TREMOL"
+
+msgid "Confirm TREMOL Fiscal Receipt"
+msgstr "Потвърждение на фискален бон TREMOL"
+
+msgid "Cash"
+msgstr "В брой"
+
+msgid "Bank card"
+msgstr "Банкова карта"
+
+msgid "I confirm that a fiscal receipt must be issued for this payment"
+msgstr "Потвърждавам, че за това плащане трябва да бъде издаден фискален бон"
+
+msgid "Rounding adjustment"
+msgstr "Корекция от закръгляване"
+

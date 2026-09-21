@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="hydromotor_tremol_fiscal.BridgeAction">
+        <div class="o_view_nocontent p-5 text-center">
+            <h2>TREMOL M23</h2>
+            <p t-att-class="state.error ? 'text-danger' : 'text-muted'" t-esc="state.status"/>
+            <div t-if="!state.error" class="spinner-border text-primary" role="status"/>
+            <button t-if="state.error" type="button" class="btn btn-secondary mt-3" t-on-click="() => action.doAction({type: 'ir.actions.act_window_close'})">
+                Close
+            </button>
+        </div>
+    </t>
+</templates>
+
