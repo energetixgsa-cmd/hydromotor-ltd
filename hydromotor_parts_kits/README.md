@@ -1,3 +1,11 @@
+# Hydromotor Parts Kits 19.0.1.1.0
+
+For installation and the new machine / kit / quotation workflow, see [UPGRADE_BG.md](UPGRADE_BG.md).
+
+This release retains the existing model names, field definitions, import identifiers and machine-kit relation. It extends the existing module; it is not a second addon.
+
+## Previous release notes
+
 # Hydromotor Parts Kits (Odoo 19.0)
 
 Adds reusable spare-parts kits to Hydromotor machine dossiers.
