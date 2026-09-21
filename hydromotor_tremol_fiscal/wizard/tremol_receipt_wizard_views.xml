@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_tremol_receipt_wizard_form" model="ir.ui.view">
+        <field name="name">hydromotor.tremol.receipt.wizard.form</field>
+        <field name="model">hydromotor.tremol.receipt.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Issue TREMOL fiscal receipt">
+                <group>
+                    <field name="move_id"/>
+                    <field name="partner_id"/>
+                    <field name="amount_total"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="payment_method"/>
+                    <field name="confirmation"/>
+                </group>
+                <div class="alert alert-warning" role="alert">
+                    This operation sends a real fiscal transaction to the connected TREMOL device.
+                </div>
+                <footer>
+                    <button name="action_issue" type="object" string="Issue receipt" class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
+
