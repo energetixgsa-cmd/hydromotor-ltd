@@ -1,6 +1,6 @@
 {
     "name": "Hydromotor TREMOL Fiscal",
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.0.1",
     "summary": "TREMOL M23 fiscal receipts from Odoo invoices through ZFPLabServer",
     "author": "Hydromotor",
     "license": "LGPL-3",
@@ -21,4 +21,5 @@
     "application": False,
     "auto_install": False,
 }
+
 
