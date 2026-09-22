@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import models
+from odoo import api, models
 
 
 def _is_bg(partner):
@@ -114,3 +114,48 @@ class PurchaseOrder(models.Model):
         else:
             label = "Поръчка към доставчик" if bg else "Purchase Order"
         return f"{label} - {ref}"
+
+
+class IrActionsReport(models.Model):
+    _inherit = "ir.actions.report"
+
+    @api.model
+    def _hm_sync_report_name_translations(self):
+        """Keep filename expressions identical in every active UI language.
+
+        Odoo defines ir.actions.report.print_report_name as a translatable field.
+        That means the Bulgarian UI translation of the standard report action can
+        otherwise replace our Python expression before it is evaluated. The PDF
+        body may correctly use the customer's language while the downloaded file
+        still receives a Bulgarian name. We deliberately store the same dynamic
+        expression for every active language; the expression itself decides BG/EN
+        from the document partner language.
+        """
+        expressions = {
+            "sale.action_report_saleorder": "object._hm_sale_pdf_filename()",
+            "sale.action_report_pro_forma_invoice": "object._hm_sale_pdf_filename(force_proforma=True)",
+            "account.account_invoices": "object._hm_invoice_pdf_filename()",
+            "account.account_invoices_without_payment": "object._hm_invoice_pdf_filename()",
+            "account.action_report_payment_receipt": "object._hm_payment_pdf_filename()",
+            "stock.action_report_delivery": "object._hm_delivery_pdf_filename()",
+            "stock.action_report_picking": "object._hm_picking_pdf_filename()",
+            "purchase.action_report_purchase_order": "object._hm_purchase_pdf_filename()",
+            "purchase.report_purchase_quotation": "object._hm_purchase_pdf_filename(force_rfq=True)",
+        }
+
+        lang_codes = [code for code, _name in self.env["res.lang"].get_installed()]
+        if "en_US" not in lang_codes:
+            lang_codes.append("en_US")
+
+        for xmlid, expression in expressions.items():
+            report = self.env.ref(xmlid, raise_if_not_found=False)
+            if not report:
+                continue
+            report = report.sudo()
+            # Set the source/base value first.
+            report.with_context(lang="en_US").write({"print_report_name": expression})
+            # Then overwrite any previously imported translated expressions
+            # (e.g. Bulgarian "Оферта - ...") with the same dynamic expression.
+            for lang_code in lang_codes:
+                report.with_context(lang=lang_code).write({"print_report_name": expression})
+        return True

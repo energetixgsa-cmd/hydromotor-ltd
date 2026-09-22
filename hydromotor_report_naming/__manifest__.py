@@ -1,6 +1,6 @@
 {
     "name": "Hydromotor Bilingual PDF Naming",
-    "version": "19.0.1.0.1",
+    "version": "19.0.1.0.2",
     "summary": "Bulgarian/English PDF filenames based on partner language",
     "category": "Hidden/Tools",
     "author": "Hydromotor OOD",

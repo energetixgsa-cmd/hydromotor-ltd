@@ -39,4 +39,9 @@
     <record id="purchase.report_purchase_quotation" model="ir.actions.report">
         <field name="print_report_name">object._hm_purchase_pdf_filename(force_rfq=True)</field>
     </record>
+
+    <!-- print_report_name is translatable in Odoo. Sync the same dynamic
+         expression into every active UI language so a Bulgarian user interface
+         cannot force a Bulgarian filename for an English customer. -->
+    <function model="ir.actions.report" name="_hm_sync_report_name_translations"/>
 </odoo>

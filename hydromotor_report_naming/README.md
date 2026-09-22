@@ -1,32 +1,25 @@
-# Hydromotor Bilingual PDF Naming - Odoo 19
+# Hydromotor Bilingual PDF Naming
 
-The module changes only the downloaded/generated PDF filename. It does not change document sequences or document content.
+Odoo 19 module for dynamic BG/EN PDF filenames based on the language of the partner selected on the document.
 
-## Language rule
-- Partner language starts with `bg` -> Bulgarian filename
-- Any other language or empty language -> English filename
+## Rule
+- partner language starts with `bg` -> Bulgarian filename
+- every other language -> English filename
 
-The exact partner/contact language on the document is used first. If it is empty, the commercial partner language is used as fallback.
+Examples:
+- `Оферта - S00045.pdf`
+- `Offer - S00045.pdf`
+- `Фактура - INV-2026-0045.pdf`
+- `Invoice - INV-2026-0045.pdf`
 
-## Covered documents
-- Sales quotation -> `Оферта - S00001.pdf` / `Offer - S00001.pdf`
-- Sales order -> `Поръчка - S00001.pdf` / `Sales Order - S00001.pdf`
-- Proforma -> `Проформа - S00001.pdf` / `Proforma Invoice - S00001.pdf`
-- Customer invoice -> `Фактура - INV-2026-0001.pdf` / `Invoice - INV-2026-0001.pdf`
-- Customer credit note -> `Кредитно известие - ...` / `Credit Note - ...`
-- Vendor bill / vendor credit note
-- Payment receipt
-- Delivery note / goods receipt / internal transfer
-- Picking operations
-- Purchase RFQ / purchase order
+## v19.0.1.0.2 fix
+Odoo's `ir.actions.report.print_report_name` field is translatable. A Bulgarian UI translation of the report action could therefore override the dynamic filename expression, even while the PDF body correctly rendered in English for an English-language customer.
 
-## Install on Odoo.sh
-1. Copy folder `hydromotor_report_naming` into the custom addons repository.
-2. Commit and push to the target branch.
-3. Wait for the Odoo.sh build.
-4. Apps -> Update Apps List.
-5. Search for `Hydromotor Bilingual PDF Naming` and install it.
-6. Test one Bulgarian partner (`Language = Bulgarian`) and one foreign partner (`Language = English`, German, etc.).
+This version synchronizes the same dynamic Python expression into every active UI language during module install/upgrade. The expression itself then decides whether the filename is Bulgarian or English from `partner_id.lang`.
 
-## Important
-This module targets Odoo 19.0 report external IDs verified against Odoo 19.0 source.
+## Installation / upgrade
+1. Replace the old `hydromotor_report_naming` folder with this version.
+2. Push/merge it to the Odoo.sh branch.
+3. In Odoo: Apps -> Update Apps List.
+4. Open **Hydromotor Bilingual PDF Naming** and click **Upgrade**.
+5. Test one partner with Language = Bulgarian and one with Language = English.
