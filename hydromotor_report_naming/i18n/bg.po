@@ -1,0 +1,23 @@
+# Translation of Hydromotor Bilingual PDF Naming to Bulgarian.
+msgid ""
+msgstr ""
+"Project-Id-Version: hydromotor_report_naming 19.0.1.0.3\n"
+"Language: bg\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. module: hydromotor_report_naming
+#: model:ir.model.fields,field_description:hydromotor_report_naming.field_res_users__hm_report_name_bg
+msgid "Document Name (Bulgarian)"
+msgstr "Име за документи (български)"
+
+#. module: hydromotor_report_naming
+#: model:ir.model.fields,field_description:hydromotor_report_naming.field_res_users__hm_report_name_en
+msgid "Document Name (English)"
+msgstr "Име за документи (английски)"
+
+#. module: hydromotor_report_naming
+#: model_terms:ir.ui.view,arch_db:hydromotor_report_naming.hm_view_users_form_bilingual_document_name
+#: model_terms:ir.ui.view,arch_db:hydromotor_report_naming.hm_view_users_preferences_bilingual_document_name
+msgid "Document Names"
+msgstr "Имена за документи"

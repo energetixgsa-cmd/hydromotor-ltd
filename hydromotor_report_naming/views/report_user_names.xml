@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+      The customer/vendor language already drives Odoo's report translation.
+      Add one report-only context flag so any res.users many2one printed with
+      t-field uses the bilingual document name instead of the UI/login name.
+    -->
+
+    <template id="hm_sale_report_user_name" inherit_id="sale.report_saleorder_document" priority="90">
+        <xpath expr="//t[@t-set='doc'][contains(@t-value, 'with_context')]" position="attributes">
+            <attribute name="t-value">doc.with_context(lang=doc.partner_id.lang, hm_bilingual_report_name=True)</attribute>
+        </xpath>
+    </template>
+
+    <template id="hm_invoice_report_user_name" inherit_id="account.report_invoice_document" priority="90">
+        <xpath expr="//t[@t-set='o'][contains(@t-value, 'with_context')]" position="attributes">
+            <attribute name="t-value">o.with_context(lang=lang, hm_bilingual_report_name=True)</attribute>
+        </xpath>
+    </template>
+
+    <template id="hm_purchase_order_report_user_name" inherit_id="purchase.report_purchaseorder_document" priority="90">
+        <xpath expr="//t[@t-set='o'][contains(@t-value, 'with_context')]" position="attributes">
+            <attribute name="t-value">o.with_context(lang=o.partner_id.lang, hm_bilingual_report_name=True)</attribute>
+        </xpath>
+    </template>
+
+    <template id="hm_purchase_rfq_report_user_name" inherit_id="purchase.report_purchasequotation_document" priority="90">
+        <xpath expr="//t[@t-set='o'][contains(@t-value, 'with_context')]" position="attributes">
+            <attribute name="t-value">o.with_context(lang=o.partner_id.lang, hm_bilingual_report_name=True)</attribute>
+        </xpath>
+    </template>
+
+    <template id="hm_delivery_report_user_name" inherit_id="stock.report_delivery_document" priority="90">
+        <xpath expr="//t[@t-set='o'][contains(@t-value, 'with_context')]" position="attributes">
+            <attribute name="t-value">o.with_context(lang=o._get_report_lang(), hm_bilingual_report_name=True)</attribute>
+        </xpath>
+    </template>
+</odoo>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hm_view_users_form_bilingual_document_name" model="ir.ui.view">
+        <field name="name">res.users.form.bilingual.document.name</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='preferences']//group[@name='other_preferences']" position="inside">
+                <group string="Document Names">
+                    <field name="hm_report_name_bg" placeholder="e.g. Иван Иванов"/>
+                    <field name="hm_report_name_en" placeholder="e.g. Ivan Ivanov"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="hm_view_users_preferences_bilingual_document_name" model="ir.ui.view">
+        <field name="name">res.users.preferences.form.bilingual.document.name</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form_simple_modif"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='preferences_page']//group[@name='other_preferences']" position="inside">
+                <group string="Document Names">
+                    <field name="hm_report_name_bg" readonly="0" placeholder="e.g. Иван Иванов"/>
+                    <field name="hm_report_name_en" readonly="0" placeholder="e.g. Ivan Ivanov"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
