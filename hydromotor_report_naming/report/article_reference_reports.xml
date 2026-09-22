@@ -3,7 +3,7 @@
     <xpath expr="//th[@name='th_description']" position="before">
       <th name="hm_th_article_number" class="text-start" style="width: 15%;">
         <t t-set="colspan_count" t-value="colspan_count + 1"/>
-        <span>Article Number</span>
+        <span t-translation="off" t-out="'Артикулен номер' if (doc.env.context.get('lang') or '').lower().startswith('bg') else 'Article Number'"/>
       </th>
     </xpath>
     <xpath expr="//td[@name='td_product_name']" position="before">
@@ -32,7 +32,7 @@
   <template id="hm_invoice_report_article" inherit_id="account.report_invoice_document" priority="70">
     <xpath expr="//th[@name='th_description']" position="before">
       <th name="hm_th_article_number" class="text-start" style="width: 15%;">
-        <span>Article Number</span>
+        <span t-translation="off" t-out="'Артикулен номер' if (o.env.context.get('lang') or '').lower().startswith('bg') else 'Article Number'"/>
       </th>
     </xpath>
     <xpath expr="//td[@name='account_invoice_line_name']" position="before">
@@ -64,7 +64,7 @@
   <template id="hm_purchase_report_article" inherit_id="purchase.report_purchaseorder_document" priority="70">
     <xpath expr="//th[@name='th_description']" position="before">
       <th name="hm_th_article_number" class="text-start" style="width: 15%;">
-        <span>Article Number</span>
+        <span t-translation="off" t-out="'Артикулен номер' if (o.env.context.get('lang') or '').lower().startswith('bg') else 'Article Number'"/>
       </th>
     </xpath>
     <xpath expr="//td[@id='product']" position="before">
@@ -79,7 +79,7 @@
   <template id="hm_rfq_report_article" inherit_id="purchase.report_purchasequotation_document" priority="70">
     <xpath expr="//th[@name='th_description']" position="before">
       <th name="hm_th_article_number" class="text-start" style="width: 15%;">
-        <span>Article Number</span>
+        <span t-translation="off" t-out="'Артикулен номер' if (o.env.context.get('lang') or '').lower().startswith('bg') else 'Article Number'"/>
       </th>
     </xpath>
     <xpath expr="//td[@id='product']" position="before">
@@ -94,17 +94,17 @@
   <template id="hm_delivery_report_article" inherit_id="stock.report_delivery_document" priority="70">
     <xpath expr="//th[@name='th_sm_product']" position="before">
       <th name="hm_th_article_number" class="text-start" style="width: 15%;">
-        <span>Article Number</span>
+        <span t-translation="off" t-out="'Артикулен номер' if (o.env.context.get('lang') or '').lower().startswith('bg') else 'Article Number'"/>
       </th>
     </xpath>
     <xpath expr="//th[@name='th_sml_product']" position="before">
       <th name="hm_th_article_number" class="text-start" style="width: 15%;">
-        <span>Article Number</span>
+        <span t-translation="off" t-out="'Артикулен номер' if (o.env.context.get('lang') or '').lower().startswith('bg') else 'Article Number'"/>
       </th>
     </xpath>
     <xpath expr="//th[@name='th_sb_product']" position="before">
       <th name="hm_th_article_number" class="text-start" style="width: 15%;">
-        <span>Article Number</span>
+        <span t-translation="off" t-out="'Артикулен номер' if (o.env.context.get('lang') or '').lower().startswith('bg') else 'Article Number'"/>
       </th>
     </xpath>
     <xpath expr="//table[@name='stock_move_table']//tr[@t-as='move']/td[1]" position="before">
@@ -144,7 +144,7 @@
   <template id="hm_picking_report_article" inherit_id="stock.report_picking" priority="70">
     <xpath expr="//th[@name='th_product']" position="before">
       <th name="hm_th_article_number" class="text-start" style="width: 15%;">
-        <span>Article Number</span>
+        <span t-translation="off" t-out="'Артикулен номер' if (o.env.context.get('lang') or '').lower().startswith('bg') else 'Article Number'"/>
       </th>
     </xpath>
     <xpath expr="//td[span[@t-field='move.product_id.display_name']]" position="before">
