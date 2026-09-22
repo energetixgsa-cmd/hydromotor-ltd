@@ -159,3 +159,4 @@ class IrActionsReport(models.Model):
             for lang_code in lang_codes:
                 report.with_context(lang=lang_code).write({"print_report_name": expression})
         return True
+

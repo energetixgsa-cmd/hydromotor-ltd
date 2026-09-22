@@ -43,3 +43,4 @@ class ResUsers(models.Model):
         lang = self.env.context.get("lang")
         for user in self:
             user.display_name = user._hm_report_name(lang)
+

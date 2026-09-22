@@ -45,3 +45,4 @@
          cannot force a Bulgarian filename for an English customer. -->
     <function model="ir.actions.report" name="_hm_sync_report_name_translations"/>
 </odoo>
+
