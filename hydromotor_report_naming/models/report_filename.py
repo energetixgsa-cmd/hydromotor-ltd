@@ -3,11 +3,20 @@ from odoo import models
 
 
 def _is_bg(partner):
-    """Return True when the commercial partner language is Bulgarian."""
+    """Return True when the document partner language is Bulgarian.
+
+    Important: use the exact partner/contact selected on the document first.
+    A child contact may be English even when its commercial company partner is Bulgarian.
+    Only fall back to the commercial partner language when the selected partner has no language.
+    """
     if not partner:
         return False
-    partner = partner.commercial_partner_id
-    return (partner.lang or "").lower().startswith("bg")
+
+    lang = partner.lang
+    if not lang and partner.commercial_partner_id:
+        lang = partner.commercial_partner_id.lang
+
+    return (lang or "").lower().startswith("bg")
 
 
 def _safe_ref(value):

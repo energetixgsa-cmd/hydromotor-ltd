@@ -6,7 +6,7 @@ The module changes only the downloaded/generated PDF filename. It does not chang
 - Partner language starts with `bg` -> Bulgarian filename
 - Any other language or empty language -> English filename
 
-The commercial partner language is used.
+The exact partner/contact language on the document is used first. If it is empty, the commercial partner language is used as fallback.
 
 ## Covered documents
 - Sales quotation -> `Оферта - S00001.pdf` / `Offer - S00001.pdf`
