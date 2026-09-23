@@ -43,7 +43,7 @@ class SaleOrderLine(models.Model):
     )
 
     hm_description = fields.Text(
-        string="Description", compute="_compute_hm_description",
+        string="Item Description", compute="_compute_hm_description",
         inverse="_inverse_hm_description", readonly=False,
     )
 
@@ -75,7 +75,7 @@ class PurchaseOrderLine(models.Model):
     )
 
     hm_description = fields.Text(
-        string="Description", compute="_compute_hm_description",
+        string="Item Description", compute="_compute_hm_description",
         inverse="_inverse_hm_description", readonly=False,
     )
 
@@ -107,7 +107,7 @@ class AccountMoveLine(models.Model):
     )
 
     hm_description = fields.Text(
-        string="Description", compute="_compute_hm_description",
+        string="Item Description", compute="_compute_hm_description",
         inverse="_inverse_hm_description", readonly=False,
     )
 
