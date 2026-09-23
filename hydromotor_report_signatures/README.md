@@ -1,6 +1,6 @@
 # Hydromotor Report Signatures — Odoo 19
 
-Version 19.0.1.2.7.
+Version 19.0.1.2.8.
 
 ## Invoice-data field mapping
 
@@ -90,3 +90,12 @@ Replace the existing `hydromotor_report_signatures` addon folder, rebuild Odoo.s
 - Fixes the Hydromotor header gap between the last address line (e.g. Bulgaria) and VAT/Tax ID.
 - The spacing rule now lives inside `web.external_layout_standard`'s actual header so it survives Odoo PDF header extraction.
 - Pulls only the VAT row upward; address line spacing is unchanged.
+
+
+## Version 19.0.1.2.8
+
+- Fixes the header inheritance selector for Odoo 19: the standard header uses `t-attf-class`, so the old selector based only on `class` could not locate it during module installation or upgrade.
+- Matches the `header` class in both static `class` and QWeb `t-attf-class` attributes.
+- Preserves the existing module name and view XML IDs.
+- Does not change configurator relationships or delete business records.
+- Validated against the upstream Odoo 19 standard report template, with Python/XML syntax and manifest-path checks. A live Odoo installation/upgrade and PDF rendering have not been run in this review environment.

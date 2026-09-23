@@ -68,7 +68,7 @@
     <template id="external_layout_standard_hydromotor_header_spacing"
               inherit_id="web.external_layout_standard"
               priority="9999">
-        <xpath expr="//div[contains(concat(' ', normalize-space(@class), ' '), ' header ')]" position="inside">
+        <xpath expr="//div[contains(concat(' ', normalize-space(@class), ' '), ' header ') or contains(concat(' ', normalize-space(@t-attf-class), ' '), ' header ')]" position="inside">
             <style type="text/css">
                 /* Remove only the trailing gap after the company-details block. */
                 ul[name="company_address_list"] &gt; li:not(:last-child) p:last-child {
