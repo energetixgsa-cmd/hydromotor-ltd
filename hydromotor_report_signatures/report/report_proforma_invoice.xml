@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Invoice-style body for sale.order pro-forma invoices. -->
+    <template id="report_proforma_invoice_document">
+        <t t-call="web.external_layout">
+            <t t-set="doc" t-value="doc.with_context(lang=doc.partner_id.lang, proforma=True)"/>
+            <t t-set="o" t-value="doc"/>
+            <t t-set="forced_vat" t-value="doc.fiscal_position_id.foreign_vat"/>
+
+            <t t-set="address">
+                <address class="mb-0"
+                         t-field="doc.partner_invoice_id"
+                         t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
+                <div t-if="doc.partner_invoice_id.vat" class="mt-1">
+                    <strong>ДДС № / VAT No.:</strong>
+                    <span t-field="doc.partner_invoice_id.vat"/>
+                </div>
+            </t>
+
+            <div class="clearfix invoice_main">
+                <div class="page mb-4">
+                    <t t-set="layout_document_title">
+                        <span>ПРОФОРМА ФАКТУРА / PRO-FORMA INVOICE </span>
+                        <span t-field="doc.name">S00001</span>
+                    </t>
+
+                    <div id="informations" class="row mb-4">
+                        <div class="col" t-if="doc.date_order" name="proforma_date">
+                            <strong>Дата / Date</strong>
+                            <div t-field="doc.date_order" t-options='{"widget": "date"}'>2026-09-23</div>
+                        </div>
+                        <div class="col" t-if="doc.validity_date" name="proforma_validity">
+                            <strong>Валидна до / Valid Until</strong>
+                            <div t-field="doc.validity_date">2026-10-23</div>
+                        </div>
+                        <div class="col" t-if="doc.client_order_ref" name="proforma_customer_ref">
+                            <strong>Референция / Reference</strong>
+                            <div t-field="doc.client_order_ref">REF</div>
+                        </div>
+                        <div class="col" t-if="doc.commitment_date" name="proforma_delivery_date">
+                            <strong>Дата на доставка / Delivery Date</strong>
+                            <div t-field="doc.commitment_date" t-options='{"widget": "date"}'>2026-10-23</div>
+                        </div>
+                    </div>
+
+                    <t t-set="lines_to_report" t-value="doc._get_order_lines_to_report()"/>
+                    <t t-set="display_discount" t-value="any(l.discount &gt; 0 for l in lines_to_report)"/>
+                    <t t-set="display_taxes" t-value="any(l._has_taxes() for l in lines_to_report)"/>
+
+                    <table class="o_has_total_table table o_main_table table-borderless mb-0" name="proforma_invoice_line_table">
+                        <thead style="display: table-row-group">
+                            <tr>
+                                <th class="text-start" name="th_description">Описание / Description</th>
+                                <th class="text-end text-nowrap" name="th_quantity">Количество / Qty</th>
+                                <th class="text-end text-nowrap" name="th_priceunit">Ед. цена / Unit Price</th>
+                                <th t-if="display_discount" class="text-end" name="th_discount">Отст. / Disc.%</th>
+                                <th t-if="display_taxes" class="text-end" name="th_taxes">ДДС / VAT</th>
+                                <th class="text-end" name="th_subtotal">Сума / Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody class="invoice_tbody">
+                            <t t-foreach="lines_to_report" t-as="line">
+                                <tr t-if="line.display_type == 'line_section'" class="fw-bolder o_line_section">
+                                    <td colspan="99"><span t-field="line.name"/></td>
+                                </tr>
+                                <tr t-elif="line.display_type == 'line_subsection'" class="fw-bold o_line_subsection">
+                                    <td colspan="99" class="ps-3"><span t-field="line.name"/></td>
+                                </tr>
+                                <tr t-elif="line.display_type == 'line_note'" class="fst-italic o_line_note">
+                                    <td colspan="99"><span t-field="line.name"/></td>
+                                </tr>
+                                <tr t-else="" name="proforma_product_line">
+                                    <td class="text-start">
+                                        <span t-field="line.name" t-options="{'widget': 'text'}"/>
+                                    </td>
+                                    <td class="text-end text-nowrap">
+                                        <span t-field="line.product_uom_qty"/>
+                                        <span t-field="line.product_uom_id"/>
+                                    </td>
+                                    <td class="text-end text-nowrap">
+                                        <span t-field="line.price_unit"/>
+                                    </td>
+                                    <td t-if="display_discount" class="text-end">
+                                        <span t-if="line.discount" t-field="line.discount"/>
+                                    </td>
+                                    <t t-set="taxes" t-value="', '.join(tax.tax_label for tax in line.tax_ids if tax.tax_label)"/>
+                                    <td t-if="display_taxes" class="text-end">
+                                        <span t-out="taxes"/>
+                                    </td>
+                                    <td class="text-end o_price_total">
+                                        <span t-field="line.price_subtotal"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+
+                    <div class="clearfix" name="proforma_total_summary">
+                        <div id="total" class="row mt-n3">
+                            <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ms-auto">
+                                <table class="o_total_table table table-borderless">
+                                    <t t-call="sale.document_tax_totals">
+                                        <t t-set="tax_totals" t-value="doc.tax_totals"/>
+                                        <t t-set="currency" t-value="doc.currency_id"/>
+                                    </t>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="payment_term" class="clearfix mt-3">
+                        <div class="mb-2" t-if="doc.payment_term_id">
+                            <strong>Условия за плащане / Payment Terms:</strong>
+                            <span t-field="doc.payment_term_id"/>
+                        </div>
+                        <div class="mb-2" t-if="not is_html_empty(doc.payment_term_id.note)">
+                            <span t-field="doc.payment_term_id.note"/>
+                        </div>
+                        <div class="mb-2" t-if="not is_html_empty(doc.note)">
+                            <span t-field="doc.note"/>
+                        </div>
+                        <p t-if="doc.fiscal_position_id and not is_html_empty(doc.fiscal_position_id.sudo().note)" class="mb-2">
+                            <strong>Данъчно основание / Fiscal Position:</strong>
+                            <span t-field="doc.fiscal_position_id.sudo().note"/>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Replace the standard quotation-shaped pro-forma with invoice-style structure. -->
+    <template id="report_saleorder_pro_forma_hydromotor_invoice_style"
+              inherit_id="sale.report_saleorder_pro_forma"
+              priority="9999">
+        <xpath expr="//t[@t-call='web.html_container']" position="replace">
+            <t t-call="web.html_container">
+                <t t-set="docs" t-value="docs.with_context(proforma=True)"/>
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="hydromotor_report_signatures.report_proforma_invoice_document"
+                       t-lang="doc.partner_id.lang"/>
+                </t>
+            </t>
+        </xpath>
+    </template>
+</odoo>
