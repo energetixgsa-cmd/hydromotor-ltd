@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_saleorder_pro_forma_hydromotor_invoice_style"
+              inherit_id="sale.report_saleorder_pro_forma"
+              priority="9999">
+        <xpath expr="//t[@t-call='web.html_container']" position="replace">
+            <t t-call="web.html_container">
+                <t t-set="docs" t-value="docs.with_context(proforma=True)"/>
+                <t t-foreach="docs" t-as="doc">
+                    <t t-set="hm_is_proforma" t-value="True"/>
+                    <t t-call="hydromotor_report_signatures.report_customer_invoice_document"
+                       t-lang="doc.partner_id.lang"/>
+                </t>
+            </t>
+        </xpath>
+    </template>
+</odoo>

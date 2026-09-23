@@ -1,25 +1,21 @@
 {
-    "name": "Hydromotor TREMOL Fiscal",
-    "version": "19.0.1.0.1",
-    "summary": "TREMOL M23 fiscal receipts from Odoo invoices through ZFPLabServer",
+    "name": "Hydromotor Report Signatures",
+    "version": "19.0.1.2.9",
+    "summary": "Bulgarian-compliant customer invoices, client-language documents and invoice-style pro-formas",
+    "category": "Accounting/Accounting",
     "author": "Hydromotor",
     "license": "LGPL-3",
-    "depends": ["account", "web"],
+    "depends": ["account", "sale"],
+    "post_init_hook": "post_init_hook",
     "data": [
-        "security/ir.model.access.csv",
-        "views/res_config_settings_views.xml",
-        "wizard/tremol_receipt_wizard_views.xml",
-        "views/account_move_views.xml",
+        "views/res_users_views.xml",
+        "views/res_partner_views.xml",
+        "views/sale_order_views.xml",
+        "report/report_external_layout_signatures.xml",
+        "report/report_invoice_signatures.xml",
+        "report/report_sale_signatures.xml",
+        "report/report_proforma_invoice.xml",
     ],
-    "assets": {
-        "web.assets_backend": [
-            "hydromotor_tremol_fiscal/static/src/js/tremol_bridge.js",
-            "hydromotor_tremol_fiscal/static/src/xml/tremol_bridge.xml",
-        ],
-    },
     "installable": True,
-    "application": False,
-    "auto_install": False,
+    "application": True,
 }
-
-

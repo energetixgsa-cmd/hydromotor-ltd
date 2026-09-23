@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="hydromotor_invoice_style_signature_block">
+        <t t-set="hm_customer" t-value="o.partner_id if o._name == 'account.move' else (o.partner_invoice_id or o.partner_id)"/>
+        <t t-set="hm_bg" t-value="(hm_customer.country_id.code == 'BG') if hm_customer.country_id else (hm_customer.lang or '').startswith('bg')"/>
+        <t t-set="prepared_user" t-value="(o.invoice_user_id or o.create_uid) if o._name == 'account.move' else (o.user_id or o.create_uid)"/>
+        <t t-set="prepared_name" t-value="(prepared_user.invoice_name_bg or prepared_user.name) if hm_bg else (prepared_user.invoice_name_en or prepared_user.name)"/>
+        <div class="hm_document_signatures hm_invoice_style_signatures"
+             data-hm-signatures="invoice-style"
+             style="margin-top: 28px; page-break-inside: avoid; break-inside: avoid; font-size: 11px; clear: both;">
+            <table style="width: 100%; table-layout: fixed; border-collapse: collapse;">
+                <tr>
+                    <td style="width: 33.33%; vertical-align: top; padding-right: 14px;">
+                        <div style="font-weight: 600; margin-bottom: 7px;">
+                            <span t-out="'Съставил:' if hm_bg else 'Prepared by:'"/>
+                        </div>
+                        <div style="min-height: 22px;"><span t-out="prepared_name"/></div>
+                        <div style="margin-top: 22px; font-weight: 600;"><span t-out="'Подпис:' if hm_bg else 'Signature:'"/></div>
+                        <div style="height: 20px; border-bottom: 1px solid #333; width: 92%;">&#160;</div>
+                    </td>
+                    <td style="width: 33.33%; vertical-align: top; padding-left: 7px; padding-right: 7px;">
+                        <div style="font-weight: 600; margin-bottom: 7px;"><span t-out="'Издал / Предал:' if hm_bg else 'Issued / Handed over by:'"/></div>
+                        <div style="height: 22px; border-bottom: 1px solid #333; width: 92%;">&#160;</div>
+                        <div style="margin-top: 22px; font-weight: 600;"><span t-out="'Подпис:' if hm_bg else 'Signature:'"/></div>
+                        <div style="height: 20px; border-bottom: 1px solid #333; width: 92%;">&#160;</div>
+                    </td>
+                    <td style="width: 33.33%; vertical-align: top; padding-left: 14px;">
+                        <div style="font-weight: 600; margin-bottom: 7px;"><span t-out="'Приел:' if hm_bg else 'Accepted by:'"/></div>
+                        <div style="height: 22px; border-bottom: 1px solid #333; width: 92%;">&#160;</div>
+                        <div style="margin-top: 22px; font-weight: 600;"><span t-out="'Подпис:' if hm_bg else 'Signature:'"/></div>
+                        <div style="height: 20px; border-bottom: 1px solid #333; width: 92%;">&#160;</div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </template>
+
+    <template id="hydromotor_sale_signature_block">
+        <t t-set="hm_customer" t-value="o.partner_invoice_id or o.partner_id"/>
+        <t t-set="hm_bg" t-value="(hm_customer.country_id.code == 'BG') if hm_customer.country_id else (hm_customer.lang or '').startswith('bg')"/>
+        <div class="hm_document_signatures hm_sale_style_signatures"
+             data-hm-signatures="sale-style"
+             style="margin-top: 28px; page-break-inside: avoid; break-inside: avoid; font-size: 11px; clear: both;">
+            <table style="width: 100%; table-layout: fixed; border-collapse: collapse;">
+                <tr>
+                    <td style="width: 50%; vertical-align: top; padding-right: 28px;">
+                        <div style="font-weight: 600; margin-bottom: 7px;"><span t-out="'Предал:' if hm_bg else 'Handed over by:'"/></div>
+                        <div style="height: 22px; border-bottom: 1px solid #333; width: 94%;">&#160;</div>
+                        <div style="margin-top: 22px; font-weight: 600;"><span t-out="'Подпис:' if hm_bg else 'Signature:'"/></div>
+                        <div style="height: 20px; border-bottom: 1px solid #333; width: 94%;">&#160;</div>
+                    </td>
+                    <td style="width: 50%; vertical-align: top; padding-left: 28px;">
+                        <div style="font-weight: 600; margin-bottom: 7px;"><span t-out="'Приел:' if hm_bg else 'Accepted by:'"/></div>
+                        <div style="height: 22px; border-bottom: 1px solid #333; width: 94%;">&#160;</div>
+                        <div style="margin-top: 22px; font-weight: 600;"><span t-out="'Подпис:' if hm_bg else 'Signature:'"/></div>
+                        <div style="height: 20px; border-bottom: 1px solid #333; width: 94%;">&#160;</div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </template>
+
+    <!--
+        The PDF engine extracts the report header into a separate HTML document.
+        Therefore spacing CSS must live INSIDE the selected external layout header;
+        CSS placed in web.external_layout's body does not reliably reach the PDF header.
+    -->
+    <template id="external_layout_standard_hydromotor_header_spacing"
+              inherit_id="web.external_layout_standard"
+              priority="9999">
+        <xpath expr="//div[contains(concat(' ', normalize-space(@class), ' '), ' header ') or contains(concat(' ', normalize-space(@t-attf-class), ' '), ' header ')]" position="inside">
+            <style type="text/css">
+                /* Remove only the trailing gap after the company-details block. */
+                ul[name="company_address_list"] &gt; li:not(:last-child) p:last-child {
+                    margin-bottom: 0 !important;
+                    padding-bottom: 0 !important;
+                }
+                ul[name="company_address_list"] &gt; li:not(:last-child) div:last-child {
+                    margin-bottom: 0 !important;
+                    padding-bottom: 0 !important;
+                }
+
+                /* Keep VAT/Tax ID in normal flow below the company address.
+                   Removing the trailing paragraph margin above closes the gap;
+                   shifting this row upward would overlap the last address line. */
+                ul[name="company_address_list"] &gt; li:last-child {
+                    position: static !important;
+                    margin-top: 0 !important;
+                    margin-bottom: 0 !important;
+                    padding-top: 0 !important;
+                    padding-bottom: 0 !important;
+                }
+            </style>
+        </xpath>
+    </template>
+
+    <template id="external_layout_hydromotor_signatures" inherit_id="web.external_layout" priority="9999">
+        <xpath expr="//t[@t-call]/t[@t-out='0']" position="after">
+            <t t-if="o and o._name == 'account.move' and o.move_type == 'out_invoice' and not o.env.context.get('hm_signature_embedded')">
+                <t t-call="hydromotor_report_signatures.hydromotor_invoice_style_signature_block"/>
+            </t>
+            <t t-elif="o and o._name == 'sale.order' and not o.env.context.get('proforma')">
+                <t t-call="hydromotor_report_signatures.hydromotor_sale_signature_block"/>
+            </t>
+        </xpath>
+    </template>
+</odoo>
