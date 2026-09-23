@@ -5,20 +5,20 @@ class ResPartner(models.Model):
     _inherit = "res.partner"
 
     hm_name_en = fields.Char(
-        string="Legal name (EN)",
-        help="English/Latin legal name used on customer-facing documents for foreign partners.",
+        string="Фирмено име за чужди документи (EN)",
+        help="Официалното име на фирмата на латиница, използвано при документи на чужд език.",
     )
     hm_address_en = fields.Text(
-        string="Legal address (EN)",
-        help="English/Latin legal address used on customer-facing documents for foreign partners.",
+        string="Адрес за чужди документи (EN)",
+        help="Официалният адрес на латиница, използван при документи на чужд език.",
     )
     hm_mol_bg = fields.Char(
         string="МОЛ / Представляващ",
-        help="Bulgarian name of the legal representative / materially responsible person printed on documents.",
+        help="Име на законния представител/МОЛ, което се отпечатва в българските документи.",
     )
     hm_mol_en = fields.Char(
-        string="Legal representative (EN)",
-        help="English/Latin name of the legal representative printed on foreign-language documents.",
+        string="Представляващ за чужди документи (EN)",
+        help="Име на законния представител на латиница за документи на чужд език.",
     )
 
 

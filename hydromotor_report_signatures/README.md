@@ -1,6 +1,6 @@
 # Hydromotor Report Signatures — Odoo 19
 
-Version 19.0.1.2.1.
+Version 19.0.1.2.2.
 
 ## Invoice-data field mapping
 
@@ -47,3 +47,10 @@ Fill the English fields only where an English/Latin presentation is required.
 ## Upgrade
 
 Replace the existing `hydromotor_report_signatures` addon folder, rebuild Odoo.sh, then upgrade the module from Apps.
+
+
+## v1.2.2 UI clarification
+- Dedicated full-width Invoice Data section on partner/company forms.
+- Explicit labels for EIK/BULSTAT, VAT No., MOL/legal representative and document language.
+- Separate foreign-document fields for EN legal name, address and representative.
+- Original VAT/language placements hidden to avoid duplicate entry points.

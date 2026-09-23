@@ -6,37 +6,69 @@
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="priority" eval="90"/>
         <field name="arch" type="xml">
-            <!-- Make the standard fields unambiguous for Bulgarian accounting users. -->
+            <!--
+                Keep one clear invoicing section instead of scattering legal data
+                across the standard partner form. The original VAT/language fields
+                stay in the view (so onchange/computations continue to work) but are
+                hidden from the user to avoid duplicate entry points.
+            -->
             <xpath expr="//field[@name='vat'][1]" position="attributes">
-                <attribute name="string">ДДС №</attribute>
+                <attribute name="invisible">1</attribute>
             </xpath>
             <xpath expr="//field[@name='lang'][1]" position="attributes">
-                <attribute name="string">Език на документите</attribute>
+                <attribute name="invisible">1</attribute>
             </xpath>
 
-            <!-- Keep all document/legal data together in the main partner form. -->
-            <xpath expr="//field[@name='vat'][1]" position="after">
-                <separator string="Данни за фактура / Invoice data"/>
-                <field name="company_registry"
-                       string="ЕИК / БУЛСТАТ"
-                       invisible="not is_company"
-                       placeholder="напр. 123456789"/>
-                <field name="hm_mol_bg"
-                       string="МОЛ / Представляващ"
-                       invisible="not is_company"
-                       placeholder="напр. Иван Иванов"/>
-                <field name="hm_name_en"
-                       string="Официално име на английски"
-                       invisible="not is_company"
-                       placeholder="e.g. Company Ltd."/>
-                <field name="hm_address_en"
-                       string="Официален адрес на английски"
-                       invisible="not is_company"
-                       placeholder="e.g. 1 Example St., Sofia 1000, Bulgaria"/>
-                <field name="hm_mol_en"
-                       string="МОЛ / Представляващ на английски"
-                       invisible="not is_company"
-                       placeholder="e.g. Ivan Ivanov"/>
+            <xpath expr="//sheet/group[1]" position="after">
+                <group string="ДАННИ ЗА ФАКТУРА / INVOICE DATA" name="hm_invoice_data" invisible="not is_company">
+                    <group string="Регистрационни данни">
+                        <label for="company_registry" string="ЕИК / БУЛСТАТ"/>
+                        <field name="company_registry"
+                               nolabel="1"
+                               placeholder="напр. 201422330"/>
+
+                        <label for="vat" string="ДДС №"/>
+                        <field name="vat"
+                               nolabel="1"
+                               placeholder="напр. BG201422330"/>
+
+                        <label for="hm_mol_bg" string="МОЛ / Представляващ"/>
+                        <field name="hm_mol_bg"
+                               nolabel="1"
+                               placeholder="напр. Иван Иванов"/>
+
+                        <label for="lang" string="Език на документите"/>
+                        <field name="lang" nolabel="1"/>
+
+                        <div colspan="2" class="text-muted" style="margin-top: 6px;">
+                            Езикът на документите определя на какъв език ще се печатат
+                            фактура, проформа, оферта и поръчка за този клиент.
+                        </div>
+                    </group>
+
+                    <group string="Данни за чуждестранни документи / Foreign document data">
+                        <label for="hm_name_en" string="Фирмено име (EN)"/>
+                        <field name="hm_name_en"
+                               nolabel="1"
+                               placeholder="e.g. Customer Company Ltd."/>
+
+                        <label for="hm_address_en" string="Адрес (EN)"/>
+                        <field name="hm_address_en"
+                               nolabel="1"
+                               placeholder="e.g. 1 Example St., Sofia 1000, Bulgaria"/>
+
+                        <label for="hm_mol_en" string="Представляващ (EN)"/>
+                        <field name="hm_mol_en"
+                               nolabel="1"
+                               placeholder="e.g. Ivan Ivanov"/>
+
+                        <div colspan="2" class="text-muted" style="margin-top: 6px;">
+                            Тези полета се използват само когато документът се издава
+                            на чужд език. За български документи се използват основното
+                            име, адрес и МОЛ на контрагента.
+                        </div>
+                    </group>
+                </group>
             </xpath>
         </field>
     </record>
@@ -47,18 +79,50 @@
         <field name="inherit_id" ref="base.view_company_form"/>
         <field name="priority" eval="90"/>
         <field name="arch" type="xml">
+            <!-- Hide the original placements; expose the same fields once in a clear block. -->
             <xpath expr="//field[@name='vat'][1]" position="attributes">
-                <attribute name="string">ДДС №</attribute>
+                <attribute name="invisible">1</attribute>
             </xpath>
             <xpath expr="//field[@name='company_registry'][1]" position="attributes">
-                <attribute name="string">ЕИК / БУЛСТАТ</attribute>
+                <attribute name="invisible">1</attribute>
             </xpath>
-            <xpath expr="//field[@name='company_registry'][1]" position="after">
-                <separator string="Данни за документи / Document data"/>
-                <field name="hm_mol_bg" string="МОЛ / Представляващ" placeholder="напр. Иван Иванов"/>
-                <field name="hm_name_en" string="Официално име на английски" placeholder="e.g. Hydromotor Ltd."/>
-                <field name="hm_address_en" string="Официален адрес на английски"/>
-                <field name="hm_mol_en" string="МОЛ / Представляващ на английски" placeholder="e.g. Ivan Ivanov"/>
+
+            <xpath expr="//page[@name='general_info']/group[1]" position="after">
+                <group string="ДАННИ ЗА ФАКТУРА / INVOICE DATA" name="hm_company_invoice_data">
+                    <group string="Регистрационни данни">
+                        <label for="company_registry" string="ЕИК / БУЛСТАТ"/>
+                        <field name="company_registry"
+                               nolabel="1"
+                               placeholder="напр. 201422330"/>
+
+                        <label for="vat" string="ДДС №"/>
+                        <field name="vat"
+                               nolabel="1"
+                               placeholder="напр. BG201422330"/>
+
+                        <label for="hm_mol_bg" string="МОЛ / Представляващ"/>
+                        <field name="hm_mol_bg"
+                               nolabel="1"
+                               placeholder="напр. Иван Иванов"/>
+                    </group>
+
+                    <group string="Данни за чуждестранни документи / Foreign document data">
+                        <label for="hm_name_en" string="Фирмено име (EN)"/>
+                        <field name="hm_name_en"
+                               nolabel="1"
+                               placeholder="e.g. Hydromotor Ltd."/>
+
+                        <label for="hm_address_en" string="Адрес (EN)"/>
+                        <field name="hm_address_en"
+                               nolabel="1"
+                               placeholder="e.g. Sofia, Bulgaria"/>
+
+                        <label for="hm_mol_en" string="Представляващ (EN)"/>
+                        <field name="hm_mol_en"
+                               nolabel="1"
+                               placeholder="e.g. Ivan Ivanov"/>
+                    </group>
+                </group>
             </xpath>
         </field>
     </record>
