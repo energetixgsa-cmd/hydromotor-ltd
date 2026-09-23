@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="report_customer_invoice_document">
-        <t t-set="doc" t-value="doc.with_context(hm_signature_embedded=True)"/>
+        <t t-set="hm_customer" t-value="doc.partner_id if doc._name == 'account.move' else (doc.partner_invoice_id or doc.partner_id)"/>
+        <t t-set="hm_bg" t-value="(hm_customer.country_id.code == 'BG') if hm_customer.country_id else (hm_customer.lang or '').startswith('bg')"/>
+        <t t-set="hm_doc_lang" t-value="'bg_BG' if hm_bg else 'en_US'"/>
+        <t t-set="doc" t-value="doc.with_context(hm_signature_embedded=True, lang=hm_doc_lang)"/>
         <t t-set="o" t-value="doc"/>
         <t t-set="hm_customer" t-value="doc.partner_id if doc._name == 'account.move' else (doc.partner_invoice_id or doc.partner_id)"/>
         <t t-set="hm_company" t-value="doc.company_id"/>
-        <t t-set="hm_bg" t-value="(hm_customer.lang or '').startswith('bg') if hm_customer.lang else (hm_customer.country_id.code == 'BG')"/>
         <t t-set="hm_issue_date" t-value="doc.invoice_date if doc._name == 'account.move' else doc.date_order"/>
         <t t-set="hm_supply_date" t-value="(doc.taxable_supply_date or doc.delivery_date or doc.invoice_date) if doc._name == 'account.move' else (doc.commitment_date or doc.date_order)"/>
         <t t-set="hm_due_date" t-value="doc.invoice_date_due if doc._name == 'account.move' else doc.validity_date"/>
         <t t-set="hm_reference" t-value="(doc.invoice_origin or doc.ref) if doc._name == 'account.move' else doc.client_order_ref"/>
         <t t-set="hm_payment_term" t-value="doc.invoice_payment_term_id if doc._name == 'account.move' else doc.payment_term_id"/>
-        <t t-set="hm_bank" t-value="(doc.partner_bank_id if doc._name == 'account.move' else False) or doc.company_id.partner_id.bank_ids[:1]"/>
+        <t t-set="hm_bank" t-value="(doc.partner_bank_id if doc._name == 'account.move' else doc.hm_partner_bank_id) or doc.company_id.partner_id.bank_ids[:1]"/>
         <t t-set="hm_lines" t-value="doc._get_move_lines_to_report() if doc._name == 'account.move' else doc._get_order_lines_to_report()"/>
         <t t-set="hm_display_discount" t-value="any(line.discount for line in hm_lines)"/>
         <t t-set="hm_prepared_user" t-value="(doc.invoice_user_id or doc.create_uid) if doc._name == 'account.move' else (doc.user_id or doc.create_uid)"/>

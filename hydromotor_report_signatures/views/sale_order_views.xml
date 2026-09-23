@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_order_form_hydromotor_document_bank" model="ir.ui.view">
+        <field name="name">sale.order.form.hydromotor.document.bank</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="priority" eval="90"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='order_details']/field[@name='payment_term_id']" position="after">
+                <field name="hm_available_partner_bank_ids" invisible="1"/>
+                <field name="hm_partner_bank_id"
+                       string="Банкова сметка за документа"
+                       domain="[('id', 'in', hm_available_partner_bank_ids)]"
+                       options="{'no_create': True, 'no_edit': True}"
+                       readonly="state == 'cancel'"/>
+                <div colspan="2" class="text-muted" style="margin-top: 2px;">
+                    Избраната сметка се печата на офертата/поръчката/проформата и се прехвърля към фактурата.
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

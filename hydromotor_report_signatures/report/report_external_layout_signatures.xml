@@ -2,7 +2,7 @@
 <odoo>
     <template id="hydromotor_invoice_style_signature_block">
         <t t-set="hm_customer" t-value="o.partner_id if o._name == 'account.move' else (o.partner_invoice_id or o.partner_id)"/>
-        <t t-set="hm_bg" t-value="(hm_customer.lang or '').startswith('bg') if hm_customer.lang else (hm_customer.country_id.code == 'BG')"/>
+        <t t-set="hm_bg" t-value="(hm_customer.country_id.code == 'BG') if hm_customer.country_id else (hm_customer.lang or '').startswith('bg')"/>
         <t t-set="prepared_user" t-value="(o.invoice_user_id or o.create_uid) if o._name == 'account.move' else (o.user_id or o.create_uid)"/>
         <t t-set="prepared_name" t-value="(prepared_user.invoice_name_bg or prepared_user.name) if hm_bg else (prepared_user.invoice_name_en or prepared_user.name)"/>
         <div class="hm_document_signatures hm_invoice_style_signatures"
@@ -37,7 +37,7 @@
 
     <template id="hydromotor_sale_signature_block">
         <t t-set="hm_customer" t-value="o.partner_invoice_id or o.partner_id"/>
-        <t t-set="hm_bg" t-value="(hm_customer.lang or '').startswith('bg') if hm_customer.lang else (hm_customer.country_id.code == 'BG')"/>
+        <t t-set="hm_bg" t-value="(hm_customer.country_id.code == 'BG') if hm_customer.country_id else (hm_customer.lang or '').startswith('bg')"/>
         <div class="hm_document_signatures hm_sale_style_signatures"
              data-hm-signatures="sale-style"
              style="margin-top: 28px; page-break-inside: avoid; break-inside: avoid; font-size: 11px; clear: both;">

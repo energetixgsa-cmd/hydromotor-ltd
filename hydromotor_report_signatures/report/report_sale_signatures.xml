@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!--
+        Quotations and sales orders use Bulgarian for Bulgarian customers and
+        English for all foreign customers, independent of an accidentally
+        mismatched partner language setting. Signature rendering is handled
+        centrally from web.external_layout.
+    -->
     <template id="report_saleorder_document_hydromotor_signatures"
               inherit_id="sale.report_saleorder_document"
               priority="999">
+        <xpath expr="//t[@t-set='doc'][1]" position="attributes">
+            <attribute name="t-value">doc.with_context(lang=('bg_BG' if doc.partner_id.country_id.code == 'BG' else ('en_US' if doc.partner_id.country_id else (doc.partner_id.lang or 'en_US'))))</attribute>
+        </xpath>
         <xpath expr="//div[contains(concat(' ', normalize-space(@class), ' '), ' page ')]"
                position="inside">
             <t t-if="False"/>

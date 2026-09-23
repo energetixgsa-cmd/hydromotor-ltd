@@ -1,6 +1,6 @@
 # Hydromotor Report Signatures — Odoo 19
 
-Version 19.0.1.2.2.
+Version 19.0.1.2.3.
 
 ## Invoice-data field mapping
 
@@ -54,3 +54,12 @@ Replace the existing `hydromotor_report_signatures` addon folder, rebuild Odoo.s
 - Explicit labels for EIK/BULSTAT, VAT No., MOL/legal representative and document language.
 - Separate foreign-document fields for EN legal name, address and representative.
 - Original VAT/language placements hidden to avoid duplicate entry points.
+
+
+## Version 19.0.1.2.3
+
+- Added an explicit **Банкова сметка за документа** field on quotation/sales order.
+- Pro-forma prints the selected sales-order bank account instead of always using the first company account.
+- Invoices created from the sales order inherit the selected bank account into `partner_bank_id`.
+- Document language is country-driven: Bulgarian customer = Bulgarian; foreign customer = English.
+- VAT label follows the same rule: **ДДС №** for Bulgarian customers, **VAT No.** for foreign customers.

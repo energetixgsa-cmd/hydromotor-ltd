@@ -1,6 +1,6 @@
 {
     "name": "Hydromotor Report Signatures",
-    "version": "19.0.1.2.2",
+    "version": "19.0.1.2.3",
     "summary": "Bulgarian-compliant customer invoices, client-language documents and invoice-style pro-formas",
     "category": "Accounting/Accounting",
     "author": "Hydromotor",
@@ -10,6 +10,7 @@
     "data": [
         "views/res_users_views.xml",
         "views/res_partner_views.xml",
+        "views/sale_order_views.xml",
         "report/report_external_layout_signatures.xml",
         "report/report_invoice_signatures.xml",
         "report/report_sale_signatures.xml",
