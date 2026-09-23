@@ -60,38 +60,42 @@
         </div>
     </template>
 
-    <template id="external_layout_hydromotor_signatures" inherit_id="web.external_layout" priority="9999">
-        <!-- Keep the VAT/Tax ID line visually attached to the company address.
-             Odoo's company_details HTML often ends in a <p> with Bootstrap's default
-             bottom margin, which creates an oversized gap before the VAT <li>. -->
-        <xpath expr="//t[@t-if='company.external_report_layout_id']" position="before">
+    <!--
+        The PDF engine extracts the report header into a separate HTML document.
+        Therefore spacing CSS must live INSIDE the selected external layout header;
+        CSS placed in web.external_layout's body does not reliably reach the PDF header.
+    -->
+    <template id="external_layout_standard_hydromotor_header_spacing"
+              inherit_id="web.external_layout_standard"
+              priority="9999">
+        <xpath expr="//div[contains(concat(' ', normalize-space(@class), ' '), ' header ')]" position="inside">
             <style type="text/css">
-                /* Keep Hydromotor VAT immediately under the last address line.
-                   company_details is HTML and can carry Bootstrap paragraph margins,
-                   so reset those margins and pull only the final VAT row upward. */
-                ul[name="company_address_list"] {
+                /* Remove only the trailing gap after the company-details block. */
+                ul[name="company_address_list"] &gt; li:not(:last-child) p:last-child {
                     margin-bottom: 0 !important;
                     padding-bottom: 0 !important;
                 }
-                ul[name="company_address_list"] &gt; li {
-                    margin-top: 0 !important;
-                    margin-bottom: 0 !important;
-                    padding-top: 0 !important;
-                    padding-bottom: 0 !important;
-                }
-                ul[name="company_address_list"] &gt; li:not(:last-child) p:last-child,
                 ul[name="company_address_list"] &gt; li:not(:last-child) div:last-child {
                     margin-bottom: 0 !important;
                     padding-bottom: 0 !important;
                 }
+
+                /* VAT/Tax ID is the final row in Odoo's company_address_list.
+                   Pull it up inside the actual PDF header, without changing the
+                   normal line spacing of the address itself. */
                 ul[name="company_address_list"] &gt; li:last-child {
-                    margin-top: -10px !important;
-                    position: relative;
-                    top: 0;
+                    position: relative !important;
+                    top: -14px !important;
+                    margin-top: 0 !important;
+                    margin-bottom: -14px !important;
+                    padding-top: 0 !important;
+                    padding-bottom: 0 !important;
                 }
             </style>
         </xpath>
+    </template>
 
+    <template id="external_layout_hydromotor_signatures" inherit_id="web.external_layout" priority="9999">
         <xpath expr="//t[@t-call]/t[@t-out='0']" position="after">
             <t t-if="o and o._name == 'account.move' and o.move_type == 'out_invoice' and not o.env.context.get('hm_signature_embedded')">
                 <t t-call="hydromotor_report_signatures.hydromotor_invoice_style_signature_block"/>

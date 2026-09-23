@@ -1,6 +1,6 @@
 # Hydromotor Report Signatures — Odoo 19
 
-Version 19.0.1.2.6.
+Version 19.0.1.2.7.
 
 ## Invoice-data field mapping
 
@@ -78,8 +78,15 @@ Replace the existing `hydromotor_report_signatures` addon folder, rebuild Odoo.s
 - Pro-forma invoices remain a single invoice-style document and are not duplicated as original/copy.
 
 
-## Version 19.0.1.2.6
+## Version 19.0.1.2.7
 
 - Invoice/pro-forma number is rendered explicitly and prominently above all document fields as `ФАКТУРА № ...` / `INVOICE № ...`.
 - ORIGINAL/COPY marker stays on the same top row as the document number.
 - Company VAT line in the external report header is pulled directly under the last address/country line; Bootstrap/HTML paragraph bottom margins are reset for the company address block.
+
+
+## 19.0.1.2.7
+
+- Fixes the Hydromotor header gap between the last address line (e.g. Bulgaria) and VAT/Tax ID.
+- The spacing rule now lives inside `web.external_layout_standard`'s actual header so it survives Odoo PDF header extraction.
+- Pulls only the VAT row upward; address line spacing is unchanged.
