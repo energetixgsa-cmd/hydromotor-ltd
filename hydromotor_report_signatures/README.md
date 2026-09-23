@@ -1,25 +1,29 @@
 # Hydromotor Report Signatures — Odoo 19
 
-Version 19.0.1.1.1.
+Version 19.0.1.2.0.
 
-## Documents covered
+## What this version changes
 
-- Customer invoice (`account.move`, outgoing invoice):
-  - automatic **Съставил / Prepared by** with BG/EN document name;
-  - blank **Издал / Предал / Issued / Handed over by**;
-  - blank **Приел / Accepted by**;
-  - signature line under all three.
-- Quotation (`sale.order`, draft/sent):
-  - blank **Предал / Handed over by**;
-  - blank **Приел / Accepted by**;
-  - signature line under both.
-- Sales Order (`sale.order`, confirmed): same signature block as quotation.
-- Pro-forma invoice (`sale.order` pro-forma): invoice-style structure plus the 3-column invoice signature block.
+- Customer invoices use a dedicated Bulgarian-compliance layout for Hydromotor.
+- Bulgarian customers receive Bulgarian labels; foreign customers receive English labels according to partner language/country.
+- Supplier and customer blocks include legal name, address, Company ID/EIK, VAT number and legal representative/MOL.
+- Invoice lines show Item No. separately from Description, Quantity, Unit, Unit Price excl. VAT, Discount, VAT and Tax Base.
+- Invoice header includes Issue Date, Date of Supply, Due Date, Currency and Reference.
+- Payment terms, IBAN/BIC and fiscal-position/legal VAT notes are printed when available.
+- Invoice signatures are single-language according to the customer.
+- Quotation and Sales Order signatures are also single-language according to the customer.
+- Pro-forma uses the exact same invoice-style template as the customer invoice; only the document title changes to Pro-forma Invoice.
 
-## Why the implementation changed
+## New master-data fields
 
-Earlier versions inherited only the standard invoice and sale-order report bodies. Studio/custom reports can replace those bodies, so the signature block could disappear. Version 19.0.1.1.1 inserts the block centrally through `web.external_layout`, which is the common external printing layout used by standard and Studio-derived reports.
+Contacts/companies now have:
+- `Legal name (EN)`
+- `Legal address (EN)`
+- `МОЛ / Представляващ`
+- `Legal representative (EN)`
+
+Fill the English fields only where an English/Latin presentation is required.
 
 ## Upgrade
 
-Replace the existing `hydromotor_report_signatures` addon folder, rebuild Odoo.sh, then upgrade the installed module from Apps.
+Replace the existing `hydromotor_report_signatures` addon folder, rebuild Odoo.sh, then upgrade the module from Apps.

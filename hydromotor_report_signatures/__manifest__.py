@@ -1,7 +1,7 @@
 {
     "name": "Hydromotor Report Signatures",
-    "version": "19.0.1.1.1",
-    "summary": "Bilingual signatures for invoices, quotations, orders and invoice-style pro-formas",
+    "version": "19.0.1.2.0",
+    "summary": "Bulgarian-compliant customer invoices, client-language documents and invoice-style pro-formas",
     "category": "Accounting/Accounting",
     "author": "Hydromotor",
     "license": "LGPL-3",
@@ -9,9 +9,10 @@
     "post_init_hook": "post_init_hook",
     "data": [
         "views/res_users_views.xml",
+        "views/res_partner_views.xml",
+        "report/report_external_layout_signatures.xml",
         "report/report_invoice_signatures.xml",
         "report/report_sale_signatures.xml",
-        "report/report_external_layout_signatures.xml",
         "report/report_proforma_invoice.xml",
     ],
     "installable": True,

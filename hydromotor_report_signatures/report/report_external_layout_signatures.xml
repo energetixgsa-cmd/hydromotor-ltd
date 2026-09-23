@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Invoice / pro-forma style: Prepared + Issued/Handed over + Accepted -->
     <template id="hydromotor_invoice_style_signature_block">
-        <t t-set="prepared_user"
-           t-value="(o.invoice_user_id or o.create_uid) if o._name == 'account.move' else (o.user_id or o.create_uid)"/>
+        <t t-set="hm_customer" t-value="o.partner_id if o._name == 'account.move' else (o.partner_invoice_id or o.partner_id)"/>
+        <t t-set="hm_bg" t-value="(hm_customer.lang or '').startswith('bg') if hm_customer.lang else (hm_customer.country_id.code == 'BG')"/>
+        <t t-set="prepared_user" t-value="(o.invoice_user_id or o.create_uid) if o._name == 'account.move' else (o.user_id or o.create_uid)"/>
+        <t t-set="prepared_name" t-value="(prepared_user.invoice_name_bg or prepared_user.name) if hm_bg else (prepared_user.invoice_name_en or prepared_user.name)"/>
         <div class="hm_document_signatures hm_invoice_style_signatures"
              data-hm-signatures="invoice-style"
              style="margin-top: 28px; page-break-inside: avoid; break-inside: avoid; font-size: 11px; clear: both;">
@@ -11,36 +12,22 @@
                 <tr>
                     <td style="width: 33.33%; vertical-align: top; padding-right: 14px;">
                         <div style="font-weight: 600; margin-bottom: 7px;">
-                            Съставил / Prepared by:
+                            <span t-out="'Съставил:' if hm_bg else 'Prepared by:'"/>
                         </div>
-                        <div style="min-height: 22px;">
-                            <t t-if="prepared_user">
-                                <t t-set="is_georgi" t-value="'georgi aenski' in (prepared_user.name or '').lower()"/>
-                                <t t-set="prepared_bg" t-value="prepared_user.invoice_name_bg or ('Георги Аенски' if is_georgi else prepared_user.name or '')"/>
-                                <t t-set="prepared_en" t-value="prepared_user.invoice_name_en or ('Georgi Aenski' if is_georgi else '')"/>
-                                <span t-out="prepared_bg"/>
-                                <t t-if="prepared_en and prepared_en != prepared_bg">
-                                    <span> / </span>
-                                    <span t-out="prepared_en"/>
-                                </t>
-                            </t>
-                        </div>
-                        <div style="margin-top: 22px; font-weight: 600;">Подпис / Signature:</div>
+                        <div style="min-height: 22px;"><span t-out="prepared_name"/></div>
+                        <div style="margin-top: 22px; font-weight: 600;"><span t-out="'Подпис:' if hm_bg else 'Signature:'"/></div>
                         <div style="height: 20px; border-bottom: 1px solid #333; width: 92%;">&#160;</div>
                     </td>
-
                     <td style="width: 33.33%; vertical-align: top; padding-left: 7px; padding-right: 7px;">
-                        <div style="font-weight: 600; margin-bottom: 2px;">Издал / Предал</div>
-                        <div style="margin-bottom: 7px;">Issued / Handed over by:</div>
+                        <div style="font-weight: 600; margin-bottom: 7px;"><span t-out="'Издал / Предал:' if hm_bg else 'Issued / Handed over by:'"/></div>
                         <div style="height: 22px; border-bottom: 1px solid #333; width: 92%;">&#160;</div>
-                        <div style="margin-top: 22px; font-weight: 600;">Подпис / Signature:</div>
+                        <div style="margin-top: 22px; font-weight: 600;"><span t-out="'Подпис:' if hm_bg else 'Signature:'"/></div>
                         <div style="height: 20px; border-bottom: 1px solid #333; width: 92%;">&#160;</div>
                     </td>
-
                     <td style="width: 33.33%; vertical-align: top; padding-left: 14px;">
-                        <div style="font-weight: 600; margin-bottom: 7px;">Приел / Accepted by:</div>
+                        <div style="font-weight: 600; margin-bottom: 7px;"><span t-out="'Приел:' if hm_bg else 'Accepted by:'"/></div>
                         <div style="height: 22px; border-bottom: 1px solid #333; width: 92%;">&#160;</div>
-                        <div style="margin-top: 22px; font-weight: 600;">Подпис / Signature:</div>
+                        <div style="margin-top: 22px; font-weight: 600;"><span t-out="'Подпис:' if hm_bg else 'Signature:'"/></div>
                         <div style="height: 20px; border-bottom: 1px solid #333; width: 92%;">&#160;</div>
                     </td>
                 </tr>
@@ -48,23 +35,24 @@
         </div>
     </template>
 
-    <!-- Quotation / sales order style: Handed over + Accepted -->
     <template id="hydromotor_sale_signature_block">
+        <t t-set="hm_customer" t-value="o.partner_invoice_id or o.partner_id"/>
+        <t t-set="hm_bg" t-value="(hm_customer.lang or '').startswith('bg') if hm_customer.lang else (hm_customer.country_id.code == 'BG')"/>
         <div class="hm_document_signatures hm_sale_style_signatures"
              data-hm-signatures="sale-style"
              style="margin-top: 28px; page-break-inside: avoid; break-inside: avoid; font-size: 11px; clear: both;">
             <table style="width: 100%; table-layout: fixed; border-collapse: collapse;">
                 <tr>
                     <td style="width: 50%; vertical-align: top; padding-right: 28px;">
-                        <div style="font-weight: 600; margin-bottom: 7px;">Предал / Handed over by:</div>
+                        <div style="font-weight: 600; margin-bottom: 7px;"><span t-out="'Предал:' if hm_bg else 'Handed over by:'"/></div>
                         <div style="height: 22px; border-bottom: 1px solid #333; width: 94%;">&#160;</div>
-                        <div style="margin-top: 22px; font-weight: 600;">Подпис / Signature:</div>
+                        <div style="margin-top: 22px; font-weight: 600;"><span t-out="'Подпис:' if hm_bg else 'Signature:'"/></div>
                         <div style="height: 20px; border-bottom: 1px solid #333; width: 94%;">&#160;</div>
                     </td>
                     <td style="width: 50%; vertical-align: top; padding-left: 28px;">
-                        <div style="font-weight: 600; margin-bottom: 7px;">Приел / Accepted by:</div>
+                        <div style="font-weight: 600; margin-bottom: 7px;"><span t-out="'Приел:' if hm_bg else 'Accepted by:'"/></div>
                         <div style="height: 22px; border-bottom: 1px solid #333; width: 94%;">&#160;</div>
-                        <div style="margin-top: 22px; font-weight: 600;">Подпис / Signature:</div>
+                        <div style="margin-top: 22px; font-weight: 600;"><span t-out="'Подпис:' if hm_bg else 'Signature:'"/></div>
                         <div style="height: 20px; border-bottom: 1px solid #333; width: 94%;">&#160;</div>
                     </td>
                 </tr>
@@ -72,23 +60,12 @@
         </div>
     </template>
 
-    <!--
-        Central insertion point. web.external_layout is used by standard and
-        Studio-derived external reports. The block is added to the body passed
-        to the selected company layout, so it works regardless of which visual
-        company layout is selected.
-    -->
-    <template id="external_layout_hydromotor_signatures"
-              inherit_id="web.external_layout"
-              priority="9999">
+    <template id="external_layout_hydromotor_signatures" inherit_id="web.external_layout" priority="9999">
         <xpath expr="//t[@t-call]/t[@t-out='0']" position="after">
-            <t t-if="o and o._name == 'account.move' and o.move_type == 'out_invoice'">
+            <t t-if="o and o._name == 'account.move' and o.move_type == 'out_invoice' and not o.env.context.get('hm_signature_embedded')">
                 <t t-call="hydromotor_report_signatures.hydromotor_invoice_style_signature_block"/>
             </t>
-            <t t-elif="o and o._name == 'sale.order' and o.env.context.get('proforma')">
-                <t t-call="hydromotor_report_signatures.hydromotor_invoice_style_signature_block"/>
-            </t>
-            <t t-elif="o and o._name == 'sale.order'">
+            <t t-elif="o and o._name == 'sale.order' and not o.env.context.get('proforma')">
                 <t t-call="hydromotor_report_signatures.hydromotor_sale_signature_block"/>
             </t>
         </xpath>

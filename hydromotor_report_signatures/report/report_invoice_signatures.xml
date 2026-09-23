@@ -1,16 +1,203 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!--
-        Kept under the original XML ID so upgrades replace the old view.
-        Signature rendering is now handled centrally from web.external_layout,
-        which also covers Studio/custom invoice templates.
-    -->
-    <template id="report_invoice_document_hydromotor_signatures"
-              inherit_id="account.report_invoice_document"
-              priority="999">
-        <xpath expr="//div[contains(concat(' ', normalize-space(@class), ' '), ' invoice_main ')]"
-               position="inside">
-            <t t-if="False"/>
+    <template id="report_customer_invoice_document">
+        <t t-set="doc" t-value="doc.with_context(hm_signature_embedded=True)"/>
+        <t t-set="o" t-value="doc"/>
+        <t t-set="hm_customer" t-value="doc.partner_id if doc._name == 'account.move' else (doc.partner_invoice_id or doc.partner_id)"/>
+        <t t-set="hm_company" t-value="doc.company_id"/>
+        <t t-set="hm_bg" t-value="(hm_customer.lang or '').startswith('bg') if hm_customer.lang else (hm_customer.country_id.code == 'BG')"/>
+        <t t-set="hm_issue_date" t-value="doc.invoice_date if doc._name == 'account.move' else doc.date_order"/>
+        <t t-set="hm_supply_date" t-value="(doc.taxable_supply_date or doc.delivery_date or doc.invoice_date) if doc._name == 'account.move' else (doc.commitment_date or doc.date_order)"/>
+        <t t-set="hm_due_date" t-value="doc.invoice_date_due if doc._name == 'account.move' else doc.validity_date"/>
+        <t t-set="hm_reference" t-value="(doc.invoice_origin or doc.ref) if doc._name == 'account.move' else doc.client_order_ref"/>
+        <t t-set="hm_payment_term" t-value="doc.invoice_payment_term_id if doc._name == 'account.move' else doc.payment_term_id"/>
+        <t t-set="hm_bank" t-value="(doc.partner_bank_id if doc._name == 'account.move' else False) or doc.company_id.partner_id.bank_ids[:1]"/>
+        <t t-set="hm_lines" t-value="doc._get_move_lines_to_report() if doc._name == 'account.move' else doc._get_order_lines_to_report()"/>
+        <t t-set="hm_display_discount" t-value="any(line.discount for line in hm_lines)"/>
+        <t t-set="hm_prepared_user" t-value="(doc.invoice_user_id or doc.create_uid) if doc._name == 'account.move' else (doc.user_id or doc.create_uid)"/>
+        <t t-set="hm_prepared_name" t-value="(hm_prepared_user.invoice_name_bg or hm_prepared_user.name) if hm_bg else (hm_prepared_user.invoice_name_en or hm_prepared_user.name)"/>
+
+        <t t-call="web.external_layout">
+            <div class="clearfix invoice_main">
+                <div class="page mb-4">
+                    <t t-set="layout_document_title">
+                        <span t-if="hm_is_proforma" t-out="'ПРОФОРМА ФАКТУРА' if hm_bg else 'PRO-FORMA INVOICE'"/>
+                        <span t-else="" t-out="'ФАКТУРА' if hm_bg else 'INVOICE'"/>
+                        <span> № </span>
+                        <span t-field="doc.name"/>
+                    </t>
+
+                    <div style="margin-bottom: 18px;">
+                        <table style="width:100%; table-layout:fixed; border-collapse:collapse; font-size:11px;">
+                            <tr>
+                                <td style="width:50%; vertical-align:top; padding:10px 14px 10px 0; border-right:1px solid #ddd;">
+                                    <div style="font-weight:700; font-size:12px; margin-bottom:7px;" t-out="'Доставчик' if hm_bg else 'Supplier'"/>
+                                    <div style="font-weight:600;" t-out="hm_company.name if hm_bg else (hm_company.hm_name_en or hm_company.name)"/>
+                                    <div t-if="not hm_bg and hm_company.hm_address_en" style="white-space:pre-line;" t-out="hm_company.hm_address_en"/>
+                                    <div t-else="">
+                                        <div t-if="hm_company.street" t-out="hm_company.street"/>
+                                        <div t-if="hm_company.street2" t-out="hm_company.street2"/>
+                                        <div t-if="hm_company.zip or hm_company.city"><span t-out="hm_company.zip or ''"/> <span t-out="hm_company.city or ''"/></div>
+                                        <div t-if="hm_company.country_id" t-out="hm_company.country_id.name"/>
+                                    </div>
+                                    <div><strong t-out="'ЕИК:' if hm_bg else 'Company ID (UIC):'"/> <span t-out="hm_company.company_registry or ''"/></div>
+                                    <div><strong t-out="'ДДС №:' if hm_bg else 'VAT No.:'"/> <span t-out="hm_company.vat or ''"/></div>
+                                    <div>
+                                        <strong t-out="'МОЛ / Представляващ:' if hm_bg else 'Legal representative:'"/>
+                                        <span t-out="(hm_company.hm_mol_bg if hm_bg else hm_company.hm_mol_en) or ''"/>
+                                    </div>
+                                </td>
+                                <td style="width:50%; vertical-align:top; padding:10px 0 10px 14px;">
+                                    <div style="font-weight:700; font-size:12px; margin-bottom:7px;" t-out="'Получател' if hm_bg else 'Customer'"/>
+                                    <div style="font-weight:600;" t-out="hm_customer.name if hm_bg else (hm_customer.hm_name_en or hm_customer.name)"/>
+                                    <div t-if="not hm_bg and hm_customer.hm_address_en" style="white-space:pre-line;" t-out="hm_customer.hm_address_en"/>
+                                    <div t-else="">
+                                        <div t-if="hm_customer.street" t-out="hm_customer.street"/>
+                                        <div t-if="hm_customer.street2" t-out="hm_customer.street2"/>
+                                        <div t-if="hm_customer.zip or hm_customer.city"><span t-out="hm_customer.zip or ''"/> <span t-out="hm_customer.city or ''"/></div>
+                                        <div t-if="hm_customer.country_id" t-out="hm_customer.country_id.name"/>
+                                    </div>
+                                    <div><strong t-out="'ЕИК:' if hm_bg else 'Company ID:'"/> <span t-out="hm_customer.company_registry or ''"/></div>
+                                    <div><strong t-out="'ДДС №:' if hm_bg else 'VAT No.:'"/> <span t-out="hm_customer.vat or ''"/></div>
+                                    <div>
+                                        <strong t-out="'МОЛ / Представляващ:' if hm_bg else 'Legal representative:'"/>
+                                        <span t-out="(hm_customer.hm_mol_bg if hm_bg else hm_customer.hm_mol_en) or ''"/>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div id="informations" class="row mb-4">
+                        <div class="col" t-if="hm_issue_date">
+                            <strong t-out="'Дата на издаване' if hm_bg else 'Issue Date'"/>
+                            <div t-out="hm_issue_date" t-options='{"widget":"date"}'/>
+                        </div>
+                        <div class="col" t-if="hm_supply_date">
+                            <strong t-out="'Дата на данъчно събитие' if hm_bg else 'Date of Supply'"/>
+                            <div t-out="hm_supply_date" t-options='{"widget":"date"}'/>
+                        </div>
+                        <div class="col" t-if="hm_due_date">
+                            <strong t-out="'Падеж' if hm_bg else 'Due Date'"/>
+                            <div t-out="hm_due_date" t-options='{"widget":"date"}'/>
+                        </div>
+                        <div class="col">
+                            <strong t-out="'Валута' if hm_bg else 'Currency'"/>
+                            <div t-out="doc.currency_id.name"/>
+                        </div>
+                        <div class="col" t-if="hm_reference">
+                            <strong t-out="'Референция' if hm_bg else 'Reference'"/>
+                            <div t-out="hm_reference"/>
+                        </div>
+                    </div>
+
+                    <table class="o_has_total_table table o_main_table table-borderless mb-0" name="hm_invoice_line_table">
+                        <thead style="display: table-row-group;">
+                            <tr>
+                                <th class="text-start" style="width:12%;"><span t-out="'Артикулен №' if hm_bg else 'Item No.'"/></th>
+                                <th class="text-start"><span t-out="'Описание' if hm_bg else 'Description'"/></th>
+                                <th class="text-end text-nowrap"><span t-out="'Количество' if hm_bg else 'Quantity'"/></th>
+                                <th class="text-start text-nowrap"><span t-out="'Мярка' if hm_bg else 'Unit'"/></th>
+                                <th class="text-end text-nowrap"><span t-out="'Ед. цена без ДДС' if hm_bg else 'Unit Price excl. VAT'"/></th>
+                                <th t-if="hm_display_discount" class="text-end"><span t-out="'Отст.%' if hm_bg else 'Disc.%'"/></th>
+                                <th class="text-end"><span t-out="'ДДС' if hm_bg else 'VAT'"/></th>
+                                <th class="text-end"><span t-out="'Данъчна основа' if hm_bg else 'Tax Base'"/></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="hm_lines" t-as="line">
+                                <tr t-if="line.display_type == 'line_section'" class="fw-bolder o_line_section">
+                                    <td colspan="99"><span t-field="line.name"/></td>
+                                </tr>
+                                <tr t-elif="line.display_type == 'line_subsection'" class="fw-bold o_line_subsection">
+                                    <td colspan="99"><span t-field="line.name"/></td>
+                                </tr>
+                                <tr t-elif="line.display_type == 'line_note'" class="fst-italic o_line_note">
+                                    <td colspan="99"><span t-field="line.name"/></td>
+                                </tr>
+                                <tr t-else="">
+                                    <td class="text-start"><span t-out="line.product_id.default_code or ''"/></td>
+                                    <td class="text-start"><span t-field="line.name" t-options="{'widget':'text'}"/></td>
+                                    <td class="text-end text-nowrap">
+                                        <span t-if="doc._name == 'account.move'" t-field="line.quantity"/>
+                                        <span t-else="" t-field="line.product_uom_qty"/>
+                                    </td>
+                                    <td class="text-start text-nowrap"><span t-field="line.product_uom_id"/></td>
+                                    <td class="text-end text-nowrap">
+                                        <span t-out="line.price_unit" t-options="{'widget':'monetary','display_currency':doc.currency_id}"/>
+                                    </td>
+                                    <td t-if="hm_display_discount" class="text-end"><span t-out="line.discount or 0"/></td>
+                                    <t t-set="hm_taxes" t-value="', '.join((tax.tax_label or tax.name) for tax in line.tax_ids)"/>
+                                    <td class="text-end"><span t-out="hm_taxes"/></td>
+                                    <td class="text-end text-nowrap">
+                                        <span t-out="line.price_subtotal" t-options="{'widget':'monetary','display_currency':doc.currency_id}"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+
+                    <div class="clearfix mt-3">
+                        <div class="row">
+                            <div class="col-6 ms-auto">
+                                <table class="o_total_table table table-borderless">
+                                    <tr>
+                                        <td><strong t-out="'Данъчна основа' if hm_bg else 'Tax Base'"/></td>
+                                        <td class="text-end"><span t-out="doc.amount_untaxed" t-options="{'widget':'monetary','display_currency':doc.currency_id}"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong t-out="'ДДС' if hm_bg else 'VAT'"/></td>
+                                        <td class="text-end"><span t-out="doc.amount_tax" t-options="{'widget':'monetary','display_currency':doc.currency_id}"/></td>
+                                    </tr>
+                                    <tr class="o_total">
+                                        <td><strong t-out="'ОБЩО' if hm_bg else 'TOTAL'"/></td>
+                                        <td class="text-end"><strong t-out="doc.amount_total" t-options="{'widget':'monetary','display_currency':doc.currency_id}"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-3" style="font-size:11px;">
+                        <div t-if="hm_payment_term" class="mb-1">
+                            <strong t-out="'Условия за плащане:' if hm_bg else 'Payment Terms:'"/> <span t-out="hm_payment_term.name"/>
+                        </div>
+                        <div t-if="hm_bank" class="mb-1">
+                            <strong>IBAN:</strong> <span t-out="hm_bank.acc_number or ''"/>
+                            <t t-if="hm_bank.bank_id and hm_bank.bank_id.bic"><span> | BIC/SWIFT: </span><span t-out="hm_bank.bank_id.bic"/></t>
+                            <t t-if="hm_bank.bank_id and hm_bank.bank_id.name"><span> | </span><span t-out="hm_bank.bank_id.name"/></t>
+                        </div>
+                        <div t-if="doc._name == 'account.move' and doc.payment_reference" class="mb-1">
+                            <strong t-out="'Основание за плащане:' if hm_bg else 'Payment Reference:'"/> <span t-field="doc.payment_reference"/>
+                        </div>
+                        <div t-if="doc.fiscal_position_id and not is_html_empty(doc.fiscal_position_id.sudo().note)" class="mb-1">
+                            <strong t-out="'Данъчно основание:' if hm_bg else 'Tax Basis:'"/> <span t-field="doc.fiscal_position_id.sudo().note"/>
+                        </div>
+                        <div t-if="doc._name == 'account.move' and not is_html_empty(doc.taxes_legal_notes)" class="mb-1">
+                            <span t-field="doc.taxes_legal_notes"/>
+                        </div>
+                        <div t-if="doc._name == 'account.move' and not is_html_empty(doc.narration)" class="mb-1">
+                            <span t-field="doc.narration"/>
+                        </div>
+                        <div t-if="doc._name == 'sale.order' and not is_html_empty(doc.note)" class="mb-1">
+                            <span t-field="doc.note"/>
+                        </div>
+                    </div>
+
+                    <t t-call="hydromotor_report_signatures.hydromotor_invoice_style_signature_block"/>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_invoice_selector_hydromotor" inherit_id="account.report_invoice" priority="9999">
+        <xpath expr="//t[@t-call='account.report_invoice_document']" position="after">
+            <t t-elif="o._get_name_invoice_report() == 'hydromotor_report_signatures.report_customer_invoice_document'"
+               t-call="hydromotor_report_signatures.report_customer_invoice_document"
+               t-lang="lang">
+                <t t-set="doc" t-value="o"/>
+                <t t-set="hm_is_proforma" t-value="False"/>
+            </t>
         </xpath>
     </template>
 </odoo>
