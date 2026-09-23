@@ -40,11 +40,13 @@
                                         <div t-if="hm_company.zip or hm_company.city"><span t-out="hm_company.zip or ''"/> <span t-out="hm_company.city or ''"/></div>
                                         <div t-if="hm_company.country_id" t-out="hm_company.country_id.name"/>
                                     </div>
-                                    <div><strong t-out="'ЕИК:' if hm_bg else 'Company ID (UIC):'"/> <span t-out="hm_company.company_registry or ''"/></div>
+                                    <t t-set="hm_company_uic" t-value="hm_company.company_registry or (((hm_company.vat or '')[2:]) if (hm_company.vat or '').startswith('BG') else '')"/>
+                                    <div><strong t-out="'ЕИК:' if hm_bg else 'Company ID (UIC):'"/> <span t-out="hm_company_uic"/></div>
                                     <div><strong t-out="'ДДС №:' if hm_bg else 'VAT No.:'"/> <span t-out="hm_company.vat or ''"/></div>
-                                    <div>
+                                    <t t-set="hm_company_mol" t-value="hm_company.hm_mol_bg if hm_bg else (hm_company.hm_mol_en or hm_company.hm_mol_bg)"/>
+                                    <div t-if="hm_company_mol">
                                         <strong t-out="'МОЛ / Представляващ:' if hm_bg else 'Legal representative:'"/>
-                                        <span t-out="(hm_company.hm_mol_bg if hm_bg else hm_company.hm_mol_en) or ''"/>
+                                        <span t-out="hm_company_mol"/>
                                     </div>
                                 </td>
                                 <td style="width:50%; vertical-align:top; padding:10px 0 10px 14px;">
@@ -57,11 +59,13 @@
                                         <div t-if="hm_customer.zip or hm_customer.city"><span t-out="hm_customer.zip or ''"/> <span t-out="hm_customer.city or ''"/></div>
                                         <div t-if="hm_customer.country_id" t-out="hm_customer.country_id.name"/>
                                     </div>
-                                    <div><strong t-out="'ЕИК:' if hm_bg else 'Company ID:'"/> <span t-out="hm_customer.company_registry or ''"/></div>
+                                    <t t-set="hm_customer_uic" t-value="hm_customer.company_registry or (((hm_customer.vat or '')[2:]) if (hm_customer.vat or '').startswith('BG') else '')"/>
+                                    <div><strong t-out="'ЕИК:' if hm_bg else 'Company ID:'"/> <span t-out="hm_customer_uic"/></div>
                                     <div><strong t-out="'ДДС №:' if hm_bg else 'VAT No.:'"/> <span t-out="hm_customer.vat or ''"/></div>
-                                    <div>
+                                    <t t-set="hm_customer_mol" t-value="hm_customer.hm_mol_bg if hm_bg else (hm_customer.hm_mol_en or hm_customer.hm_mol_bg)"/>
+                                    <div t-if="hm_customer_mol">
                                         <strong t-out="'МОЛ / Представляващ:' if hm_bg else 'Legal representative:'"/>
-                                        <span t-out="(hm_customer.hm_mol_bg if hm_bg else hm_customer.hm_mol_en) or ''"/>
+                                        <span t-out="hm_customer_mol"/>
                                     </div>
                                 </td>
                             </tr>
