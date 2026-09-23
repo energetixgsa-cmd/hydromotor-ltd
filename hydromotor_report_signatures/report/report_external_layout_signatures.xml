@@ -80,14 +80,13 @@
                     padding-bottom: 0 !important;
                 }
 
-                /* VAT/Tax ID is the final row in Odoo's company_address_list.
-                   Pull it up inside the actual PDF header, without changing the
-                   normal line spacing of the address itself. */
+                /* Keep VAT/Tax ID in normal flow below the company address.
+                   Removing the trailing paragraph margin above closes the gap;
+                   shifting this row upward would overlap the last address line. */
                 ul[name="company_address_list"] &gt; li:last-child {
-                    position: relative !important;
-                    top: -14px !important;
+                    position: static !important;
                     margin-top: 0 !important;
-                    margin-bottom: -14px !important;
+                    margin-bottom: 0 !important;
                     padding-top: 0 !important;
                     padding-bottom: 0 !important;
                 }

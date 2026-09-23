@@ -1,6 +1,6 @@
 # Hydromotor Report Signatures — Odoo 19
 
-Version 19.0.1.2.8.
+Version 19.0.1.2.9.
 
 ## Invoice-data field mapping
 
@@ -99,3 +99,11 @@ Replace the existing `hydromotor_report_signatures` addon folder, rebuild Odoo.s
 - Preserves the existing module name and view XML IDs.
 - Does not change configurator relationships or delete business records.
 - Validated against the upstream Odoo 19 standard report template, with Python/XML syntax and manifest-path checks. A live Odoo installation/upgrade and PDF rendering have not been run in this review environment.
+
+
+## Version 19.0.1.2.9
+
+- Removes the negative VAT-row offset and negative bottom margin that made the VAT number overlap the final company-address line once the header selector was fixed in 19.0.1.2.8.
+- Keeps the VAT row in normal document flow below the address. The trailing address paragraph/div margin reset remains to remove excess blank space.
+- Retains the Odoo 19 header selector and the existing view XML IDs.
+- Visual validation uses representative header HTML and the stylesheet extracted from this module, rendered with WeasyPrint. This is a layout fixture, not a live Odoo/wkhtmltopdf render or module upgrade.
