@@ -66,11 +66,28 @@
              bottom margin, which creates an oversized gap before the VAT <li>. -->
         <xpath expr="//t[@t-if='company.external_report_layout_id']" position="before">
             <style type="text/css">
-                ul[name="company_address_list"] p:last-child {
-                    margin-bottom: 2px !important;
+                /* Keep Hydromotor VAT immediately under the last address line.
+                   company_details is HTML and can carry Bootstrap paragraph margins,
+                   so reset those margins and pull only the final VAT row upward. */
+                ul[name="company_address_list"] {
+                    margin-bottom: 0 !important;
+                    padding-bottom: 0 !important;
                 }
                 ul[name="company_address_list"] &gt; li {
+                    margin-top: 0 !important;
                     margin-bottom: 0 !important;
+                    padding-top: 0 !important;
+                    padding-bottom: 0 !important;
+                }
+                ul[name="company_address_list"] &gt; li:not(:last-child) p:last-child,
+                ul[name="company_address_list"] &gt; li:not(:last-child) div:last-child {
+                    margin-bottom: 0 !important;
+                    padding-bottom: 0 !important;
+                }
+                ul[name="company_address_list"] &gt; li:last-child {
+                    margin-top: -10px !important;
+                    position: relative;
+                    top: 0;
                 }
             </style>
         </xpath>

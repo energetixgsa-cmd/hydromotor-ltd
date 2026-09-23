@@ -44,18 +44,27 @@
         <t t-call="web.external_layout">
             <div class="clearfix invoice_main">
                 <div class="page mb-4">
-                    <t t-set="layout_document_title">
-                        <span t-if="hm_is_proforma" t-out="'ПРОФОРМА ФАКТУРА' if hm_bg else 'PRO-FORMA INVOICE'"/>
-                        <span t-else="" t-out="'ФАКТУРА' if hm_bg else 'INVOICE'"/>
-                        <span> № </span>
-                        <span t-field="doc.name"/>
-                    </t>
-
-                    <div t-if="hm_copy_kind"
-                         style="text-align:right; font-size:10px; font-weight:700; letter-spacing:0.5px; margin-top:-4px; margin-bottom:6px;">
-                        <span t-if="hm_copy_kind == 'original'" t-out="'ОРИГИНАЛ' if hm_bg else 'ORIGINAL'"/>
-                        <span t-else="" t-out="'КОПИЕ' if hm_bg else 'COPY'"/>
-                    </div>
+                    <!-- Do not rely on the external layout title for the fiscal document number.
+                         Keep the invoice/pro-forma number explicitly visible above all document fields. -->
+                    <t t-set="layout_document_title" t-value="False"/>
+                    <table style="width:100%; border-collapse:collapse; margin:0 0 14px 0;">
+                        <tr>
+                            <td style="vertical-align:top; padding:0;">
+                                <div style="font-size:22px; font-weight:800; line-height:1.15; letter-spacing:0.2px;">
+                                    <span t-if="hm_is_proforma" t-out="'ПРОФОРМА ФАКТУРА' if hm_bg else 'PRO-FORMA INVOICE'"/>
+                                    <span t-else="" t-out="'ФАКТУРА' if hm_bg else 'INVOICE'"/>
+                                    <span> № </span>
+                                    <span t-out="doc.name or ''"/>
+                                </div>
+                            </td>
+                            <td t-if="hm_copy_kind" style="width:22%; vertical-align:top; text-align:right; padding:4px 0 0 12px;">
+                                <div style="font-size:11px; font-weight:800; letter-spacing:0.7px; white-space:nowrap;">
+                                    <span t-if="hm_copy_kind == 'original'" t-out="'ОРИГИНАЛ' if hm_bg else 'ORIGINAL'"/>
+                                    <span t-else="" t-out="'КОПИЕ' if hm_bg else 'COPY'"/>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
 
                     <div style="margin-bottom: 18px;">
                         <table style="width:100%; table-layout:fixed; border-collapse:collapse; font-size:11px;">

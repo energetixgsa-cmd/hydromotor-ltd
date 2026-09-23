@@ -1,6 +1,6 @@
 # Hydromotor Report Signatures — Odoo 19
 
-Version 19.0.1.2.5.
+Version 19.0.1.2.6.
 
 ## Invoice-data field mapping
 
@@ -76,3 +76,10 @@ Replace the existing `hydromotor_report_signatures` addon folder, rebuild Odoo.s
 - Foreign counterparties print **Company ID / UIC**.
 - Customer invoices are rendered as two copies in one PDF: **ОРИГИНАЛ / ORIGINAL** followed by **КОПИЕ / COPY**.
 - Pro-forma invoices remain a single invoice-style document and are not duplicated as original/copy.
+
+
+## Version 19.0.1.2.6
+
+- Invoice/pro-forma number is rendered explicitly and prominently above all document fields as `ФАКТУРА № ...` / `INVOICE № ...`.
+- ORIGINAL/COPY marker stays on the same top row as the document number.
+- Company VAT line in the external report header is pulled directly under the last address/country line; Bootstrap/HTML paragraph bottom margins are reset for the company address block.
