@@ -61,6 +61,20 @@
     </template>
 
     <template id="external_layout_hydromotor_signatures" inherit_id="web.external_layout" priority="9999">
+        <!-- Keep the VAT/Tax ID line visually attached to the company address.
+             Odoo's company_details HTML often ends in a <p> with Bootstrap's default
+             bottom margin, which creates an oversized gap before the VAT <li>. -->
+        <xpath expr="//t[@t-if='company.external_report_layout_id']" position="before">
+            <style type="text/css">
+                ul[name="company_address_list"] p:last-child {
+                    margin-bottom: 2px !important;
+                }
+                ul[name="company_address_list"] &gt; li {
+                    margin-bottom: 0 !important;
+                }
+            </style>
+        </xpath>
+
         <xpath expr="//t[@t-call]/t[@t-out='0']" position="after">
             <t t-if="o and o._name == 'account.move' and o.move_type == 'out_invoice' and not o.env.context.get('hm_signature_embedded')">
                 <t t-call="hydromotor_report_signatures.hydromotor_invoice_style_signature_block"/>

@@ -1,6 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
+    <!--
+        Customer invoice wrapper. Real invoices are rendered twice in one PDF:
+        first as ORIGINAL, second as COPY. Pro-forma uses the same invoice body
+        but is rendered only once and is not marked as an original/copy.
+    -->
     <template id="report_customer_invoice_document">
+        <t t-if="hm_is_proforma">
+            <t t-set="hm_copy_kind" t-value="False"/>
+            <t t-call="hydromotor_report_signatures.report_customer_invoice_page"/>
+        </t>
+        <t t-elif="doc._name == 'account.move' and doc.move_type == 'out_invoice'">
+            <t t-set="hm_copy_kind" t-value="'original'"/>
+            <t t-call="hydromotor_report_signatures.report_customer_invoice_page"/>
+            <t t-set="hm_copy_kind" t-value="'copy'"/>
+            <t t-call="hydromotor_report_signatures.report_customer_invoice_page"/>
+        </t>
+        <t t-else="">
+            <t t-set="hm_copy_kind" t-value="False"/>
+            <t t-call="hydromotor_report_signatures.report_customer_invoice_page"/>
+        </t>
+    </template>
+    <template id="report_customer_invoice_page">
         <t t-set="hm_customer" t-value="doc.partner_id if doc._name == 'account.move' else (doc.partner_invoice_id or doc.partner_id)"/>
         <t t-set="hm_bg" t-value="(hm_customer.country_id.code == 'BG') if hm_customer.country_id else (hm_customer.lang or '').startswith('bg')"/>
         <t t-set="hm_doc_lang" t-value="'bg_BG' if hm_bg else 'en_US'"/>
@@ -29,6 +51,12 @@
                         <span t-field="doc.name"/>
                     </t>
 
+                    <div t-if="hm_copy_kind"
+                         style="text-align:right; font-size:10px; font-weight:700; letter-spacing:0.5px; margin-top:-4px; margin-bottom:6px;">
+                        <span t-if="hm_copy_kind == 'original'" t-out="'ОРИГИНАЛ' if hm_bg else 'ORIGINAL'"/>
+                        <span t-else="" t-out="'КОПИЕ' if hm_bg else 'COPY'"/>
+                    </div>
+
                     <div style="margin-bottom: 18px;">
                         <table style="width:100%; table-layout:fixed; border-collapse:collapse; font-size:11px;">
                             <tr>
@@ -43,7 +71,7 @@
                                         <div t-if="hm_company.country_id" t-out="hm_company.country_id.name"/>
                                     </div>
                                     <t t-set="hm_company_uic" t-value="hm_company.company_registry or (((hm_company.vat or '')[2:]) if (hm_company.vat or '').startswith('BG') else '')"/>
-                                    <div><strong t-out="'ЕИК:' if hm_bg else 'Company ID (UIC):'"/> <span t-out="hm_company_uic"/></div>
+                                    <div><strong t-out="'ЕИК:' if hm_bg else 'Company ID / UIC:'"/> <span t-out="hm_company_uic"/></div>
                                     <div><strong t-out="'ДДС №:' if hm_bg else 'VAT No.:'"/> <span t-out="hm_company.vat or ''"/></div>
                                     <t t-set="hm_company_mol" t-value="hm_company.hm_mol_bg if hm_bg else (hm_company.hm_mol_en or hm_company.hm_mol_bg)"/>
                                     <div t-if="hm_company_mol">
@@ -62,7 +90,7 @@
                                         <div t-if="hm_customer.country_id" t-out="hm_customer.country_id.name"/>
                                     </div>
                                     <t t-set="hm_customer_uic" t-value="hm_customer.company_registry or (((hm_customer.vat or '')[2:]) if (hm_customer.vat or '').startswith('BG') else '')"/>
-                                    <div><strong t-out="'ЕИК:' if hm_bg else 'Company ID:'"/> <span t-out="hm_customer_uic"/></div>
+                                    <div><strong t-out="'ЕИК:' if hm_bg else 'Company ID / UIC:'"/> <span t-out="hm_customer_uic"/></div>
                                     <div><strong t-out="'ДДС №:' if hm_bg else 'VAT No.:'"/> <span t-out="hm_customer.vat or ''"/></div>
                                     <t t-set="hm_customer_mol" t-value="hm_customer.hm_mol_bg if hm_bg else (hm_customer.hm_mol_en or hm_customer.hm_mol_bg)"/>
                                     <div t-if="hm_customer_mol">

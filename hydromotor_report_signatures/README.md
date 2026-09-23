@@ -1,6 +1,6 @@
 # Hydromotor Report Signatures — Odoo 19
 
-Version 19.0.1.2.3.
+Version 19.0.1.2.5.
 
 ## Invoice-data field mapping
 
@@ -56,10 +56,23 @@ Replace the existing `hydromotor_report_signatures` addon folder, rebuild Odoo.s
 - Original VAT/language placements hidden to avoid duplicate entry points.
 
 
-## Version 19.0.1.2.3
+## Version 19.0.1.2.5
 
 - Added an explicit **Банкова сметка за документа** field on quotation/sales order.
 - Pro-forma prints the selected sales-order bank account instead of always using the first company account.
 - Invoices created from the sales order inherit the selected bank account into `partner_bank_id`.
 - Document language is country-driven: Bulgarian customer = Bulgarian; foreign customer = English.
 - VAT label follows the same rule: **ДДС №** for Bulgarian customers, **VAT No.** for foreign customers.
+
+
+## 19.0.1.2.5
+- Reduced the excessive blank space between the last company-address line and the VAT/Tax ID line in the report header.
+- The address line spacing itself is unchanged.
+
+
+## Version 19.0.1.2.5
+
+- Bulgarian counterparties print **ЕИК**.
+- Foreign counterparties print **Company ID / UIC**.
+- Customer invoices are rendered as two copies in one PDF: **ОРИГИНАЛ / ORIGINAL** followed by **КОПИЕ / COPY**.
+- Pro-forma invoices remain a single invoice-style document and are not duplicated as original/copy.
