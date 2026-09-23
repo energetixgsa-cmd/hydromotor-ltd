@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_saleorder_document_hydromotor_signatures" inherit_id="sale.report_saleorder_document">
+        <xpath expr="//span[@name='order_note']/parent::div" position="after">
+            <div t-if="doc.state in ['draft', 'sent']"
+                 class="hm_quote_signatures"
+                 style="margin-top: 28px; page-break-inside: avoid; font-size: 11px;">
+                <table style="width: 100%; table-layout: fixed; border-collapse: collapse;">
+                    <tr>
+                        <!-- Handed over by: intentionally blank for handwriting -->
+                        <td style="width: 50%; vertical-align: top; padding-right: 28px;">
+                            <div style="font-weight: 600; margin-bottom: 7px;">
+                                Предал / Handed over by:
+                            </div>
+                            <div style="height: 22px; border-bottom: 1px solid #333; width: 94%;">&#160;</div>
+                            <div style="margin-top: 22px; font-weight: 600;">
+                                Подпис / Signature:
+                            </div>
+                            <div style="height: 20px; border-bottom: 1px solid #333; width: 94%;">&#160;</div>
+                        </td>
+
+                        <!-- Accepted by: intentionally blank for handwriting -->
+                        <td style="width: 50%; vertical-align: top; padding-left: 28px;">
+                            <div style="font-weight: 600; margin-bottom: 7px;">
+                                Приел / Accepted by:
+                            </div>
+                            <div style="height: 22px; border-bottom: 1px solid #333; width: 94%;">&#160;</div>
+                            <div style="margin-top: 22px; font-weight: 600;">
+                                Подпис / Signature:
+                            </div>
+                            <div style="height: 20px; border-bottom: 1px solid #333; width: 94%;">&#160;</div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </xpath>
+    </template>
+</odoo>
