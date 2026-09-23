@@ -1,6 +1,6 @@
 # Hydromotor Report Signatures — Odoo 19
 
-Version 19.0.1.1.0.
+Version 19.0.1.1.1.
 
 ## Documents covered
 
@@ -18,7 +18,7 @@ Version 19.0.1.1.0.
 
 ## Why the implementation changed
 
-Earlier versions inherited only the standard invoice and sale-order report bodies. Studio/custom reports can replace those bodies, so the signature block could disappear. Version 19.0.1.1.0 inserts the block centrally through `web.external_layout`, which is the common external printing layout used by standard and Studio-derived reports.
+Earlier versions inherited only the standard invoice and sale-order report bodies. Studio/custom reports can replace those bodies, so the signature block could disappear. Version 19.0.1.1.1 inserts the block centrally through `web.external_layout`, which is the common external printing layout used by standard and Studio-derived reports.
 
 ## Upgrade
 

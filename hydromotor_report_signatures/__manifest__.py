@@ -1,7 +1,8 @@
 {
     "name": "Hydromotor Report Signatures",
-    "version": "19.0.1.1.0",
+    "version": "19.0.1.1.1",
     "summary": "Bilingual signatures for invoices, quotations, orders and invoice-style pro-formas",
+    "category": "Accounting/Accounting",
     "author": "Hydromotor",
     "license": "LGPL-3",
     "depends": ["account", "sale"],
@@ -14,5 +15,5 @@
         "report/report_proforma_invoice.xml",
     ],
     "installable": True,
-    "application": False,
+    "application": True,
 }
