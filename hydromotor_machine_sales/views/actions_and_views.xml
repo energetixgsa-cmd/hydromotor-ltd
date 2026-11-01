@@ -242,6 +242,10 @@ def hm_mapping(settings):
     if not settings.x_target_model_id or not settings.x_target_model_id.model.startswith('x_'):
         raise UserError('Изберете потребителския Studio модел на регистъра за машини.')
     model_name = settings.x_target_model_id.model
+    if model_name == 'x_hm_machine':
+        # Native service adapter has a fixed, source-verified contract. Product
+        # and serial stay related to the REAL lot and are never written here.
+        return (env[model_name], dict(name='x_name', partner='x_partner_id', company='x_company_id', key='x_hms_source_key', order='x_sale_order_id', summary='x_hms_quote_description', state='x_hms_order_state'))
     target = env[model_name].sudo()
     specification = [('name', settings.x_name_field_id, 'char', False, True), ('partner', settings.x_partner_field_id, 'many2one', 'res.partner', True), ('company', settings.x_company_field_id, 'many2one', 'res.company', True), ('key', settings.x_key_field_id, 'char', False, True), ('product', settings.x_product_field_id, 'many2one', 'product.product', False), ('order', settings.x_order_field_id, 'many2one', 'sale.order', False), ('line', settings.x_line_field_id, 'many2one', 'sale.order.line', False), ('lead', settings.x_lead_field_id, 'many2one', 'crm.lead', False), ('summary', settings.x_summary_field_id, 'text', False, False), ('state', settings.x_state_field_id, 'char', False, False), ('warranty', settings.x_warranty_field_id, 'integer', False, False)]
     mapping = {}
@@ -262,52 +266,12 @@ def hm_mapping(settings):
     return (target, mapping)
 
 def hm_sync(order):
-    bridge_model = env['x_hm_bridge'].sudo()
-    links = bridge_model.search([('x_order_id', '=', order.id)])
-    machine_lines = order.order_line.filtered(lambda l: l.product_id.x_hm_base_id or l.x_hm_release_id or l.x_hm_config_id)
-    if not machine_lines and (not links):
-        return
-    order.write({'x_hm_sync_revision': order.x_hm_sync_revision + 1})
-    for link in links:
-        target = env[link.x_target_model].sudo().browse(link.x_target_id).exists()
-        if not target:
-            raise UserError('Липсва вече свързана машина в регистъра: ' + link.x_name + '. Възстановете връзката преди продължаване.')
-        if link.x_state_field:
-            target.write({link.x_state_field: order.state})
-    if order.state != 'sale':
-        return
-    settings_rows = env['x_hm_settings'].sudo().search([('x_company_id', '=', order.company_id.id)])
-    if len(settings_rows) != 1 or not settings_rows.x_enabled:
-        raise UserError('Преди продажба на машина настройте и активирайте връзката към нейния регистър в „Машини → Настройки“.')
-    settings = settings_rows
-    target_model, mapping = hm_mapping(settings)
-    for line in machine_lines:
-        release = hm_validate_release(line)
-        if not release:
-            continue
-        keys = hm_unit_keys(line.id, release.x_quantity)
-        for number, key in enumerate(keys, 1):
-            existing = bridge_model.search([('x_source_key', '=', key)])
-            if len(existing) &gt; 1:
-                raise UserError('Повторена вътрешна връзка: ' + key)
-            if existing:
-                if existing.x_release_id != release or existing.x_company_id != order.company_id:
-                    raise UserError('Продадената машина има различна фиксирана конфигурация: ' + key)
-                continue
-            logical = dict(name='%s — %s / %s' % (release.x_product_id.name, order.name, number), partner=order.partner_id.commercial_partner_id.id, company=order.company_id.id, key=key, product=release.x_product_id.id, order=order.id, line=line.id, lead=order.opportunity_id.id or False, summary=release.x_description, state=order.state, warranty=release.x_config_id.x_warranty_months)
-            values = {}
-            for k, field in mapping.items():
-                values[field] = logical[k]
-            target = target_model.search([(mapping['key'], '=', key)])
-            if len(target) &gt; 1:
-                raise UserError('Повторен източник в регистъра: ' + key)
-            if target:
-                for check in ['partner', 'company', 'product', 'order', 'line']:
-                    if check in mapping and (target[mapping[check]].id or False) != logical[check]:
-                        raise UserError('Съществуващият запис не съответства на тази продажба: ' + key)
-            else:
-                target = target_model.with_company(order.company_id).create(values)
-            bridge_model.create(dict(x_name=logical['name'], x_source_key=key, x_order_id=order.id, x_line_id=line.id, x_config_id=release.x_config_id.id, x_release_id=release.id, x_company_id=order.company_id.id, x_target_model=target_model._name, x_target_id=target.id, x_unit_number=number, x_state_field=mapping.get('state', False)))
+    # Keep the recovered configurator's release/fingerprint guards; perform
+    # dossier writes only in the transactional, caller-ACL-aware adapter.
+    for line in order.order_line:
+        if order.state == 'sale':
+            hm_validate_release(line)
+    env['hydromotor.machine.registry']._sync_order(order)
 
 def hm_publish(cfg, approve=False):
     if not env.user.has_group('sales_team.group_sale_salesman'):
@@ -607,6 +571,10 @@ def hm_mapping(settings):
     if not settings.x_target_model_id or not settings.x_target_model_id.model.startswith('x_'):
         raise UserError('Изберете потребителския Studio модел на регистъра за машини.')
     model_name = settings.x_target_model_id.model
+    if model_name == 'x_hm_machine':
+        # Native service adapter has a fixed, source-verified contract. Product
+        # and serial stay related to the REAL lot and are never written here.
+        return (env[model_name], dict(name='x_name', partner='x_partner_id', company='x_company_id', key='x_hms_source_key', order='x_sale_order_id', summary='x_hms_quote_description', state='x_hms_order_state'))
     target = env[model_name].sudo()
     specification = [('name', settings.x_name_field_id, 'char', False, True), ('partner', settings.x_partner_field_id, 'many2one', 'res.partner', True), ('company', settings.x_company_field_id, 'many2one', 'res.company', True), ('key', settings.x_key_field_id, 'char', False, True), ('product', settings.x_product_field_id, 'many2one', 'product.product', False), ('order', settings.x_order_field_id, 'many2one', 'sale.order', False), ('line', settings.x_line_field_id, 'many2one', 'sale.order.line', False), ('lead', settings.x_lead_field_id, 'many2one', 'crm.lead', False), ('summary', settings.x_summary_field_id, 'text', False, False), ('state', settings.x_state_field_id, 'char', False, False), ('warranty', settings.x_warranty_field_id, 'integer', False, False)]
     mapping = {}
@@ -627,52 +595,12 @@ def hm_mapping(settings):
     return (target, mapping)
 
 def hm_sync(order):
-    bridge_model = env['x_hm_bridge'].sudo()
-    links = bridge_model.search([('x_order_id', '=', order.id)])
-    machine_lines = order.order_line.filtered(lambda l: l.product_id.x_hm_base_id or l.x_hm_release_id or l.x_hm_config_id)
-    if not machine_lines and (not links):
-        return
-    order.write({'x_hm_sync_revision': order.x_hm_sync_revision + 1})
-    for link in links:
-        target = env[link.x_target_model].sudo().browse(link.x_target_id).exists()
-        if not target:
-            raise UserError('Липсва вече свързана машина в регистъра: ' + link.x_name + '. Възстановете връзката преди продължаване.')
-        if link.x_state_field:
-            target.write({link.x_state_field: order.state})
-    if order.state != 'sale':
-        return
-    settings_rows = env['x_hm_settings'].sudo().search([('x_company_id', '=', order.company_id.id)])
-    if len(settings_rows) != 1 or not settings_rows.x_enabled:
-        raise UserError('Преди продажба на машина настройте и активирайте връзката към нейния регистър в „Машини → Настройки“.')
-    settings = settings_rows
-    target_model, mapping = hm_mapping(settings)
-    for line in machine_lines:
-        release = hm_validate_release(line)
-        if not release:
-            continue
-        keys = hm_unit_keys(line.id, release.x_quantity)
-        for number, key in enumerate(keys, 1):
-            existing = bridge_model.search([('x_source_key', '=', key)])
-            if len(existing) &gt; 1:
-                raise UserError('Повторена вътрешна връзка: ' + key)
-            if existing:
-                if existing.x_release_id != release or existing.x_company_id != order.company_id:
-                    raise UserError('Продадената машина има различна фиксирана конфигурация: ' + key)
-                continue
-            logical = dict(name='%s — %s / %s' % (release.x_product_id.name, order.name, number), partner=order.partner_id.commercial_partner_id.id, company=order.company_id.id, key=key, product=release.x_product_id.id, order=order.id, line=line.id, lead=order.opportunity_id.id or False, summary=release.x_description, state=order.state, warranty=release.x_config_id.x_warranty_months)
-            values = {}
-            for k, field in mapping.items():
-                values[field] = logical[k]
-            target = target_model.search([(mapping['key'], '=', key)])
-            if len(target) &gt; 1:
-                raise UserError('Повторен източник в регистъра: ' + key)
-            if target:
-                for check in ['partner', 'company', 'product', 'order', 'line']:
-                    if check in mapping and (target[mapping[check]].id or False) != logical[check]:
-                        raise UserError('Съществуващият запис не съответства на тази продажба: ' + key)
-            else:
-                target = target_model.with_company(order.company_id).create(values)
-            bridge_model.create(dict(x_name=logical['name'], x_source_key=key, x_order_id=order.id, x_line_id=line.id, x_config_id=release.x_config_id.id, x_release_id=release.id, x_company_id=order.company_id.id, x_target_model=target_model._name, x_target_id=target.id, x_unit_number=number, x_state_field=mapping.get('state', False)))
+    # Keep the recovered configurator's release/fingerprint guards; perform
+    # dossier writes only in the transactional, caller-ACL-aware adapter.
+    for line in order.order_line:
+        if order.state == 'sale':
+            hm_validate_release(line)
+    env['hydromotor.machine.registry']._sync_order(order)
 
 def hm_publish(cfg, approve=False):
     if not env.user.has_group('sales_team.group_sale_salesman'):
@@ -970,6 +898,10 @@ def hm_mapping(settings):
     if not settings.x_target_model_id or not settings.x_target_model_id.model.startswith('x_'):
         raise UserError('Изберете потребителския Studio модел на регистъра за машини.')
     model_name = settings.x_target_model_id.model
+    if model_name == 'x_hm_machine':
+        # Native service adapter has a fixed, source-verified contract. Product
+        # and serial stay related to the REAL lot and are never written here.
+        return (env[model_name], dict(name='x_name', partner='x_partner_id', company='x_company_id', key='x_hms_source_key', order='x_sale_order_id', summary='x_hms_quote_description', state='x_hms_order_state'))
     target = env[model_name].sudo()
     specification = [('name', settings.x_name_field_id, 'char', False, True), ('partner', settings.x_partner_field_id, 'many2one', 'res.partner', True), ('company', settings.x_company_field_id, 'many2one', 'res.company', True), ('key', settings.x_key_field_id, 'char', False, True), ('product', settings.x_product_field_id, 'many2one', 'product.product', False), ('order', settings.x_order_field_id, 'many2one', 'sale.order', False), ('line', settings.x_line_field_id, 'many2one', 'sale.order.line', False), ('lead', settings.x_lead_field_id, 'many2one', 'crm.lead', False), ('summary', settings.x_summary_field_id, 'text', False, False), ('state', settings.x_state_field_id, 'char', False, False), ('warranty', settings.x_warranty_field_id, 'integer', False, False)]
     mapping = {}
@@ -990,52 +922,12 @@ def hm_mapping(settings):
     return (target, mapping)
 
 def hm_sync(order):
-    bridge_model = env['x_hm_bridge'].sudo()
-    links = bridge_model.search([('x_order_id', '=', order.id)])
-    machine_lines = order.order_line.filtered(lambda l: l.product_id.x_hm_base_id or l.x_hm_release_id or l.x_hm_config_id)
-    if not machine_lines and (not links):
-        return
-    order.write({'x_hm_sync_revision': order.x_hm_sync_revision + 1})
-    for link in links:
-        target = env[link.x_target_model].sudo().browse(link.x_target_id).exists()
-        if not target:
-            raise UserError('Липсва вече свързана машина в регистъра: ' + link.x_name + '. Възстановете връзката преди продължаване.')
-        if link.x_state_field:
-            target.write({link.x_state_field: order.state})
-    if order.state != 'sale':
-        return
-    settings_rows = env['x_hm_settings'].sudo().search([('x_company_id', '=', order.company_id.id)])
-    if len(settings_rows) != 1 or not settings_rows.x_enabled:
-        raise UserError('Преди продажба на машина настройте и активирайте връзката към нейния регистър в „Машини → Настройки“.')
-    settings = settings_rows
-    target_model, mapping = hm_mapping(settings)
-    for line in machine_lines:
-        release = hm_validate_release(line)
-        if not release:
-            continue
-        keys = hm_unit_keys(line.id, release.x_quantity)
-        for number, key in enumerate(keys, 1):
-            existing = bridge_model.search([('x_source_key', '=', key)])
-            if len(existing) &gt; 1:
-                raise UserError('Повторена вътрешна връзка: ' + key)
-            if existing:
-                if existing.x_release_id != release or existing.x_company_id != order.company_id:
-                    raise UserError('Продадената машина има различна фиксирана конфигурация: ' + key)
-                continue
-            logical = dict(name='%s — %s / %s' % (release.x_product_id.name, order.name, number), partner=order.partner_id.commercial_partner_id.id, company=order.company_id.id, key=key, product=release.x_product_id.id, order=order.id, line=line.id, lead=order.opportunity_id.id or False, summary=release.x_description, state=order.state, warranty=release.x_config_id.x_warranty_months)
-            values = {}
-            for k, field in mapping.items():
-                values[field] = logical[k]
-            target = target_model.search([(mapping['key'], '=', key)])
-            if len(target) &gt; 1:
-                raise UserError('Повторен източник в регистъра: ' + key)
-            if target:
-                for check in ['partner', 'company', 'product', 'order', 'line']:
-                    if check in mapping and (target[mapping[check]].id or False) != logical[check]:
-                        raise UserError('Съществуващият запис не съответства на тази продажба: ' + key)
-            else:
-                target = target_model.with_company(order.company_id).create(values)
-            bridge_model.create(dict(x_name=logical['name'], x_source_key=key, x_order_id=order.id, x_line_id=line.id, x_config_id=release.x_config_id.id, x_release_id=release.id, x_company_id=order.company_id.id, x_target_model=target_model._name, x_target_id=target.id, x_unit_number=number, x_state_field=mapping.get('state', False)))
+    # Keep the recovered configurator's release/fingerprint guards; perform
+    # dossier writes only in the transactional, caller-ACL-aware adapter.
+    for line in order.order_line:
+        if order.state == 'sale':
+            hm_validate_release(line)
+    env['hydromotor.machine.registry']._sync_order(order)
 
 def hm_publish(cfg, approve=False):
     if not env.user.has_group('sales_team.group_sale_salesman'):
@@ -1368,6 +1260,10 @@ def hm_mapping(settings):
     if not settings.x_target_model_id or not settings.x_target_model_id.model.startswith('x_'):
         raise UserError('Изберете потребителския Studio модел на регистъра за машини.')
     model_name = settings.x_target_model_id.model
+    if model_name == 'x_hm_machine':
+        # Native service adapter has a fixed, source-verified contract. Product
+        # and serial stay related to the REAL lot and are never written here.
+        return (env[model_name], dict(name='x_name', partner='x_partner_id', company='x_company_id', key='x_hms_source_key', order='x_sale_order_id', summary='x_hms_quote_description', state='x_hms_order_state'))
     target = env[model_name].sudo()
     specification = [('name', settings.x_name_field_id, 'char', False, True), ('partner', settings.x_partner_field_id, 'many2one', 'res.partner', True), ('company', settings.x_company_field_id, 'many2one', 'res.company', True), ('key', settings.x_key_field_id, 'char', False, True), ('product', settings.x_product_field_id, 'many2one', 'product.product', False), ('order', settings.x_order_field_id, 'many2one', 'sale.order', False), ('line', settings.x_line_field_id, 'many2one', 'sale.order.line', False), ('lead', settings.x_lead_field_id, 'many2one', 'crm.lead', False), ('summary', settings.x_summary_field_id, 'text', False, False), ('state', settings.x_state_field_id, 'char', False, False), ('warranty', settings.x_warranty_field_id, 'integer', False, False)]
     mapping = {}
@@ -1388,52 +1284,12 @@ def hm_mapping(settings):
     return (target, mapping)
 
 def hm_sync(order):
-    bridge_model = env['x_hm_bridge'].sudo()
-    links = bridge_model.search([('x_order_id', '=', order.id)])
-    machine_lines = order.order_line.filtered(lambda l: l.product_id.x_hm_base_id or l.x_hm_release_id or l.x_hm_config_id)
-    if not machine_lines and (not links):
-        return
-    order.write({'x_hm_sync_revision': order.x_hm_sync_revision + 1})
-    for link in links:
-        target = env[link.x_target_model].sudo().browse(link.x_target_id).exists()
-        if not target:
-            raise UserError('Липсва вече свързана машина в регистъра: ' + link.x_name + '. Възстановете връзката преди продължаване.')
-        if link.x_state_field:
-            target.write({link.x_state_field: order.state})
-    if order.state != 'sale':
-        return
-    settings_rows = env['x_hm_settings'].sudo().search([('x_company_id', '=', order.company_id.id)])
-    if len(settings_rows) != 1 or not settings_rows.x_enabled:
-        raise UserError('Преди продажба на машина настройте и активирайте връзката към нейния регистър в „Машини → Настройки“.')
-    settings = settings_rows
-    target_model, mapping = hm_mapping(settings)
-    for line in machine_lines:
-        release = hm_validate_release(line)
-        if not release:
-            continue
-        keys = hm_unit_keys(line.id, release.x_quantity)
-        for number, key in enumerate(keys, 1):
-            existing = bridge_model.search([('x_source_key', '=', key)])
-            if len(existing) &gt; 1:
-                raise UserError('Повторена вътрешна връзка: ' + key)
-            if existing:
-                if existing.x_release_id != release or existing.x_company_id != order.company_id:
-                    raise UserError('Продадената машина има различна фиксирана конфигурация: ' + key)
-                continue
-            logical = dict(name='%s — %s / %s' % (release.x_product_id.name, order.name, number), partner=order.partner_id.commercial_partner_id.id, company=order.company_id.id, key=key, product=release.x_product_id.id, order=order.id, line=line.id, lead=order.opportunity_id.id or False, summary=release.x_description, state=order.state, warranty=release.x_config_id.x_warranty_months)
-            values = {}
-            for k, field in mapping.items():
-                values[field] = logical[k]
-            target = target_model.search([(mapping['key'], '=', key)])
-            if len(target) &gt; 1:
-                raise UserError('Повторен източник в регистъра: ' + key)
-            if target:
-                for check in ['partner', 'company', 'product', 'order', 'line']:
-                    if check in mapping and (target[mapping[check]].id or False) != logical[check]:
-                        raise UserError('Съществуващият запис не съответства на тази продажба: ' + key)
-            else:
-                target = target_model.with_company(order.company_id).create(values)
-            bridge_model.create(dict(x_name=logical['name'], x_source_key=key, x_order_id=order.id, x_line_id=line.id, x_config_id=release.x_config_id.id, x_release_id=release.id, x_company_id=order.company_id.id, x_target_model=target_model._name, x_target_id=target.id, x_unit_number=number, x_state_field=mapping.get('state', False)))
+    # Keep the recovered configurator's release/fingerprint guards; perform
+    # dossier writes only in the transactional, caller-ACL-aware adapter.
+    for line in order.order_line:
+        if order.state == 'sale':
+            hm_validate_release(line)
+    env['hydromotor.machine.registry']._sync_order(order)
 
 def hm_publish(cfg, approve=False):
     if not env.user.has_group('sales_team.group_sale_salesman'):
@@ -1734,6 +1590,10 @@ def hm_mapping(settings):
     if not settings.x_target_model_id or not settings.x_target_model_id.model.startswith('x_'):
         raise UserError('Изберете потребителския Studio модел на регистъра за машини.')
     model_name = settings.x_target_model_id.model
+    if model_name == 'x_hm_machine':
+        # Native service adapter has a fixed, source-verified contract. Product
+        # and serial stay related to the REAL lot and are never written here.
+        return (env[model_name], dict(name='x_name', partner='x_partner_id', company='x_company_id', key='x_hms_source_key', order='x_sale_order_id', summary='x_hms_quote_description', state='x_hms_order_state'))
     target = env[model_name].sudo()
     specification = [('name', settings.x_name_field_id, 'char', False, True), ('partner', settings.x_partner_field_id, 'many2one', 'res.partner', True), ('company', settings.x_company_field_id, 'many2one', 'res.company', True), ('key', settings.x_key_field_id, 'char', False, True), ('product', settings.x_product_field_id, 'many2one', 'product.product', False), ('order', settings.x_order_field_id, 'many2one', 'sale.order', False), ('line', settings.x_line_field_id, 'many2one', 'sale.order.line', False), ('lead', settings.x_lead_field_id, 'many2one', 'crm.lead', False), ('summary', settings.x_summary_field_id, 'text', False, False), ('state', settings.x_state_field_id, 'char', False, False), ('warranty', settings.x_warranty_field_id, 'integer', False, False)]
     mapping = {}
@@ -1754,52 +1614,12 @@ def hm_mapping(settings):
     return (target, mapping)
 
 def hm_sync(order):
-    bridge_model = env['x_hm_bridge'].sudo()
-    links = bridge_model.search([('x_order_id', '=', order.id)])
-    machine_lines = order.order_line.filtered(lambda l: l.product_id.x_hm_base_id or l.x_hm_release_id or l.x_hm_config_id)
-    if not machine_lines and (not links):
-        return
-    order.write({'x_hm_sync_revision': order.x_hm_sync_revision + 1})
-    for link in links:
-        target = env[link.x_target_model].sudo().browse(link.x_target_id).exists()
-        if not target:
-            raise UserError('Липсва вече свързана машина в регистъра: ' + link.x_name + '. Възстановете връзката преди продължаване.')
-        if link.x_state_field:
-            target.write({link.x_state_field: order.state})
-    if order.state != 'sale':
-        return
-    settings_rows = env['x_hm_settings'].sudo().search([('x_company_id', '=', order.company_id.id)])
-    if len(settings_rows) != 1 or not settings_rows.x_enabled:
-        raise UserError('Преди продажба на машина настройте и активирайте връзката към нейния регистър в „Машини → Настройки“.')
-    settings = settings_rows
-    target_model, mapping = hm_mapping(settings)
-    for line in machine_lines:
-        release = hm_validate_release(line)
-        if not release:
-            continue
-        keys = hm_unit_keys(line.id, release.x_quantity)
-        for number, key in enumerate(keys, 1):
-            existing = bridge_model.search([('x_source_key', '=', key)])
-            if len(existing) &gt; 1:
-                raise UserError('Повторена вътрешна връзка: ' + key)
-            if existing:
-                if existing.x_release_id != release or existing.x_company_id != order.company_id:
-                    raise UserError('Продадената машина има различна фиксирана конфигурация: ' + key)
-                continue
-            logical = dict(name='%s — %s / %s' % (release.x_product_id.name, order.name, number), partner=order.partner_id.commercial_partner_id.id, company=order.company_id.id, key=key, product=release.x_product_id.id, order=order.id, line=line.id, lead=order.opportunity_id.id or False, summary=release.x_description, state=order.state, warranty=release.x_config_id.x_warranty_months)
-            values = {}
-            for k, field in mapping.items():
-                values[field] = logical[k]
-            target = target_model.search([(mapping['key'], '=', key)])
-            if len(target) &gt; 1:
-                raise UserError('Повторен източник в регистъра: ' + key)
-            if target:
-                for check in ['partner', 'company', 'product', 'order', 'line']:
-                    if check in mapping and (target[mapping[check]].id or False) != logical[check]:
-                        raise UserError('Съществуващият запис не съответства на тази продажба: ' + key)
-            else:
-                target = target_model.with_company(order.company_id).create(values)
-            bridge_model.create(dict(x_name=logical['name'], x_source_key=key, x_order_id=order.id, x_line_id=line.id, x_config_id=release.x_config_id.id, x_release_id=release.id, x_company_id=order.company_id.id, x_target_model=target_model._name, x_target_id=target.id, x_unit_number=number, x_state_field=mapping.get('state', False)))
+    # Keep the recovered configurator's release/fingerprint guards; perform
+    # dossier writes only in the transactional, caller-ACL-aware adapter.
+    for line in order.order_line:
+        if order.state == 'sale':
+            hm_validate_release(line)
+    env['hydromotor.machine.registry']._sync_order(order)
 
 def hm_publish(cfg, approve=False):
     if not env.user.has_group('sales_team.group_sale_salesman'):
@@ -2099,6 +1919,10 @@ def hm_mapping(settings):
     if not settings.x_target_model_id or not settings.x_target_model_id.model.startswith('x_'):
         raise UserError('Изберете потребителския Studio модел на регистъра за машини.')
     model_name = settings.x_target_model_id.model
+    if model_name == 'x_hm_machine':
+        # Native service adapter has a fixed, source-verified contract. Product
+        # and serial stay related to the REAL lot and are never written here.
+        return (env[model_name], dict(name='x_name', partner='x_partner_id', company='x_company_id', key='x_hms_source_key', order='x_sale_order_id', summary='x_hms_quote_description', state='x_hms_order_state'))
     target = env[model_name].sudo()
     specification = [('name', settings.x_name_field_id, 'char', False, True), ('partner', settings.x_partner_field_id, 'many2one', 'res.partner', True), ('company', settings.x_company_field_id, 'many2one', 'res.company', True), ('key', settings.x_key_field_id, 'char', False, True), ('product', settings.x_product_field_id, 'many2one', 'product.product', False), ('order', settings.x_order_field_id, 'many2one', 'sale.order', False), ('line', settings.x_line_field_id, 'many2one', 'sale.order.line', False), ('lead', settings.x_lead_field_id, 'many2one', 'crm.lead', False), ('summary', settings.x_summary_field_id, 'text', False, False), ('state', settings.x_state_field_id, 'char', False, False), ('warranty', settings.x_warranty_field_id, 'integer', False, False)]
     mapping = {}
@@ -2119,52 +1943,12 @@ def hm_mapping(settings):
     return (target, mapping)
 
 def hm_sync(order):
-    bridge_model = env['x_hm_bridge'].sudo()
-    links = bridge_model.search([('x_order_id', '=', order.id)])
-    machine_lines = order.order_line.filtered(lambda l: l.product_id.x_hm_base_id or l.x_hm_release_id or l.x_hm_config_id)
-    if not machine_lines and (not links):
-        return
-    order.write({'x_hm_sync_revision': order.x_hm_sync_revision + 1})
-    for link in links:
-        target = env[link.x_target_model].sudo().browse(link.x_target_id).exists()
-        if not target:
-            raise UserError('Липсва вече свързана машина в регистъра: ' + link.x_name + '. Възстановете връзката преди продължаване.')
-        if link.x_state_field:
-            target.write({link.x_state_field: order.state})
-    if order.state != 'sale':
-        return
-    settings_rows = env['x_hm_settings'].sudo().search([('x_company_id', '=', order.company_id.id)])
-    if len(settings_rows) != 1 or not settings_rows.x_enabled:
-        raise UserError('Преди продажба на машина настройте и активирайте връзката към нейния регистър в „Машини → Настройки“.')
-    settings = settings_rows
-    target_model, mapping = hm_mapping(settings)
-    for line in machine_lines:
-        release = hm_validate_release(line)
-        if not release:
-            continue
-        keys = hm_unit_keys(line.id, release.x_quantity)
-        for number, key in enumerate(keys, 1):
-            existing = bridge_model.search([('x_source_key', '=', key)])
-            if len(existing) &gt; 1:
-                raise UserError('Повторена вътрешна връзка: ' + key)
-            if existing:
-                if existing.x_release_id != release or existing.x_company_id != order.company_id:
-                    raise UserError('Продадената машина има различна фиксирана конфигурация: ' + key)
-                continue
-            logical = dict(name='%s — %s / %s' % (release.x_product_id.name, order.name, number), partner=order.partner_id.commercial_partner_id.id, company=order.company_id.id, key=key, product=release.x_product_id.id, order=order.id, line=line.id, lead=order.opportunity_id.id or False, summary=release.x_description, state=order.state, warranty=release.x_config_id.x_warranty_months)
-            values = {}
-            for k, field in mapping.items():
-                values[field] = logical[k]
-            target = target_model.search([(mapping['key'], '=', key)])
-            if len(target) &gt; 1:
-                raise UserError('Повторен източник в регистъра: ' + key)
-            if target:
-                for check in ['partner', 'company', 'product', 'order', 'line']:
-                    if check in mapping and (target[mapping[check]].id or False) != logical[check]:
-                        raise UserError('Съществуващият запис не съответства на тази продажба: ' + key)
-            else:
-                target = target_model.with_company(order.company_id).create(values)
-            bridge_model.create(dict(x_name=logical['name'], x_source_key=key, x_order_id=order.id, x_line_id=line.id, x_config_id=release.x_config_id.id, x_release_id=release.id, x_company_id=order.company_id.id, x_target_model=target_model._name, x_target_id=target.id, x_unit_number=number, x_state_field=mapping.get('state', False)))
+    # Keep the recovered configurator's release/fingerprint guards; perform
+    # dossier writes only in the transactional, caller-ACL-aware adapter.
+    for line in order.order_line:
+        if order.state == 'sale':
+            hm_validate_release(line)
+    env['hydromotor.machine.registry']._sync_order(order)
 
 def hm_publish(cfg, approve=False):
     if not env.user.has_group('sales_team.group_sale_salesman'):
@@ -2477,6 +2261,10 @@ def hm_mapping(settings):
     if not settings.x_target_model_id or not settings.x_target_model_id.model.startswith('x_'):
         raise UserError('Изберете потребителския Studio модел на регистъра за машини.')
     model_name = settings.x_target_model_id.model
+    if model_name == 'x_hm_machine':
+        # Native service adapter has a fixed, source-verified contract. Product
+        # and serial stay related to the REAL lot and are never written here.
+        return (env[model_name], dict(name='x_name', partner='x_partner_id', company='x_company_id', key='x_hms_source_key', order='x_sale_order_id', summary='x_hms_quote_description', state='x_hms_order_state'))
     target = env[model_name].sudo()
     specification = [('name', settings.x_name_field_id, 'char', False, True), ('partner', settings.x_partner_field_id, 'many2one', 'res.partner', True), ('company', settings.x_company_field_id, 'many2one', 'res.company', True), ('key', settings.x_key_field_id, 'char', False, True), ('product', settings.x_product_field_id, 'many2one', 'product.product', False), ('order', settings.x_order_field_id, 'many2one', 'sale.order', False), ('line', settings.x_line_field_id, 'many2one', 'sale.order.line', False), ('lead', settings.x_lead_field_id, 'many2one', 'crm.lead', False), ('summary', settings.x_summary_field_id, 'text', False, False), ('state', settings.x_state_field_id, 'char', False, False), ('warranty', settings.x_warranty_field_id, 'integer', False, False)]
     mapping = {}
@@ -2497,52 +2285,12 @@ def hm_mapping(settings):
     return (target, mapping)
 
 def hm_sync(order):
-    bridge_model = env['x_hm_bridge'].sudo()
-    links = bridge_model.search([('x_order_id', '=', order.id)])
-    machine_lines = order.order_line.filtered(lambda l: l.product_id.x_hm_base_id or l.x_hm_release_id or l.x_hm_config_id)
-    if not machine_lines and (not links):
-        return
-    order.write({'x_hm_sync_revision': order.x_hm_sync_revision + 1})
-    for link in links:
-        target = env[link.x_target_model].sudo().browse(link.x_target_id).exists()
-        if not target:
-            raise UserError('Липсва вече свързана машина в регистъра: ' + link.x_name + '. Възстановете връзката преди продължаване.')
-        if link.x_state_field:
-            target.write({link.x_state_field: order.state})
-    if order.state != 'sale':
-        return
-    settings_rows = env['x_hm_settings'].sudo().search([('x_company_id', '=', order.company_id.id)])
-    if len(settings_rows) != 1 or not settings_rows.x_enabled:
-        raise UserError('Преди продажба на машина настройте и активирайте връзката към нейния регистър в „Машини → Настройки“.')
-    settings = settings_rows
-    target_model, mapping = hm_mapping(settings)
-    for line in machine_lines:
-        release = hm_validate_release(line)
-        if not release:
-            continue
-        keys = hm_unit_keys(line.id, release.x_quantity)
-        for number, key in enumerate(keys, 1):
-            existing = bridge_model.search([('x_source_key', '=', key)])
-            if len(existing) &gt; 1:
-                raise UserError('Повторена вътрешна връзка: ' + key)
-            if existing:
-                if existing.x_release_id != release or existing.x_company_id != order.company_id:
-                    raise UserError('Продадената машина има различна фиксирана конфигурация: ' + key)
-                continue
-            logical = dict(name='%s — %s / %s' % (release.x_product_id.name, order.name, number), partner=order.partner_id.commercial_partner_id.id, company=order.company_id.id, key=key, product=release.x_product_id.id, order=order.id, line=line.id, lead=order.opportunity_id.id or False, summary=release.x_description, state=order.state, warranty=release.x_config_id.x_warranty_months)
-            values = {}
-            for k, field in mapping.items():
-                values[field] = logical[k]
-            target = target_model.search([(mapping['key'], '=', key)])
-            if len(target) &gt; 1:
-                raise UserError('Повторен източник в регистъра: ' + key)
-            if target:
-                for check in ['partner', 'company', 'product', 'order', 'line']:
-                    if check in mapping and (target[mapping[check]].id or False) != logical[check]:
-                        raise UserError('Съществуващият запис не съответства на тази продажба: ' + key)
-            else:
-                target = target_model.with_company(order.company_id).create(values)
-            bridge_model.create(dict(x_name=logical['name'], x_source_key=key, x_order_id=order.id, x_line_id=line.id, x_config_id=release.x_config_id.id, x_release_id=release.id, x_company_id=order.company_id.id, x_target_model=target_model._name, x_target_id=target.id, x_unit_number=number, x_state_field=mapping.get('state', False)))
+    # Keep the recovered configurator's release/fingerprint guards; perform
+    # dossier writes only in the transactional, caller-ACL-aware adapter.
+    for line in order.order_line:
+        if order.state == 'sale':
+            hm_validate_release(line)
+    env['hydromotor.machine.registry']._sync_order(order)
 
 def hm_publish(cfg, approve=False):
     if not env.user.has_group('sales_team.group_sale_salesman'):
@@ -2862,6 +2610,10 @@ def hm_mapping(settings):
     if not settings.x_target_model_id or not settings.x_target_model_id.model.startswith('x_'):
         raise UserError('Изберете потребителския Studio модел на регистъра за машини.')
     model_name = settings.x_target_model_id.model
+    if model_name == 'x_hm_machine':
+        # Native service adapter has a fixed, source-verified contract. Product
+        # and serial stay related to the REAL lot and are never written here.
+        return (env[model_name], dict(name='x_name', partner='x_partner_id', company='x_company_id', key='x_hms_source_key', order='x_sale_order_id', summary='x_hms_quote_description', state='x_hms_order_state'))
     target = env[model_name].sudo()
     specification = [('name', settings.x_name_field_id, 'char', False, True), ('partner', settings.x_partner_field_id, 'many2one', 'res.partner', True), ('company', settings.x_company_field_id, 'many2one', 'res.company', True), ('key', settings.x_key_field_id, 'char', False, True), ('product', settings.x_product_field_id, 'many2one', 'product.product', False), ('order', settings.x_order_field_id, 'many2one', 'sale.order', False), ('line', settings.x_line_field_id, 'many2one', 'sale.order.line', False), ('lead', settings.x_lead_field_id, 'many2one', 'crm.lead', False), ('summary', settings.x_summary_field_id, 'text', False, False), ('state', settings.x_state_field_id, 'char', False, False), ('warranty', settings.x_warranty_field_id, 'integer', False, False)]
     mapping = {}
@@ -2882,52 +2634,12 @@ def hm_mapping(settings):
     return (target, mapping)
 
 def hm_sync(order):
-    bridge_model = env['x_hm_bridge'].sudo()
-    links = bridge_model.search([('x_order_id', '=', order.id)])
-    machine_lines = order.order_line.filtered(lambda l: l.product_id.x_hm_base_id or l.x_hm_release_id or l.x_hm_config_id)
-    if not machine_lines and (not links):
-        return
-    order.write({'x_hm_sync_revision': order.x_hm_sync_revision + 1})
-    for link in links:
-        target = env[link.x_target_model].sudo().browse(link.x_target_id).exists()
-        if not target:
-            raise UserError('Липсва вече свързана машина в регистъра: ' + link.x_name + '. Възстановете връзката преди продължаване.')
-        if link.x_state_field:
-            target.write({link.x_state_field: order.state})
-    if order.state != 'sale':
-        return
-    settings_rows = env['x_hm_settings'].sudo().search([('x_company_id', '=', order.company_id.id)])
-    if len(settings_rows) != 1 or not settings_rows.x_enabled:
-        raise UserError('Преди продажба на машина настройте и активирайте връзката към нейния регистър в „Машини → Настройки“.')
-    settings = settings_rows
-    target_model, mapping = hm_mapping(settings)
-    for line in machine_lines:
-        release = hm_validate_release(line)
-        if not release:
-            continue
-        keys = hm_unit_keys(line.id, release.x_quantity)
-        for number, key in enumerate(keys, 1):
-            existing = bridge_model.search([('x_source_key', '=', key)])
-            if len(existing) &gt; 1:
-                raise UserError('Повторена вътрешна връзка: ' + key)
-            if existing:
-                if existing.x_release_id != release or existing.x_company_id != order.company_id:
-                    raise UserError('Продадената машина има различна фиксирана конфигурация: ' + key)
-                continue
-            logical = dict(name='%s — %s / %s' % (release.x_product_id.name, order.name, number), partner=order.partner_id.commercial_partner_id.id, company=order.company_id.id, key=key, product=release.x_product_id.id, order=order.id, line=line.id, lead=order.opportunity_id.id or False, summary=release.x_description, state=order.state, warranty=release.x_config_id.x_warranty_months)
-            values = {}
-            for k, field in mapping.items():
-                values[field] = logical[k]
-            target = target_model.search([(mapping['key'], '=', key)])
-            if len(target) &gt; 1:
-                raise UserError('Повторен източник в регистъра: ' + key)
-            if target:
-                for check in ['partner', 'company', 'product', 'order', 'line']:
-                    if check in mapping and (target[mapping[check]].id or False) != logical[check]:
-                        raise UserError('Съществуващият запис не съответства на тази продажба: ' + key)
-            else:
-                target = target_model.with_company(order.company_id).create(values)
-            bridge_model.create(dict(x_name=logical['name'], x_source_key=key, x_order_id=order.id, x_line_id=line.id, x_config_id=release.x_config_id.id, x_release_id=release.id, x_company_id=order.company_id.id, x_target_model=target_model._name, x_target_id=target.id, x_unit_number=number, x_state_field=mapping.get('state', False)))
+    # Keep the recovered configurator's release/fingerprint guards; perform
+    # dossier writes only in the transactional, caller-ACL-aware adapter.
+    for line in order.order_line:
+        if order.state == 'sale':
+            hm_validate_release(line)
+    env['hydromotor.machine.registry']._sync_order(order)
 
 def hm_publish(cfg, approve=False):
     if not env.user.has_group('sales_team.group_sale_salesman'):
@@ -3249,6 +2961,10 @@ def hm_mapping(settings):
     if not settings.x_target_model_id or not settings.x_target_model_id.model.startswith('x_'):
         raise UserError('Изберете потребителския Studio модел на регистъра за машини.')
     model_name = settings.x_target_model_id.model
+    if model_name == 'x_hm_machine':
+        # Native service adapter has a fixed, source-verified contract. Product
+        # and serial stay related to the REAL lot and are never written here.
+        return (env[model_name], dict(name='x_name', partner='x_partner_id', company='x_company_id', key='x_hms_source_key', order='x_sale_order_id', summary='x_hms_quote_description', state='x_hms_order_state'))
     target = env[model_name].sudo()
     specification = [('name', settings.x_name_field_id, 'char', False, True), ('partner', settings.x_partner_field_id, 'many2one', 'res.partner', True), ('company', settings.x_company_field_id, 'many2one', 'res.company', True), ('key', settings.x_key_field_id, 'char', False, True), ('product', settings.x_product_field_id, 'many2one', 'product.product', False), ('order', settings.x_order_field_id, 'many2one', 'sale.order', False), ('line', settings.x_line_field_id, 'many2one', 'sale.order.line', False), ('lead', settings.x_lead_field_id, 'many2one', 'crm.lead', False), ('summary', settings.x_summary_field_id, 'text', False, False), ('state', settings.x_state_field_id, 'char', False, False), ('warranty', settings.x_warranty_field_id, 'integer', False, False)]
     mapping = {}
@@ -3269,52 +2985,12 @@ def hm_mapping(settings):
     return (target, mapping)
 
 def hm_sync(order):
-    bridge_model = env['x_hm_bridge'].sudo()
-    links = bridge_model.search([('x_order_id', '=', order.id)])
-    machine_lines = order.order_line.filtered(lambda l: l.product_id.x_hm_base_id or l.x_hm_release_id or l.x_hm_config_id)
-    if not machine_lines and (not links):
-        return
-    order.write({'x_hm_sync_revision': order.x_hm_sync_revision + 1})
-    for link in links:
-        target = env[link.x_target_model].sudo().browse(link.x_target_id).exists()
-        if not target:
-            raise UserError('Липсва вече свързана машина в регистъра: ' + link.x_name + '. Възстановете връзката преди продължаване.')
-        if link.x_state_field:
-            target.write({link.x_state_field: order.state})
-    if order.state != 'sale':
-        return
-    settings_rows = env['x_hm_settings'].sudo().search([('x_company_id', '=', order.company_id.id)])
-    if len(settings_rows) != 1 or not settings_rows.x_enabled:
-        raise UserError('Преди продажба на машина настройте и активирайте връзката към нейния регистър в „Машини → Настройки“.')
-    settings = settings_rows
-    target_model, mapping = hm_mapping(settings)
-    for line in machine_lines:
-        release = hm_validate_release(line)
-        if not release:
-            continue
-        keys = hm_unit_keys(line.id, release.x_quantity)
-        for number, key in enumerate(keys, 1):
-            existing = bridge_model.search([('x_source_key', '=', key)])
-            if len(existing) &gt; 1:
-                raise UserError('Повторена вътрешна връзка: ' + key)
-            if existing:
-                if existing.x_release_id != release or existing.x_company_id != order.company_id:
-                    raise UserError('Продадената машина има различна фиксирана конфигурация: ' + key)
-                continue
-            logical = dict(name='%s — %s / %s' % (release.x_product_id.name, order.name, number), partner=order.partner_id.commercial_partner_id.id, company=order.company_id.id, key=key, product=release.x_product_id.id, order=order.id, line=line.id, lead=order.opportunity_id.id or False, summary=release.x_description, state=order.state, warranty=release.x_config_id.x_warranty_months)
-            values = {}
-            for k, field in mapping.items():
-                values[field] = logical[k]
-            target = target_model.search([(mapping['key'], '=', key)])
-            if len(target) &gt; 1:
-                raise UserError('Повторен източник в регистъра: ' + key)
-            if target:
-                for check in ['partner', 'company', 'product', 'order', 'line']:
-                    if check in mapping and (target[mapping[check]].id or False) != logical[check]:
-                        raise UserError('Съществуващият запис не съответства на тази продажба: ' + key)
-            else:
-                target = target_model.with_company(order.company_id).create(values)
-            bridge_model.create(dict(x_name=logical['name'], x_source_key=key, x_order_id=order.id, x_line_id=line.id, x_config_id=release.x_config_id.id, x_release_id=release.id, x_company_id=order.company_id.id, x_target_model=target_model._name, x_target_id=target.id, x_unit_number=number, x_state_field=mapping.get('state', False)))
+    # Keep the recovered configurator's release/fingerprint guards; perform
+    # dossier writes only in the transactional, caller-ACL-aware adapter.
+    for line in order.order_line:
+        if order.state == 'sale':
+            hm_validate_release(line)
+    env['hydromotor.machine.registry']._sync_order(order)
 
 def hm_publish(cfg, approve=False):
     if not env.user.has_group('sales_team.group_sale_salesman'):
@@ -3614,6 +3290,10 @@ def hm_mapping(settings):
     if not settings.x_target_model_id or not settings.x_target_model_id.model.startswith('x_'):
         raise UserError('Изберете потребителския Studio модел на регистъра за машини.')
     model_name = settings.x_target_model_id.model
+    if model_name == 'x_hm_machine':
+        # Native service adapter has a fixed, source-verified contract. Product
+        # and serial stay related to the REAL lot and are never written here.
+        return (env[model_name], dict(name='x_name', partner='x_partner_id', company='x_company_id', key='x_hms_source_key', order='x_sale_order_id', summary='x_hms_quote_description', state='x_hms_order_state'))
     target = env[model_name].sudo()
     specification = [('name', settings.x_name_field_id, 'char', False, True), ('partner', settings.x_partner_field_id, 'many2one', 'res.partner', True), ('company', settings.x_company_field_id, 'many2one', 'res.company', True), ('key', settings.x_key_field_id, 'char', False, True), ('product', settings.x_product_field_id, 'many2one', 'product.product', False), ('order', settings.x_order_field_id, 'many2one', 'sale.order', False), ('line', settings.x_line_field_id, 'many2one', 'sale.order.line', False), ('lead', settings.x_lead_field_id, 'many2one', 'crm.lead', False), ('summary', settings.x_summary_field_id, 'text', False, False), ('state', settings.x_state_field_id, 'char', False, False), ('warranty', settings.x_warranty_field_id, 'integer', False, False)]
     mapping = {}
@@ -3634,52 +3314,12 @@ def hm_mapping(settings):
     return (target, mapping)
 
 def hm_sync(order):
-    bridge_model = env['x_hm_bridge'].sudo()
-    links = bridge_model.search([('x_order_id', '=', order.id)])
-    machine_lines = order.order_line.filtered(lambda l: l.product_id.x_hm_base_id or l.x_hm_release_id or l.x_hm_config_id)
-    if not machine_lines and (not links):
-        return
-    order.write({'x_hm_sync_revision': order.x_hm_sync_revision + 1})
-    for link in links:
-        target = env[link.x_target_model].sudo().browse(link.x_target_id).exists()
-        if not target:
-            raise UserError('Липсва вече свързана машина в регистъра: ' + link.x_name + '. Възстановете връзката преди продължаване.')
-        if link.x_state_field:
-            target.write({link.x_state_field: order.state})
-    if order.state != 'sale':
-        return
-    settings_rows = env['x_hm_settings'].sudo().search([('x_company_id', '=', order.company_id.id)])
-    if len(settings_rows) != 1 or not settings_rows.x_enabled:
-        raise UserError('Преди продажба на машина настройте и активирайте връзката към нейния регистър в „Машини → Настройки“.')
-    settings = settings_rows
-    target_model, mapping = hm_mapping(settings)
-    for line in machine_lines:
-        release = hm_validate_release(line)
-        if not release:
-            continue
-        keys = hm_unit_keys(line.id, release.x_quantity)
-        for number, key in enumerate(keys, 1):
-            existing = bridge_model.search([('x_source_key', '=', key)])
-            if len(existing) &gt; 1:
-                raise UserError('Повторена вътрешна връзка: ' + key)
-            if existing:
-                if existing.x_release_id != release or existing.x_company_id != order.company_id:
-                    raise UserError('Продадената машина има различна фиксирана конфигурация: ' + key)
-                continue
-            logical = dict(name='%s — %s / %s' % (release.x_product_id.name, order.name, number), partner=order.partner_id.commercial_partner_id.id, company=order.company_id.id, key=key, product=release.x_product_id.id, order=order.id, line=line.id, lead=order.opportunity_id.id or False, summary=release.x_description, state=order.state, warranty=release.x_config_id.x_warranty_months)
-            values = {}
-            for k, field in mapping.items():
-                values[field] = logical[k]
-            target = target_model.search([(mapping['key'], '=', key)])
-            if len(target) &gt; 1:
-                raise UserError('Повторен източник в регистъра: ' + key)
-            if target:
-                for check in ['partner', 'company', 'product', 'order', 'line']:
-                    if check in mapping and (target[mapping[check]].id or False) != logical[check]:
-                        raise UserError('Съществуващият запис не съответства на тази продажба: ' + key)
-            else:
-                target = target_model.with_company(order.company_id).create(values)
-            bridge_model.create(dict(x_name=logical['name'], x_source_key=key, x_order_id=order.id, x_line_id=line.id, x_config_id=release.x_config_id.id, x_release_id=release.id, x_company_id=order.company_id.id, x_target_model=target_model._name, x_target_id=target.id, x_unit_number=number, x_state_field=mapping.get('state', False)))
+    # Keep the recovered configurator's release/fingerprint guards; perform
+    # dossier writes only in the transactional, caller-ACL-aware adapter.
+    for line in order.order_line:
+        if order.state == 'sale':
+            hm_validate_release(line)
+    env['hydromotor.machine.registry']._sync_order(order)
 
 def hm_publish(cfg, approve=False):
     if not env.user.has_group('sales_team.group_sale_salesman'):

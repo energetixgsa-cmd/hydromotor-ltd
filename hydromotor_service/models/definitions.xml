@@ -187,7 +187,7 @@ which the class' module is installed).
     <field name="on_delete">restrict</field>
     <field name="field_description">Сериен номер</field>
     <field name="copied" eval="True"/>
-    <field name="required" eval="True"/>
+    <field name="required" eval="False"/>
     <field name="readonly" eval="False"/>
     <field name="index" eval="True"/>
     <field name="store" eval="True"/>

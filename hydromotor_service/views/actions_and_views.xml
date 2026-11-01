@@ -15,6 +15,8 @@ result_ids = []
 for order in records:
     if order.state != 'sale':
         raise UserError('Машини се регистрират от потвърдена продажба след действителна доставка.')
+    if 'hydromotor.machine.registry' in env:
+        result_ids += env['hydromotor.machine.registry']._register_delivered(order)
     lines = env['stock.move.line'].search([
         ('move_id.sale_line_id.order_id', '=', order.id),
         ('state', '=', 'done'), ('location_dest_id.usage', '=', 'customer'),
@@ -23,6 +25,8 @@ for order in records:
         ('company_id', '=', order.company_id.id),
     ])
     for line in lines:
+        if 'x_hm_config_id' in line.move_id.sale_line_id._fields and (line.move_id.sale_line_id.x_hm_config_id or line.move_id.sale_line_id.x_hm_release_id):
+            continue  # configured units were assigned to their existing dossiers above
         if line.product_id.tracking != 'serial':
             raise UserError('Машината %s трябва да се проследява по отделен сериен номер.' % line.product_id.display_name)
         machines = env['x_hm_machine'].search([('x_lot_id', '=', line.lot_id.id), ('x_company_id', '=', order.company_id.id)])
@@ -286,17 +290,27 @@ action = {'type': 'ir.actions.act_window', 'res_model': 'sale.order', 'view_mode
     <field name="usage">ir_actions_server</field>
     <field name="sequence" eval="5"/>
     <field name="code">for r in records:
-    identity = '%s/%s' % (r.x_company_id.id, r.x_lot_id.id)
-    if r.x_identity_key and r.x_identity_key != identity:
-        raise UserError('Фирмата и серийният номер на записано досие не могат да се сменят. Създайте отделно досие за друга машина.')
-    if not r.x_identity_key:
-        r.write({'x_identity_key': identity})
-    if r.x_lot_id.product_id.tracking != 'serial':
-        raise UserError('За машината е необходимо проследяване по сериен номер, а не по партида.')
-    if r.x_lot_id.company_id and r.x_lot_id.company_id != r.x_company_id:
-        raise UserError('Серийният номер е от друга фирма.')
-    if env['x_hm_machine'].search_count([('id', '!=', r.id), ('x_lot_id', '=', r.x_lot_id.id), ('x_company_id', '=', r.x_company_id.id)]):
-        raise UserError('За този сериен номер вече има досие в същата фирма.')
+    if not r.x_lot_id:
+        if r.x_identity_key:
+            raise UserError('Не може да се премахне записаният сериен номер.')
+        if 'x_hms_source_key' not in r._fields or not r.x_hms_source_key or not r.x_sale_order_id:
+            raise UserError('Досие без сериен номер се допуска само от потвърдена конфигурация.')
+        if r.x_sale_order_id.company_id != r.x_company_id:
+            raise UserError('Първоначалната продажба е от друга фирма.')
+        if r.x_sale_order_id.partner_id.commercial_partner_id != r.x_partner_id.commercial_partner_id:
+            raise UserError('Клиентът не съответства на продажбата.')
+    else:
+        identity = '%s/%s' % (r.x_company_id.id, r.x_lot_id.id)
+        if r.x_identity_key and r.x_identity_key != identity:
+            raise UserError('Фирмата и серийният номер на записано досие не могат да се сменят. Създайте отделно досие за друга машина.')
+        if not r.x_identity_key:
+            r.write({'x_identity_key': identity})
+        if r.x_lot_id.product_id.tracking != 'serial':
+            raise UserError('За машината е необходимо проследяване по сериен номер, а не по партида.')
+        if r.x_lot_id.company_id and r.x_lot_id.company_id != r.x_company_id:
+            raise UserError('Серийният номер е от друга фирма.')
+        if env['x_hm_machine'].search_count([('id', '!=', r.id), ('x_lot_id', '=', r.x_lot_id.id), ('x_company_id', '=', r.x_company_id.id)]):
+            raise UserError('За този сериен номер вече има досие в същата фирма.')
     if r.x_warranty_hours &lt; 0:
         raise UserError('Гаранционният лимит не може да е отрицателен.')
     if r.x_warranty_start and r.x_warranty_end and r.x_warranty_end &lt; r.x_warranty_start:

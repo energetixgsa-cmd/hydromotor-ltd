@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="machine_registry_form" model="ir.ui.view">
+    <field name="name">hydromotor.machine.registry.form</field>
+    <field name="model">x_hm_machine</field>
+    <field name="inherit_id" ref="hydromotor_service.machine_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//sheet" position="inside">
+        <field name="x_hms_source_key" invisible="1"/>
+        <div class="alert alert-info" role="alert" invisible="not x_hms_source_key or x_lot_id">
+          Предварително досие от потвърдена конфигурация. Реалният сериен номер се попълва при завършена доставка; не е резервиран или измислен сериен номер.
+        </div>
+      </xpath>
+      <xpath expr="//field[@name='x_lot_id']" position="attributes">
+        <attribute name="readonly">x_identity_key or x_hms_source_key</attribute>
+      </xpath>
+      <xpath expr="//notebook" position="inside">
+        <page string="Фиксирана конфигурация" invisible="not x_hms_source_key">
+          <group><field name="x_hms_order_state" readonly="1"/></group>
+          <field name="x_hms_quote_description" readonly="1"/>
+        </page>
+      </xpath>
+    </field>
+  </record>
+</odoo>
