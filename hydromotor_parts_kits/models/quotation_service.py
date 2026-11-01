@@ -3,12 +3,44 @@ import math
 import re
 
 from odoo import api, models
+from odoo.fields import Domain
 from odoo.exceptions import AccessError, UserError
+
+from .catalog_search import implicit_exceptions
+
+
+def search_catalog_product(kits, operator, value):
+    """Use the searching user's environment, never the registry hook environment."""
+    return kits.env['hydromotor.parts.quotation.service']._search_catalog_product(operator, value)
 
 
 class PartsQuotationService(models.AbstractModel):
     _name = 'hydromotor.parts.quotation.service'
     _description = 'Навигация и оферти от комплекти части'
+
+    def _register_hook(self):
+        super()._register_hook()
+        # Manual XML model classes are recreated during registry setup;
+        # Python _inherit is not a durable extension mechanism for them.
+        # Odoo calls this after manual models/fields, and again after re-setup.
+        if 'x_hm_parts_kit' not in self.env:
+            return
+        field = self.env['x_hm_parts_kit']._fields.get('x_catalog_product_id')
+        if field is None:
+            return  # also safe while the owning module is being uninstalled
+        if (not field.manual or field.store or field.type != 'many2one'
+                or field.comodel_name != 'product.product'):
+            raise RuntimeError('Unexpected x_catalog_product_id definition')
+        if field.search not in (None, False, search_catalog_product):
+            raise RuntimeError('Another addon owns x_catalog_product_id search')
+        field.search = search_catalog_product
+
+    def _unregister_hook(self):
+        if 'x_hm_parts_kit' in self.env:
+            field = self.env['x_hm_parts_kit']._fields.get('x_catalog_product_id')
+            if field is not None and field.search is search_catalog_product:
+                field.search = None
+        super()._unregister_hook()
 
     @api.model
     def _require_user(self, sales=False):
@@ -60,6 +92,78 @@ class PartsQuotationService(models.AbstractModel):
             ], limit=2)
         # Multiple variants with the same code require an explicit choice.
         return products if len(products) == 1 else self.env['product.product']
+
+    @api.model
+    def _catalog_product_matcher(self, operator, value):
+        """Mirror standard many2one ID/name matching without elevating access.
+
+        Odoo 19 normalizes equality to membership; retain raw equality for
+        direct tests/callers too. Name matching goes through the product ORM,
+        including its display_name search override, ACLs and record rules.
+        """
+        if operator == '=?':
+            if not value:
+                return lambda product: True
+            operator = '='
+        if operator in ('=', '!='):
+            operator, value = ('in' if operator == '=' else 'not in'), [value]
+        negative = operator in ('not in', 'not like', 'not ilike', 'not any', 'not any!')
+        positive = operator[4:] if operator.startswith('not ') else operator
+        products = self.env['product.product'].with_context(active_test=False)
+        ids = set()
+        if positive == 'in':
+            names = [item for item in value if isinstance(item, str)]
+            ids.update(item for item in value if not isinstance(item, str))
+            if names:
+                ids.update(products.search([('display_name', 'in', names)]).ids)
+        elif positive in ('like', 'ilike', '=like', '=ilike'):
+            if not value:
+                # Native relational empty-pattern rewrite (domains.py).
+                empty = positive.startswith('=')
+                return lambda product: (not bool(product.id)) == (empty != negative)
+            ids.update(products.search([('display_name', positive, value)]).ids)
+        elif positive in ('any', 'any!'):
+            # An outer normal search keeps product rules even when value is a
+            # Query produced by Odoo's relational-name normalization.
+            ids.update(products.search([('id', 'any', value)]).ids)
+        else:
+            return None
+        return lambda product: ((product.id or False) in ids) != negative
+
+    @api.model
+    def _search_catalog_product(self, operator, value):
+        matches = self._catalog_product_matcher(operator, value)
+        if matches is None:
+            return NotImplemented
+        kits = self.env['x_hm_parts_kit']
+        explicit = Domain('x_assembly_product_id', '!=', False)
+        implicit = Domain('x_assembly_product_id', '=', False)
+        # This is a safe superset of the exact, case-sensitive Python marker.
+        # Do not approximate the regex in PostgreSQL (Unicode digits/space).
+        candidates = implicit & Domain('x_note', 'like', 'Възел')
+
+        def batches():
+            last_id = 0
+            while True:
+                batch = kits.search_fetch(
+                    candidates & Domain('id', '>', last_id),
+                    ['x_note', 'x_company_id', 'x_assembly_product_id'],
+                    order='id', limit=200,
+                )
+                if not batch:
+                    break
+                yield batch
+                last_id = batch[-1].id
+
+        empty_matches = matches(self.env['product.product'])
+        exceptions = implicit_exceptions(
+            batches(), self._catalog_code, self._assembly_product,
+            matches, empty_matches,
+        )
+        implicit &= Domain('id', 'not in' if empty_matches else 'in', exceptions)
+        # The explicit branch stays entirely in SQL, with native m2o semantics.
+        # The outer ORM search still applies kit ACLs/rules, order and limit.
+        return (explicit & Domain('x_assembly_product_id', operator, value)) | implicit
 
     @api.model
     def action_open_kit(self, kit_id):
