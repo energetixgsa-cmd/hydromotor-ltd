@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="sale_order_customer_machine" model="ir.ui.view">
+    <field name="name">sale.order.customer.machine</field>
+    <field name="model">sale.order</field>
+    <field name="inherit_id" ref="sale.view_order_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//group[@name='partner_details']/field[@name='partner_id']" position="after">
+        <field name="x_hm_order_machine_id" options="{'no_create': True}"
+               domain="[('x_company_id','=',company_id),('x_retired','=',False),('x_partner_id','child_of',x_hm_machine_customer_id)]"
+               readonly="state not in ['draft','sent']"/>
+        <field name="x_hm_order_machine_label" invisible="not x_hm_order_machine_id"/>
+        <field name="x_hm_order_machine_serial" invisible="not x_hm_order_machine_id"/>
+        <field name="x_hm_machine_customer_id" invisible="1"/>
+      </xpath>
+      <xpath expr="//page[@name='order_lines']/field[@name='order_line']/list/field[@name='name']" position="after">
+        <field name="x_hm_use_order_machine" optional="show" force_save="1"
+               readonly="parent.state not in ['draft','sent']" invisible="display_type"/>
+        <field name="x_hm_parts_machine_id" optional="show" force_save="1"
+               options="{'no_create': True}" invisible="display_type"
+               readonly="parent.state not in ['draft','sent'] or x_hm_use_order_machine"
+               domain="[('x_company_id','=',parent.company_id),('x_retired','=',False),('x_partner_id','child_of',parent.x_hm_machine_customer_id)]"/>
+        <field name="x_hm_parts_machine_serial" optional="show"/>
+      </xpath>
+      <xpath expr="//page[@name='order_lines']/field[@name='order_line']/form/group/group[1]" position="inside">
+        <field name="x_hm_use_order_machine" force_save="1" readonly="parent.state not in ['draft','sent']"/>
+        <field name="x_hm_parts_machine_id" force_save="1" options="{'no_create': True}"
+               readonly="parent.state not in ['draft','sent'] or x_hm_use_order_machine"
+               domain="[('x_company_id','=',parent.company_id),('x_retired','=',False),('x_partner_id','child_of',parent.x_hm_machine_customer_id)]"/>
+        <field name="x_hm_parts_machine_serial"/>
+      </xpath>
+    </field>
+  </record>
+  <record id="machine_form_parts_history" model="ir.ui.view">
+    <field name="name">machine.parts.sale.history</field>
+    <field name="model">x_hm_machine</field>
+    <field name="inherit_id" ref="hydromotor_service.machine_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//form/sheet/notebook" position="inside">
+        <page name="hm_parts_sales_history" string="Оферти и продажби на части" groups="sales_team.group_sale_salesman">
+          <div class="text-muted">Оферта/продажба и доставено количество, не доказателство за монтаж. Върнатите количества са отразени в нетно доставеното.</div>
+          <field name="x_hm_parts_sale_line_ids" readonly="1" nolabel="1">
+            <list create="false" edit="false" delete="false" default_order="id desc">
+              <field name="order_id"/><field name="order_partner_id" optional="hide"/>
+              <field name="product_id"/><field name="name" optional="hide"/>
+              <field name="product_uom_qty" string="Предложено/поръчано"/>
+              <field name="qty_delivered" string="Нетно доставено"/>
+              <field name="product_uom_id"/>
+              <field name="qty_invoiced" optional="hide"/>
+              <field name="state"/><field name="x_hm_parts_history_state" widget="badge"/>
+              <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+          </field>
+        </page>
+      </xpath>
+    </field>
+  </record>
+</odoo>

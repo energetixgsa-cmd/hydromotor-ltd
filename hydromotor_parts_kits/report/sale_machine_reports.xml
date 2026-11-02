@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <template id="report_machine_identity">
+    <t t-if="hm_machine">
+      <t t-set="hm_machine_bg" t-value="(doc.env.context.get('lang') or '').startswith('bg')"/>
+      <strong t-out="'Машина: ' if hm_machine_bg else 'Machine: '"/>
+      <span t-out="hm_machine.x_model_label or hm_machine.x_name"/>
+      <t t-if="hm_machine.x_serial">
+        <span> | </span><strong t-out="'Сериен №: ' if hm_machine_bg else 'Serial No.: '"/>
+        <span t-out="hm_machine.x_serial"/>
+      </t>
+    </t>
+  </template>
+  <template id="sale_report_customer_machine" inherit_id="sale.report_saleorder_document">
+    <xpath expr="//div[@id='informations']" position="after">
+      <div t-if="doc.x_hm_order_machine_id" class="hm-machine-default mb-3">
+        <div class="text-muted small" t-out="'Машина по подразбиране (виж позициите):' if (doc.env.context.get('lang') or '').startswith('bg') else 'Default machine (see line attribution):'"/>
+        <t t-call="hydromotor_parts_kits.report_machine_identity">
+          <t t-set="hm_machine" t-value="doc.x_hm_order_machine_id"/>
+        </t>
+      </div>
+    </xpath>
+    <xpath expr="//td[@name='td_product_name']" position="inside">
+      <div t-if="line.x_hm_parts_machine_id" class="hm-machine-line small text-muted">
+        <t t-call="hydromotor_parts_kits.report_machine_identity">
+          <t t-set="hm_machine" t-value="line.x_hm_parts_machine_id"/>
+        </t>
+      </div>
+    </xpath>
+    <xpath expr="//td[@name='td_combo_name']" position="inside">
+      <div t-if="line.x_hm_parts_machine_id" class="hm-machine-line small text-muted">
+        <t t-call="hydromotor_parts_kits.report_machine_identity">
+          <t t-set="hm_machine" t-value="line.x_hm_parts_machine_id"/>
+        </t>
+      </div>
+    </xpath>
+  </template>
+  <!-- The installed proforma action uses this invoice-style body, NOT the
+       standard sale document. Restrict changes to sale/proforma only. -->
+  <template id="proforma_report_customer_machine" inherit_id="hydromotor_report_signatures.report_customer_invoice_page">
+    <xpath expr="//div[@id='informations']" position="after">
+      <div t-if="hm_is_proforma and doc._name == 'sale.order' and doc.x_hm_order_machine_id" class="hm-machine-default mb-3">
+        <div class="text-muted small" t-out="'Машина по подразбиране (виж позициите):' if hm_bg else 'Default machine (see line attribution):'"/>
+        <t t-call="hydromotor_parts_kits.report_machine_identity">
+          <t t-set="hm_machine" t-value="doc.x_hm_order_machine_id"/>
+        </t>
+      </div>
+    </xpath>
+    <xpath expr="//table[@name='hm_invoice_line_table']//tr[@t-else='']/td[2]" position="inside">
+      <div t-if="hm_is_proforma and doc._name == 'sale.order' and line.x_hm_parts_machine_id" class="hm-machine-line small text-muted">
+        <t t-call="hydromotor_parts_kits.report_machine_identity">
+          <t t-set="hm_machine" t-value="line.x_hm_parts_machine_id"/>
+        </t>
+      </div>
+    </xpath>
+  </template>
+</odoo>

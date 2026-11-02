@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <!-- x_hm_machine is XML/manual: do not extend its Python class. -->
+  <record id="field_machine_parts_sale_lines" model="ir.model.fields">
+    <field name="model_id" ref="hydromotor_service.model_machine"/>
+    <field name="name">x_hm_parts_sale_line_ids</field>
+    <field name="field_description">Оферти и продажби на части/услуги</field>
+    <field name="ttype">one2many</field>
+    <field name="relation">sale.order.line</field>
+    <field name="relation_field">x_hm_parts_machine_id</field>
+    <field name="store" eval="True"/>
+    <field name="index" eval="False"/>
+    <field name="copied" eval="False"/>
+    <field name="readonly" eval="True"/>
+    <field name="required" eval="False"/>
+  </record>
+</odoo>
