@@ -14,7 +14,7 @@ class SaleOrder(models.Model):
         help='Машина на клиента за частите/услугите; не е първоначалната продажба на машината.')
 
     x_hm_machine_customer_id = fields.Many2one(
-        related='partner_id.commercial_partner_id', compute_sudo=False)
+        related='partner_id.commercial_partner_id', string='Клиент за избор на машина', compute_sudo=False)
     x_hm_order_machine_label = fields.Char(
         related='x_hm_order_machine_id.x_model_label', string='Модел машина', compute_sudo=False)
     x_hm_order_machine_serial = fields.Char(
@@ -57,6 +57,20 @@ class SaleOrder(models.Model):
             order._hm_validate_machine(order.x_hm_order_machine_id)
 
     def write(self, values):
+        if 'x_hm_order_machine_id' in values and values.get('order_line'):
+            # The web client serializes onchange-updated machines but omits an
+            # unchanged True inheritance flag. Recognize only echoes on already
+            # inherited, owned lines; do not reinterpret explicit overrides.
+            inherited_ids = set(self.order_line.filtered('x_hm_use_order_machine').ids)
+            commands = []
+            for command in values['order_line']:
+                if (command[0] == 1 and command[1] in inherited_ids and
+                        'x_hm_use_order_machine' not in command[2] and
+                        'x_hm_parts_machine_id' in command[2] and
+                        command[2]['x_hm_parts_machine_id'] == values['x_hm_order_machine_id']):
+                    command = (1, command[1], dict(command[2], x_hm_use_order_machine=True))
+                commands.append(command)
+            values = dict(values, order_line=commands)
         result = super().write(values)
         if 'x_hm_order_machine_id' in values:
             for order in self:

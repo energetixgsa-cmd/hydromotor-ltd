@@ -75,6 +75,74 @@ class TestSaleMachine(TransactionCase):
         inherited.write({'x_hm_use_order_machine': True})
         self.assertFalse(inherited.x_hm_parts_machine_id)
 
+    def test_exact_web_save_header_onchange_echo_preserves_inheritance(self):
+        # Captured staging request: [[49], {"x_hm_order_machine_id":45,
+        # "order_line":[[1,65,{"x_hm_parts_machine_id":45}]]}].
+        # Only database IDs are rebound to isolated transaction fixtures.
+        order = self._order()
+        inherited = self._line(order)
+        override = self._line(order, x_hm_parts_machine_id=self.second_machine.id)
+        cleared = self._line(order, x_hm_parts_machine_id=False)
+        args = [[order.id], {'x_hm_order_machine_id': self.second_machine.id,
+            'order_line': [[1, inherited.id, {'x_hm_parts_machine_id': self.second_machine.id}]]}]
+        self.env['sale.order'].browse(args[0]).web_save(args[1], specification={})
+        self.env.flush_all()
+        self.env.invalidate_all()
+        self.assertTrue(inherited.x_hm_use_order_machine,
+                        'Unchanged true flag omitted by web_save must survive the onchange echo')
+        self.assertEqual(inherited.x_hm_parts_machine_id, self.second_machine)
+        order.web_save({'x_hm_order_machine_id': self.machine.id,
+            'order_line': [[1, inherited.id, {'x_hm_parts_machine_id': self.machine.id}]]}, specification={})
+        self.assertTrue(inherited.x_hm_use_order_machine)
+        self.assertEqual(inherited.x_hm_parts_machine_id, self.machine)
+        self.assertFalse(override.x_hm_use_order_machine)
+        self.assertEqual(override.x_hm_parts_machine_id, self.second_machine)
+        self.assertFalse(cleared.x_hm_use_order_machine)
+        self.assertFalse(cleared.x_hm_parts_machine_id)
+
+    def test_web_save_header_echo_does_not_swallow_override_or_clear(self):
+        order = self._order()
+        explicit = self._line(order, x_hm_parts_machine_id=self.second_machine.id)
+        opt_out = self._line(order)
+        different = self._line(order)
+        cleared = self._line(order)
+        order.web_save({'x_hm_order_machine_id': self.second_machine.id, 'order_line': [
+            [1, explicit.id, {'x_hm_parts_machine_id': self.second_machine.id}],
+            [1, opt_out.id, {'x_hm_parts_machine_id': self.second_machine.id,
+                             'x_hm_use_order_machine': False}],
+            [1, different.id, {'x_hm_parts_machine_id': self.machine.id}],
+            [1, cleared.id, {'x_hm_parts_machine_id': False}],
+        ]}, specification={})
+        for line in (explicit, opt_out, different, cleared):
+            self.assertFalse(line.x_hm_use_order_machine)
+        self.assertEqual(different.x_hm_parts_machine_id, self.machine)
+        self.assertFalse(cleared.x_hm_parts_machine_id)
+        order.x_hm_order_machine_id = self.machine
+        self.assertEqual(explicit.x_hm_parts_machine_id, self.second_machine)
+        self.assertEqual(opt_out.x_hm_parts_machine_id, self.second_machine)
+        self.assertFalse(cleared.x_hm_parts_machine_id)
+
+    def test_web_save_header_clear_echo_keeps_inheritance_and_direct_clear_opts_out(self):
+        order = self._order()
+        inherited = self._line(order)
+        order.web_save({'x_hm_order_machine_id': False,
+            'order_line': [[1, inherited.id, {'x_hm_parts_machine_id': False}]]}, specification={})
+        self.assertTrue(inherited.x_hm_use_order_machine)
+        self.assertFalse(inherited.x_hm_parts_machine_id)
+        order.x_hm_order_machine_id = self.machine
+        self.assertEqual(inherited.x_hm_parts_machine_id, self.machine)
+        order.web_save({'order_line': [[1, inherited.id, {'x_hm_parts_machine_id': False}]]}, specification={})
+        self.assertFalse(inherited.x_hm_use_order_machine)
+        order.x_hm_order_machine_id = self.second_machine
+        self.assertFalse(inherited.x_hm_parts_machine_id)
+
+    def test_machine_customer_helper_has_distinct_label(self):
+        metadata = self.env['sale.order'].fields_get(
+            ['x_hm_machine_customer_id', 'commercial_partner_id'], attributes=['string'])
+        self.assertNotEqual(metadata['x_hm_machine_customer_id']['string'],
+                            metadata.get('commercial_partner_id', {}).get('string', 'Commercial Entity'))
+        self.assertNotEqual(metadata['x_hm_machine_customer_id']['string'], 'Commercial Entity')
+
     def test_rpc_rejects_wrong_customer_retired_and_wrong_company(self):
         order = self._order()
         wrong = self._machine('HM-WRONG-OWNER', partner=self.other_partner)
