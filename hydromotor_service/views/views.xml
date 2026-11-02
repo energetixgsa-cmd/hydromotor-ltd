@@ -8,6 +8,8 @@
         <field name="x_name"/>
         <field name="x_partner_id"/>
         <field name="x_serial" string="Сериен номер"/>
+        <field name="x_registration_number" optional="show"/>
+        <field name="x_engine_number" optional="hide"/>
         <field name="x_site" optional="show"/>
         <field name="x_hours"/>
         <field name="x_last_meter_date" optional="show"/>
@@ -46,6 +48,8 @@
               <field name="x_model_label"/>
               <field name="x_year"/>
               <field name="x_vin"/>
+              <field name="x_registration_number"/>
+              <field name="x_engine_number"/>
             </group>
             <group string="Експлоатация">
               <field name="x_site"/>
@@ -130,6 +134,8 @@
         <field name="x_serial" string="Сериен номер"/>
         <field name="x_partner_id"/>
         <field name="x_vin"/>
+        <field name="x_registration_number"/>
+        <field name="x_engine_number"/>
         <filter name="operating" string="В обслужване" domain="[('x_retired', '=', False)]"/>
         <filter name="retired" string="Изведени" domain="[('x_retired', '=', True)]"/>
         <separator/>

@@ -314,6 +314,34 @@ which the class' module is installed).
     <field name="selectable" eval="True"/>
     <field name="company_dependent" eval="False"/>
   </record>
+  <record id="hydromotor_service.field_machine_registration_number" model="ir.model.fields">
+    <field name="model_id" ref="hydromotor_service.model_machine"/>
+    <field name="name">x_registration_number</field>
+    <field name="ttype">char</field>
+    <field name="domain">[]</field>
+    <field name="field_description">Регистрационен номер</field>
+    <field name="copied" eval="False"/>
+    <field name="required" eval="False"/>
+    <field name="readonly" eval="False"/>
+    <field name="index" eval="True"/>
+    <field name="store" eval="True"/>
+    <field name="selectable" eval="True"/>
+    <field name="company_dependent" eval="False"/>
+  </record>
+  <record id="hydromotor_service.field_machine_engine_number" model="ir.model.fields">
+    <field name="model_id" ref="hydromotor_service.model_machine"/>
+    <field name="name">x_engine_number</field>
+    <field name="ttype">char</field>
+    <field name="domain">[]</field>
+    <field name="field_description">Номер на двигателя</field>
+    <field name="copied" eval="False"/>
+    <field name="required" eval="False"/>
+    <field name="readonly" eval="False"/>
+    <field name="index" eval="True"/>
+    <field name="store" eval="True"/>
+    <field name="selectable" eval="True"/>
+    <field name="company_dependent" eval="False"/>
+  </record>
   <record id="hydromotor_service.field_machine_site" model="ir.model.fields">
     <field name="model_id" ref="hydromotor_service.model_machine"/>
     <field name="name">x_site</field>

@@ -456,7 +456,7 @@ action = {'type': 'ir.actions.act_window', 'res_model': 'sale.order', 'view_mode
         <t t-call="web.external_layout">
           <div class="page" style="font-family: DejaVu Sans, sans-serif; font-size: 12px;">
 <h2>СЕРВИЗЕН ПРОТОКОЛ <span t-field="o.x_reference"/></h2>
-<table class="table table-sm"><tbody><tr><td style="width: 25%"><strong>Клиент</strong></td><td><span t-field="o.x_partner_id"/></td></tr><tr><td><strong>Машина</strong></td><td><span t-field="o.x_machine_id.x_name"/></td></tr><tr><td><strong>Сериен номер</strong></td><td><span t-field="o.x_machine_id.x_serial"/></td></tr><tr><td><strong>Посещение</strong></td><td><span t-field="o.x_planned_start"/></td></tr><tr><td><strong>Отговорен техник</strong></td><td><span t-field="o.x_technician_id"/></td></tr><tr><td><strong>Етап</strong></td><td><span t-field="o.x_state"/></td></tr></tbody></table>
+<table class="table table-sm"><tbody><tr><td style="width: 25%"><strong>Клиент</strong></td><td><span t-field="o.x_partner_id"/></td></tr><tr><td><strong>Машина</strong></td><td><span t-field="o.x_machine_id.x_name"/></td></tr><tr><td><strong>Сериен номер</strong></td><td><span t-field="o.x_machine_id.x_serial"/></td></tr><tr t-if="o.x_machine_id.x_registration_number"><td><strong>Регистрационен номер</strong></td><td><span t-field="o.x_machine_id.x_registration_number"/></td></tr><tr t-if="o.x_machine_id.x_engine_number"><td><strong>Номер на двигателя</strong></td><td><span t-field="o.x_machine_id.x_engine_number"/></td></tr><tr><td><strong>Посещение</strong></td><td><span t-field="o.x_planned_start"/></td></tr><tr><td><strong>Отговорен техник</strong></td><td><span t-field="o.x_technician_id"/></td></tr><tr><td><strong>Етап</strong></td><td><span t-field="o.x_state"/></td></tr></tbody></table>
 <h4>Заявена задача / неизправност</h4><p style="white-space: pre-wrap;" t-field="o.x_problem"/>
 <h4>Диагностика</h4><p style="white-space: pre-wrap;" t-field="o.x_diagnosis"/>
 <h4>Извършени дейности</h4><p style="white-space: pre-wrap;" t-field="o.x_work_done"/>
@@ -480,7 +480,7 @@ action = {'type': 'ir.actions.act_window', 'res_model': 'sale.order', 'view_mode
     <field name="active" eval="True"/>
     <field name="arch" type="xml">
       <list string="Машини" decoration-muted="x_retired">
- <field name="x_name"/><field name="x_partner_id"/><field name="x_serial" string="Сериен номер"/><field name="x_site" optional="show"/><field name="x_hours"/><field name="x_last_meter_date" optional="show"/><field name="x_warranty_end" optional="show"/><field name="x_sale_order_id" optional="hide" groups="sales_team.group_sale_salesman"/><field name="x_company_id" groups="base.group_multi_company"/><field name="x_retired" optional="hide"/>
+ <field name="x_name"/><field name="x_partner_id"/><field name="x_serial" string="Сериен номер"/><field name="x_registration_number" optional="show"/><field name="x_engine_number" optional="hide"/><field name="x_site" optional="show"/><field name="x_hours"/><field name="x_last_meter_date" optional="show"/><field name="x_warranty_end" optional="show"/><field name="x_sale_order_id" optional="hide" groups="sales_team.group_sale_salesman"/><field name="x_company_id" groups="base.group_multi_company"/><field name="x_retired" optional="hide"/>
 </list>
     </field>
   </record>
@@ -496,7 +496,7 @@ action = {'type': 'ir.actions.act_window', 'res_model': 'sale.order', 'view_mode
         <field name="x_name"/>
         <field name="x_serial" string="Сериен номер"/>
         <field name="x_partner_id"/>
-        <field name="x_vin"/>
+        <field name="x_vin"/><field name="x_registration_number"/><field name="x_engine_number"/>
         <filter name="operating" string="В обслужване" domain="[('x_retired', '=', False)]"/>
         <filter name="retired" string="Изведени" domain="[('x_retired', '=', True)]"/>
         <separator/>
@@ -778,7 +778,7 @@ action = {'type': 'ir.actions.act_window', 'res_model': 'sale.order', 'view_mode
       <form string="Досие на машина">
 <header><button name="%(hydromotor_service.action_new_job)d" type="action" string="Нова заявка" class="oe_highlight"/><button name="%(hydromotor_service.action_new_plan)d" type="action" string="Нов план"/><button name="%(hydromotor_service.action_new_meter)d" type="action" string="Отчети моточасове"/><button name="%(hydromotor_service.action_machine_repairs)d" type="action" string="Ремонти (Repairs)" groups="stock.group_stock_user"/></header>
 <sheet><div class="oe_title"><h1><field name="x_name" placeholder="Машина / сериен номер"/></h1></div>
-<group><group string="Машина и собственик"><field name="x_company_id" options="{'no_create': True}" readonly="x_identity_key"/><field name="x_identity_key" invisible="1"/><field name="x_partner_id"/><field name="x_lot_id" options="{'no_create': True}" domain="[('product_id.tracking', '=', 'serial'), '|', ('company_id', '=', False), ('company_id', '=', x_company_id)]" readonly="x_identity_key"/><field name="x_product_id"/><field name="x_brand"/><field name="x_model_label"/><field name="x_year"/><field name="x_vin"/></group>
+<group><group string="Машина и собственик"><field name="x_company_id" options="{'no_create': True}" readonly="x_identity_key"/><field name="x_identity_key" invisible="1"/><field name="x_partner_id"/><field name="x_lot_id" options="{'no_create': True}" domain="[('product_id.tracking', '=', 'serial'), '|', ('company_id', '=', False), ('company_id', '=', x_company_id)]" readonly="x_identity_key"/><field name="x_product_id"/><field name="x_brand"/><field name="x_model_label"/><field name="x_year"/><field name="x_vin"/><field name="x_registration_number"/><field name="x_engine_number"/></group>
 <group string="Експлоатация"><field name="x_site"/><field name="x_hours"/><field name="x_last_meter_date"/><field name="x_commission_date"/><field name="x_retired"/></group></group>
 <notebook><page string="Проектна книга"><field name="x_notes" placeholder="Конфигурация, пускови настройки и важни бележки. Приложете документи и снимки в историята отдолу."/></page>
 <page string="Сервизна история"><field name="x_job_ids" readonly="1"><list><field name="x_reference"/><field name="x_name"/><field name="x_partner_id"/><field name="x_state"/><field name="x_planned_start"/><field name="x_technician_id"/><field name="x_closed_at"/><field name="x_sale_order_id" groups="sales_team.group_sale_salesman"/></list></field></page>
