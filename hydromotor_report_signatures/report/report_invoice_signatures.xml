@@ -202,6 +202,10 @@
                     </div>
 
                     <div class="mt-3" style="font-size:11px;">
+                        <div t-if="doc.preferred_payment_method_line_id" name="hm_payment_method" class="mb-1">
+                            <strong t-out="'Начин на плащане:' if hm_bg else 'Payment Method:'"/>
+                            <span t-field="doc.preferred_payment_method_line_id.name"/>
+                        </div>
                         <div t-if="hm_payment_term" class="mb-1">
                             <strong t-out="'Условия за плащане:' if hm_bg else 'Payment Terms:'"/> <span t-out="hm_payment_term.name"/>
                         </div>
