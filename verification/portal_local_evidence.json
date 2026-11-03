@@ -1,0 +1,114 @@
+{
+  "odoo_source": "5cd0bbc9cf6a554b5b91fbd0c0df3800f0744bc7",
+  "database": "hm_portal_machine_tdd",
+  "testovo_base": "f3687b473d72b49e14399243bc4de949f2a4e461",
+  "main_must_remain": "3019936f6ba36270e5df59a1d91c13b7473f0a8e",
+  "tests": {
+    "portal-header-red": {
+      "log": "C:\\Users\\admin\\AppData\\Local\\hermes\\profiles\\odoo-integration\\cache\\scratch\\hm_odoo_runtime\\portal-header-red.log",
+      "sha256": "813de99ed97f43382bc2f9dbab7d24f03ba99fc1de0281946b88b537cb30af75",
+      "summary": "1 failed, 0 error(s) of 1 tests",
+      "failures": [
+        "TestSaleMachinePortal.test_internal_preview_renders_mixed_attribution"
+      ],
+      "skipped": [],
+      "portal_cases": [
+        "test_internal_preview_renders_mixed_attribution"
+      ]
+    },
+    "portal-header-green": {
+      "log": "C:\\Users\\admin\\AppData\\Local\\hermes\\profiles\\odoo-integration\\cache\\scratch\\hm_odoo_runtime\\portal-header-green.log",
+      "sha256": "1c04d8c7ad6c035b5c8884f964cd17264414cec532af5902688c26f5c0dba932",
+      "summary": "0 failed, 0 error(s) of 1 tests",
+      "failures": [],
+      "skipped": [],
+      "portal_cases": [
+        "test_internal_preview_renders_mixed_attribution"
+      ]
+    },
+    "portal-release-final": {
+      "log": "C:\\Users\\admin\\AppData\\Local\\hermes\\profiles\\odoo-integration\\cache\\scratch\\hm_odoo_runtime\\portal-release-final.log",
+      "sha256": "ee7a0cb9bd1b83b37307d99b824c76691d710d76e7ea37a32889f8b5a8bdd501",
+      "summary": "0 failed, 0 error(s) of 24 tests",
+      "failures": [],
+      "skipped": [
+        "TestSaleMachine.test_real_sale_and_proforma_pdf_machine_text : Set HM_TEST_PDF=1 with patched-Qt wkhtmltopdf for PDF acceptance "
+      ],
+      "portal_cases": [
+        "test_internal_preview_renders_mixed_attribution",
+        "test_invalid_missing_and_other_order_tokens_disclose_nothing",
+        "test_line_override_remains_without_header",
+        "test_no_machine_hides_header_and_all_line_blocks",
+        "test_portal_direct_machine_rpc_stays_denied",
+        "test_portal_owner_renders_without_machine_read_acl",
+        "test_public_token_renders_without_machine_read_acl"
+      ]
+    },
+    "portal-full-final": {
+      "log": "C:\\Users\\admin\\AppData\\Local\\hermes\\profiles\\odoo-integration\\cache\\scratch\\hm_odoo_runtime\\portal-full-final.log",
+      "sha256": "d59b969824817533ff91922e1dba45b55535bbdcad26eef303dd2777f6314726",
+      "summary": "1 failed, 0 error(s) of 45 tests",
+      "failures": [
+        "TestCatalogProductSearch.test_product_edits_and_ambiguity_are_dynamic"
+      ],
+      "skipped": [
+        "TestSaleMachine.test_real_sale_and_proforma_pdf_machine_text : Set HM_TEST_PDF=1 with patched-Qt wkhtmltopdf for PDF acceptance "
+      ],
+      "portal_cases": [
+        "test_internal_preview_renders_mixed_attribution",
+        "test_invalid_missing_and_other_order_tokens_disclose_nothing",
+        "test_line_override_remains_without_header",
+        "test_no_machine_hides_header_and_all_line_blocks",
+        "test_portal_direct_machine_rpc_stays_denied",
+        "test_portal_owner_renders_without_machine_read_acl",
+        "test_public_token_renders_without_machine_read_acl"
+      ]
+    },
+    "portal-baseline-catalog": {
+      "log": "C:\\Users\\admin\\AppData\\Local\\hermes\\profiles\\odoo-integration\\cache\\scratch\\hm_odoo_runtime\\portal-baseline-catalog.log",
+      "sha256": "3779d2b3f209776c95c2a86e2494e3cd062e23ba3f8b84a87f8c34bafa661777",
+      "summary": "1 failed, 0 error(s) of 13 tests",
+      "failures": [
+        "TestCatalogProductSearch.test_product_edits_and_ambiguity_are_dynamic"
+      ],
+      "skipped": [],
+      "portal_cases": []
+    }
+  },
+  "rollback": {
+    "database": "hm_portal_machine_tdd",
+    "operation": "verify-rollback",
+    "schema_columns": 140,
+    "order_id": 398,
+    "unchanged_schema_and_attribution": true,
+    "portal_template_present": false,
+    "result": "PASS"
+  },
+  "candidate_schema_data": {
+    "database": "hm_portal_machine_tdd",
+    "operation": "verify-candidate",
+    "schema_columns": 140,
+    "order_id": 398,
+    "unchanged_schema_and_attribution": true,
+    "portal_template_present": true,
+    "result": "PASS"
+  },
+  "backup": {
+    "path": "C:\\Users\\admin\\Downloads\\energetixgsa-cmd-hydromotor-ltd-testovo-41085001_2026-11-03_054356_exact_fs.zip",
+    "bytes": 53691833,
+    "sha256": "04833a0b1b2b634f9b16cff362bf6a1e18323e5e47c3f2deb305a2d1ae2b2677",
+    "crc_error": null,
+    "dump_sql_bytes": 131591074,
+    "filestore_files": 1132,
+    "branch": "Testovo",
+    "revision": "f3687b473d72b49e14399243bc4de949f2a4e461",
+    "utc": "2026-11-03 05:43:56",
+    "restore_target_verified": "Testovo exact timestamp; closed without restore",
+    "restore_rehearsal": false
+  },
+  "limitations": [
+    "Full module has one unchanged Testovo catalog search failure, reproduced at original source",
+    "Existing opt-in real PDF test skipped; PDF code unchanged",
+    "Backup ZIP integrity and matching Restore target verified, not a full backup restore rehearsal"
+  ]
+}
