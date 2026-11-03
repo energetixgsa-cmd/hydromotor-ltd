@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <!-- Standard sale controller checks order ACL/token BEFORE rendering and
+       supplies the authorized order. No machine routes, sudo or portal ACLs. -->
+  <template id="sale_portal_customer_machine" inherit_id="sale.sale_order_portal_content">
+    <xpath expr="//div[@id='informations']" position="after">
+      <div t-if="sale_order.x_hm_order_machine_id" class="hm-portal-machine-default mb-3">
+        <div class="text-muted small" t-out="'Машина по подразбиране (виж позициите):' if (sale_order.env.context.get('lang') or '').startswith('bg') else 'Default machine (see line attribution):'"/>
+        <t t-call="hydromotor_parts_kits.report_machine_identity">
+          <t t-set="doc" t-value="sale_order"/>
+          <t t-set="hm_machine" t-value="sale_order.x_hm_order_machine_id"/>
+        </t>
+      </div>
+    </xpath>
+    <xpath expr="//td[@name='td_product_name']" position="inside">
+      <div t-if="line.x_hm_parts_machine_id" class="hm-portal-machine-line small text-muted">
+        <t t-call="hydromotor_parts_kits.report_machine_identity">
+          <t t-set="doc" t-value="sale_order"/>
+          <t t-set="hm_machine" t-value="line.x_hm_parts_machine_id"/>
+        </t>
+      </div>
+    </xpath>
+    <xpath expr="//td[@name='td_combo_name']" position="inside">
+      <div t-if="line.x_hm_parts_machine_id" class="hm-portal-machine-line small text-muted">
+        <t t-call="hydromotor_parts_kits.report_machine_identity">
+          <t t-set="doc" t-value="sale_order"/>
+          <t t-set="hm_machine" t-value="line.x_hm_parts_machine_id"/>
+        </t>
+      </div>
+    </xpath>
+  </template>
+</odoo>
