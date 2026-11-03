@@ -44,6 +44,12 @@ class SaleOrder(models.Model):
 
     def _prepare_invoice(self):
         values = super()._prepare_invoice()
-        if self.hm_partner_bank_id:
-            values["partner_bank_id"] = self.hm_partner_bank_id.id
+        # Explicit False keeps grouping keys comparable and preserves a cleared choice.
+        values["partner_bank_id"] = self.hm_partner_bank_id.id or False
         return values
+
+    def _get_invoice_grouping_keys(self):
+        # A combined invoice can carry only one intended method and recipient bank.
+        return super()._get_invoice_grouping_keys() + [
+            "preferred_payment_method_line_id", "partner_bank_id",
+        ]
