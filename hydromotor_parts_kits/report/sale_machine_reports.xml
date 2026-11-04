@@ -13,22 +13,22 @@
   </template>
   <template id="sale_report_customer_machine" inherit_id="sale.report_saleorder_document">
     <xpath expr="//div[@id='informations']" position="after">
-      <div t-if="doc.x_hm_order_machine_id" class="hm-machine-default mb-3">
-        <div class="text-muted small" t-out="'Машина по подразбиране (виж позициите):' if (doc.env.context.get('lang') or '').startswith('bg') else 'Default machine (see line attribution):'"/>
+      <div t-if="doc._hm_report_has_uniform_machine()" class="hm-machine-default mb-3">
+        <div class="text-muted small" t-out="'Машина за всички позиции:' if (doc.env.context.get('lang') or '').startswith('bg') else 'Machine for all items:'"/>
         <t t-call="hydromotor_parts_kits.report_machine_identity">
           <t t-set="hm_machine" t-value="doc.x_hm_order_machine_id"/>
         </t>
       </div>
     </xpath>
     <xpath expr="//td[@name='td_product_name']" position="inside">
-      <div t-if="line.x_hm_parts_machine_id" class="hm-machine-line small text-muted">
+      <div t-if="line.x_hm_parts_machine_id and not doc._hm_report_has_uniform_machine()" class="hm-machine-line small text-muted">
         <t t-call="hydromotor_parts_kits.report_machine_identity">
           <t t-set="hm_machine" t-value="line.x_hm_parts_machine_id"/>
         </t>
       </div>
     </xpath>
     <xpath expr="//td[@name='td_combo_name']" position="inside">
-      <div t-if="line.x_hm_parts_machine_id" class="hm-machine-line small text-muted">
+      <div t-if="line.x_hm_parts_machine_id and not doc._hm_report_has_uniform_machine()" class="hm-machine-line small text-muted">
         <t t-call="hydromotor_parts_kits.report_machine_identity">
           <t t-set="hm_machine" t-value="line.x_hm_parts_machine_id"/>
         </t>
@@ -39,15 +39,15 @@
        standard sale document. Restrict changes to sale/proforma only. -->
   <template id="proforma_report_customer_machine" inherit_id="hydromotor_report_signatures.report_customer_invoice_page">
     <xpath expr="//div[@id='informations']" position="after">
-      <div t-if="hm_is_proforma and doc._name == 'sale.order' and doc.x_hm_order_machine_id" class="hm-machine-default mb-3">
-        <div class="text-muted small" t-out="'Машина по подразбиране (виж позициите):' if hm_bg else 'Default machine (see line attribution):'"/>
+      <div t-if="hm_is_proforma and doc._name == 'sale.order' and doc._hm_report_has_uniform_machine()" class="hm-machine-default mb-3">
+        <div class="text-muted small" t-out="'Машина за всички позиции:' if hm_bg else 'Machine for all items:'"/>
         <t t-call="hydromotor_parts_kits.report_machine_identity">
           <t t-set="hm_machine" t-value="doc.x_hm_order_machine_id"/>
         </t>
       </div>
     </xpath>
     <xpath expr="//table[@name='hm_invoice_line_table']//tr[@t-else='']/td[2]" position="inside">
-      <div t-if="hm_is_proforma and doc._name == 'sale.order' and line.x_hm_parts_machine_id" class="hm-machine-line small text-muted">
+      <div t-if="hm_is_proforma and doc._name == 'sale.order' and line.x_hm_parts_machine_id and not doc._hm_report_has_uniform_machine()" class="hm-machine-line small text-muted">
         <t t-call="hydromotor_parts_kits.report_machine_identity">
           <t t-set="hm_machine" t-value="line.x_hm_parts_machine_id"/>
         </t>

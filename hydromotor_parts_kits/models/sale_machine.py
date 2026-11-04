@@ -20,6 +20,18 @@ class SaleOrder(models.Model):
     x_hm_order_machine_serial = fields.Char(
         related='x_hm_order_machine_id.x_serial', string='Сериен номер', compute_sudo=False)
 
+    def _hm_report_has_uniform_machine(self):
+        """A shared header is authoritative only when every printed item matches.
+
+        An explicitly cleared row must never appear to inherit a header machine.
+        Notes/sections do not have attribution; explicit same-machine overrides
+        are safe because this checks the actual stored relation, not its default.
+        """
+        self.ensure_one()
+        items = self._get_order_lines_to_report().filtered(lambda line: not line.display_type)
+        return bool(self.x_hm_order_machine_id and items and all(
+            line.x_hm_parts_machine_id == self.x_hm_order_machine_id for line in items))
+
     @api.onchange('x_hm_order_machine_id')
     def _onchange_hm_order_machine(self):
         for order in self:

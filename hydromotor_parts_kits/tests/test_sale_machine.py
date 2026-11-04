@@ -234,8 +234,7 @@ class TestSaleMachine(TransactionCase):
                 html, _ = self.env['ir.actions.report']._render_qweb_html(report, order.ids)
                 dom = etree.HTML(html)
                 header = dom.xpath("//*[contains(@class,'hm-machine-default')]")
-                self.assertEqual(len(header), 1, 'Actual report must include default machine header')
-                self.assertIn('HM-00001', ''.join(header[0].itertext()))
+                self.assertFalse(header, 'Mixed/cleared items must not inherit a shared header')
                 attributed = dom.xpath("//*[contains(@class,'hm-machine-line')]")
                 self.assertEqual(len(attributed), 2, 'No order fallback on explicitly unassigned line')
                 self.assertIn('HM-00001', ''.join(attributed[0].itertext()))
@@ -334,32 +333,66 @@ class TestSaleMachine(TransactionCase):
             self.assertIn('Сериен №:', text)
             self.assertIn('HM-00001', text)
 
+    def test_uniform_machine_is_printed_once_in_actual_reports(self):
+        order = self._order()
+        self._line(order, name='Uniform first spare')
+        self._line(order, name='Uniform second spare')
+        for report in ('sale.action_report_saleorder', 'sale.action_report_pro_forma_invoice'):
+            html, _ = self.env['ir.actions.report']._render_qweb_html(report, order.ids)
+            dom = etree.HTML(html)
+            self.assertEqual(''.join(dom.itertext()).count('HM-00001'), 1,
+                             'Uniform machine must not repeat in header and following item')
+            self.assertEqual(len(dom.xpath("//*[contains(@class,'hm-machine-default')]")), 1)
+            self.assertFalse(dom.xpath("//*[contains(@class,'hm-machine-line')]"))
+
     def test_real_sale_and_proforma_pdf_machine_text(self):
         if os.environ.get('HM_TEST_PDF') != '1':
             self.skipTest('Set HM_TEST_PDF=1 with patched-Qt wkhtmltopdf for PDF acceptance')
         self.env['ir.config_parameter'].set_param(
             'report.url', os.environ.get('HM_TEST_REPORT_URL') or
             'http://127.0.0.1:%s' % tools.config['http_port'])
-        self.second_machine.x_model_label = 'Second <safe> model'
-        order = self._order()
-        self._line(order, name='Inherited spare')
-        self._line(order, name='Override spare', x_hm_parts_machine_id=self.second_machine.id)
-        self._line(order, name='Unassigned spare', x_hm_parts_machine_id=False)
+        self.env['res.lang']._activate_lang('bg_BG')
         renderer = self.env['ir.actions.report'].with_context(force_report_rendering=True)
-        for label, report in [('sale', 'sale.action_report_saleorder'),
-                              ('proforma', 'sale.action_report_pro_forma_invoice')]:
-            pdf, kind = renderer._render_qweb_pdf(report, order.ids)
-            self.assertEqual(kind, 'pdf')
-            self.assertTrue(pdf.startswith(b'%PDF-'), 'Must be real PDF, not Odoo test-mode HTML fallback')
-            reader = PdfReader(io.BytesIO(pdf))
-            text = '\n'.join(page.extract_text() for page in reader.pages)
-            self.assertEqual(text.count('HM-00001'), 2, 'Header plus inherited line only')
-            self.assertEqual(text.count('HM-00002'), 1, 'Override line only')
-            self.assertIn('HM Model', text)
-            self.assertIn('Second <safe> model', text)
-            self.assertIn('Unassigned spare', text)
-            destination = os.environ.get('HM_TEST_ARTIFACT_DIR')
-            if destination:
-                path = Path(destination)
-                path.mkdir(parents=True, exist_ok=True)
-                (path / ('machine-' + label + '.pdf')).write_bytes(pdf)
+        for language, country in [('en_US', 'base.us'), ('bg_BG', 'base.bg')]:
+            self.partner.write({'lang': language, 'country_id': self.env.ref(country).id})
+            for scenario in ('single', 'same_override', 'mixed', 'cleared', 'no_machine'):
+                order = self._order(x_hm_order_machine_id=False if scenario == 'no_machine' else self.machine.id)
+                self._line(order, name='FIRST SPARE')
+                values: dict = {'name': 'SECOND SPARE'}
+                if scenario == 'same_override':
+                    values['x_hm_parts_machine_id'] = self.machine.id
+                elif scenario == 'mixed':
+                    values['x_hm_parts_machine_id'] = self.second_machine.id
+                elif scenario == 'cleared':
+                    values['x_hm_parts_machine_id'] = False
+                self._line(order, **values)
+                for label, report in [('sale', 'sale.action_report_saleorder'),
+                                      ('proforma', 'sale.action_report_pro_forma_invoice')]:
+                    with self.subTest(language=language, scenario=scenario, report=label):
+                        html, _ = renderer._render_qweb_html(report, order.ids)
+                        dom = etree.HTML(html)
+                        header = dom.xpath("//*[contains(@class,'hm-machine-default')]")
+                        rows = dom.xpath("//*[contains(@class,'hm-machine-line')]")
+                        self.assertEqual(len(header), int(scenario in ('single', 'same_override')))
+                        self.assertEqual(len(rows), {'single':0, 'same_override':0,
+                            'mixed':2, 'cleared':1, 'no_machine':0}[scenario])
+                        if scenario == 'cleared':
+                            cleared = dom.xpath("//tr[.//td[contains(.,'SECOND SPARE')]]")[-1]
+                            self.assertNotIn('HM-00001', ''.join(cleared.itertext()))
+                        pdf, kind = renderer._render_qweb_pdf(report, order.ids)
+                        self.assertEqual(kind, 'pdf')
+                        self.assertTrue(pdf.startswith(b'%PDF-'))
+                        reader = PdfReader(io.BytesIO(pdf))
+                        text = ' '.join(' '.join(page.extract_text().split()) for page in reader.pages)
+                        compact = ''.join(text.split())
+                        self.assertEqual(compact.count('HM-00001'), int(scenario != 'no_machine'))
+                        self.assertEqual(compact.count('HM-00002'), int(scenario == 'mixed'))
+                        self.assertIn('SECOND SPARE', text)
+                        if scenario != 'no_machine':
+                            label_text = 'Сериен №:' if language == 'bg_BG' else 'Serial No.:'
+                            self.assertIn(''.join(label_text.split()), ''.join(text.split()))
+                        destination = os.environ.get('HM_TEST_ARTIFACT_DIR')
+                        if destination:
+                            path = Path(destination)
+                            path.mkdir(parents=True, exist_ok=True)
+                            (path / ('%s-%s-%s.pdf' % (language, scenario, label))).write_bytes(pdf)
