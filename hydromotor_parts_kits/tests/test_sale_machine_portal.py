@@ -49,8 +49,7 @@ class TestSaleMachinePortal(HttpCase):
         self.assertEqual(response.status_code, 200, response.text[:200])
         dom = html.fromstring(response.content)
         header = dom.xpath("//*[contains(@class,'hm-portal-machine-default')]")
-        self.assertEqual(len(header), 1, 'Customer Preview is missing machine header')
-        self.assertIn('HM-PORTAL-001', header[0].text_content())
+        self.assertFalse(header, 'Mixed/cleared Preview must use per-line attribution only')
         rows = dom.xpath("//tr[@name='tr_product']")
         self.assertEqual(len(rows), 3)
         self.assertIn('HM-PORTAL-001', rows[0].text_content())
@@ -59,6 +58,16 @@ class TestSaleMachinePortal(HttpCase):
         self.assertIn('Portal <safe> Model', rows[1].text_content())
         self.assertFalse(dom.xpath('//safe'))
         self.assertNotIn('HM-PRIVATE-DOSSIER-NOTES', response.text)
+
+    def test_uniform_preview_prints_machine_once(self):
+        self.order.order_line.write({'x_hm_parts_machine_id': self.machines[0].id})
+        self.authenticate(self.sales.login, self.sales.login)
+        response = self._page(self.order)
+        self.assertEqual(response.status_code, 200)
+        dom = html.fromstring(response.content)
+        self.assertEqual(len(dom.xpath("//*[contains(@class,'hm-portal-machine-default')]")), 1)
+        self.assertFalse(dom.xpath("//*[contains(@class,'hm-portal-machine-line')]"))
+        self.assertEqual(dom.text_content().count('HM-PORTAL-001'), 1)
 
     def test_internal_preview_renders_mixed_attribution(self):
         self.authenticate(self.sales.login, self.sales.login)
