@@ -7,6 +7,20 @@ from odoo.exceptions import UserError
 
 @tagged('post_install', '-at_install')
 class TestQuickOrder(TransactionCase):
+    def test_purchase_export_supplier_code(self):
+        partner = self.env['res.partner'].create({'name': 'Local vendor'})
+        product = self.env['product.product'].create({'name': 'Local purchase part', 'default_code': 'INTERNAL'})
+        self.env['product.supplierinfo'].create({'partner_id': partner.id, 'product_tmpl_id': product.product_tmpl_id.id, 'product_code': '000VENDOR'})
+        order = self.env['purchase.order'].create({'partner_id': partner.id, 'order_line': [(0, 0, {'product_id': product.id, 'product_qty': 3})]})
+        self.assertTrue(hasattr(order, 'action_hm_quick_order_export'), 'Purchase export missing')
+        action = order.action_hm_quick_order_export()
+        download = self.env['hm.quick.order.download'].browse(action['res_id'])
+        with zipfile.ZipFile(io.BytesIO(base64.b64decode(download.file_data))) as archive:
+            self.assertIn(b'000VENDOR', archive.read('xl/sharedStrings.xml'))
+            self.assertNotIn(b'INTERNAL', archive.read('xl/sharedStrings.xml'))
+        arch = self.env['sale.order'].get_view(view_id=self.env.ref('sale.view_order_form').id)['arch']
+        self.assertIn('Печат на поръчка', arch)
+
     def test_export_preserves_codes(self):
         partner = self.env['res.partner'].create({'name': 'Local export fixture'})
         product = self.env['product.product'].create({'name': 'Local part', 'default_code': '000123-A'})
