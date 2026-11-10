@@ -193,7 +193,7 @@
                                         <td class="text-end"><span t-out="doc.amount_tax" t-options="{'widget':'monetary','display_currency':doc.currency_id}"/></td>
                                     </tr>
                                     <tr class="o_total">
-                                        <td><strong t-out="'ОБЩО' if hm_bg else 'TOTAL'"/></td>
+                                        <td><strong t-out="'Обща сума' if hm_bg else 'TOTAL'"/></td>
                                         <td class="text-end"><strong t-out="doc.amount_total" t-options="{'widget':'monetary','display_currency':doc.currency_id}"/></td>
                                     </tr>
                                 </table>

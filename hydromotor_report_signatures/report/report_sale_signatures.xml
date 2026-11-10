@@ -17,4 +17,14 @@
             <t t-if="False"/>
         </xpath>
     </template>
+    <!-- Change display labels only; keep monetary expressions and tax groups intact. -->
+    <template id="document_tax_totals_bg_labels" inherit_id="account.document_tax_totals_template" priority="999">
+        <xpath expr="//span[@t-out=&quot;subtotal['name']&quot;]" position="attributes">
+            <attribute name="t-out">'Данъчна основа' if (env.context.get('lang') or '').startswith('bg') else subtotal['name']</attribute>
+        </xpath>
+        <xpath expr="//tr[@class='o_total']/td[1]/strong" position="replace">
+            <strong t-if="(env.context.get('lang') or '').startswith('bg')">Обща сума</strong>
+            <strong t-else="">Total</strong>
+        </xpath>
+    </template>
 </odoo>
