@@ -20,6 +20,39 @@ class TestSitePlant(TransactionCase):
         lot = cls.env['stock.lot'].create({'name': 'LOCAL-0001', 'product_id': cls.product.id, 'company_id': cls.env.company.id})
         cls.machine = cls.env['x_hm_machine'].create({'x_name': 'Local machine', 'x_lot_id': lot.id, 'x_partner_id': cls.partner.id, 'x_company_id': cls.env.company.id})
 
+    def test_14_sale_current_assignment(self):
+        order = self.env['sale.order'].create({'partner_id': self.partner.id, 'x_hm_order_machine_id': self.machine.id})
+        line = self.env['sale.order.line'].create({'order_id': order.id, 'product_id': self.product.id})
+        self.assertIn('hm_current_site_id', order._fields)
+        self.assertFalse(order.hm_current_site_id)
+        self.env['hm.machine.assignment'].create({'machine_id': self.machine.id, 'project_id': self.project.id, 'plant_id': self.plant.id})
+        self.assertEqual(order.hm_current_site_id, self.project)
+        self.assertEqual(order.hm_current_plant_id, self.plant)
+        self.assertEqual(line.hm_current_plant_id, self.plant)
+        self.assertFalse(order.hm_target_project_id)
+
+    def test_15_service_current_assignment_fields(self):
+        model = self.env['x_hm_job']
+        self.assertIn('x_hm_current_site_id', model._fields)
+        self.assertIn('x_hm_current_plant_id', model._fields)
+        job = model.create({'x_name': 'Local service assignment', 'x_machine_id': self.machine.id, 'x_partner_id': self.partner.id})
+        self.assertFalse(job.x_hm_current_site_id)
+        self.env['hm.machine.assignment'].create({'machine_id': self.machine.id, 'project_id': self.project.id, 'plant_id': self.plant.id})
+        self.assertEqual(job.x_hm_current_site_id, self.project)
+        self.assertEqual(job.x_hm_current_plant_id, self.plant)
+        arch = etree.fromstring(model.get_view(view_id=self.env.ref('hydromotor_service.job_form').id)['arch'])
+        self.assertTrue(arch.xpath("//field[@name='x_hm_current_plant_id']"))
+
+    def test_16_copy_part_code(self):
+        self.product.default_code = '000123-A'
+        order = self.env['sale.order'].create({'partner_id': self.partner.id})
+        line = self.env['sale.order.line'].create({'order_id': order.id, 'product_id': self.product.id})
+        self.assertIn('hm_part_code', line._fields)
+        self.assertEqual(line.hm_part_code, '000123-A')
+        self.assertTrue(line._fields['hm_part_code'].readonly)
+        arch = etree.fromstring(order.get_view(view_id=self.env.ref('sale.view_order_form').id)['arch'])
+        self.assertTrue(arch.xpath("//field[@name='hm_part_code'][@widget='CopyClipboardChar']"))
+
     def test_05_existing_machine_company_guard_is_preserved(self):
         self.env['hm.machine.assignment'].create({'machine_id': self.machine.id, 'project_id': self.project.id})
         other = self.env['res.company'].create({'name': 'Local company mutation'})

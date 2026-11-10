@@ -7,4 +7,22 @@
     current = record.x_hm_assignment_ids.filtered(lambda a: not a.ended_at)[:1]
     record['x_hm_plant_id'] = current.plant_id.id if current else False</field><field name="depends">x_hm_assignment_ids,x_hm_assignment_ids.ended_at</field></record>
 <record id="field_machine_x_hm_assignment_revision" model="ir.model.fields"><field name="model_id" ref="hydromotor_service.model_machine"/><field name="name">x_hm_assignment_revision</field><field name="ttype">integer</field><field name="field_description">Assignment concurrency revision</field><field name="store" eval="True"/><field name="readonly" eval="True"/><field name="copied" eval="False"/><field name="required" eval="False"/><field name="index" eval="False"/></record>
+<record id="field_job_current_site" model="ir.model.fields">
+  <field name="model_id" ref="hydromotor_service.model_job"/>
+  <field name="name">x_hm_current_site_id</field><field name="ttype">many2one</field>
+  <field name="relation">project.project</field><field name="field_description">Текущ обект на машината</field>
+  <field name="store" eval="False"/><field name="readonly" eval="True"/><field name="copied" eval="False"/>
+  <field name="compute">for record in self:
+    record['x_hm_current_site_id'] = record.x_machine_id.x_hm_site_id.id</field>
+  <field name="depends">x_machine_id,x_machine_id.x_hm_assignment_ids,x_machine_id.x_hm_assignment_ids.ended_at</field>
+</record>
+<record id="field_job_current_plant" model="ir.model.fields">
+  <field name="model_id" ref="hydromotor_service.model_job"/>
+  <field name="name">x_hm_current_plant_id</field><field name="ttype">many2one</field>
+  <field name="relation">hm.concrete.plant</field><field name="field_description">Текущ бетонов възел</field>
+  <field name="store" eval="False"/><field name="readonly" eval="True"/><field name="copied" eval="False"/>
+  <field name="compute">for record in self:
+    record['x_hm_current_plant_id'] = record.x_machine_id.x_hm_plant_id.id</field>
+  <field name="depends">x_machine_id,x_machine_id.x_hm_assignment_ids,x_machine_id.x_hm_assignment_ids.ended_at</field>
+</record>
 </odoo>

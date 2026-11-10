@@ -18,6 +18,9 @@ def validate_target(record):
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
+    hm_current_site_id = fields.Many2one(related='x_hm_order_machine_id.x_hm_site_id', string='Текущ обект на машината', compute_sudo=False)
+    hm_current_plant_id = fields.Many2one(related='x_hm_order_machine_id.x_hm_plant_id', string='Текущ бетонов възел', compute_sudo=False)
+
     hm_target_project_id = fields.Many2one('project.project', string='Planned site / Project', check_company=True, copy=False, ondelete='restrict', index=True,
         help='Commercial destination only. Quotation, sale and delivery do not prove installation.')
     hm_target_plant_id = fields.Many2one('hm.concrete.plant', string='Planned concrete plant', check_company=True, copy=False, ondelete='restrict', index=True)
@@ -58,6 +61,11 @@ class SaleOrder(models.Model):
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
+
+    hm_part_code = fields.Char(related='product_id.default_code', string='Код на частта', compute_sudo=False)
+
+    hm_current_site_id = fields.Many2one(related='x_hm_parts_machine_id.x_hm_site_id', string='Текущ обект на машината', compute_sudo=False)
+    hm_current_plant_id = fields.Many2one(related='x_hm_parts_machine_id.x_hm_plant_id', string='Текущ бетонов възел', compute_sudo=False)
 
     hm_use_order_target = fields.Boolean(string='Use order planned destination', default=True, copy=False)
     hm_target_project_id = fields.Many2one('project.project', string='Planned site / Project', check_company=True, copy=False, ondelete='restrict', index=True)

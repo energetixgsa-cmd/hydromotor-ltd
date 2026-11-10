@@ -1,5 +1,33 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <odoo>
+  <record id="service_current_assignment_form" model="ir.ui.view">
+    <field name="name">x_hm_job.current.assignment</field><field name="model">x_hm_job</field>
+    <field name="inherit_id" ref="hydromotor_service.job_form"/>
+    <field name="arch" type="xml"><xpath expr="//field[@name='x_machine_id']" position="after">
+      <field name="x_hm_current_site_id" readonly="1"/>
+      <field name="x_hm_current_plant_id" readonly="1"/>
+      <div class="text-muted">Текущо местоположение на машината, не историческо местоположение към датата на документа.</div>
+    </xpath></field>
+  </record>
+  <record id="sale_current_assignment_form" model="ir.ui.view">
+    <field name="name">sale.order.current.machine.assignment</field>
+    <field name="model">sale.order</field>
+    <field name="inherit_id" ref="hydromotor_parts_kits.sale_order_customer_machine"/>
+    <field name="arch" type="xml">
+      <xpath expr="//group[@name='partner_details']/field[@name='x_hm_order_machine_id']" position="after">
+        <field name="hm_current_site_id" invisible="not x_hm_order_machine_id"/>
+        <field name="hm_current_plant_id" invisible="not x_hm_order_machine_id"/>
+      </xpath>
+      <xpath expr="//field[@name='order_line']/list/field[@name='x_hm_parts_machine_id']" position="after">
+        <field name="hm_current_site_id" optional="show"/>
+        <field name="hm_current_plant_id" optional="show"/>
+      </xpath>
+      <xpath expr="//field[@name='order_line']/form//field[@name='x_hm_parts_machine_id']" position="after">
+        <field name="hm_current_site_id"/>
+        <field name="hm_current_plant_id"/>
+      </xpath>
+    </field>
+  </record>
   <record id="assignment_list" model="ir.ui.view">
     <field name="name">hm.machine.assignment.list</field><field name="model">hm.machine.assignment</field>
     <field name="arch" type="xml"><list edit="false" delete="false" decoration-muted="ended_at">
@@ -41,13 +69,13 @@
   </record>
   <record id="plant_form" model="ir.ui.view"><field name="name">hm.concrete.plant.form</field><field name="model">hm.concrete.plant</field>
     <field name="arch" type="xml"><form><header><button name="%(assign_machine_action)d" type="action" string="Assign existing machine" context="{'default_project_id': project_id, 'default_plant_id': id, 'default_company_id': company_id}" groups="hydromotor_service.group_service_user"/></header><sheet>
-      <group><field name="name"/><field name="owner_id"/><field name="company_id"/><field name="project_id" domain="[('company_id', '=', company_id)]" context="{'default_company_id': company_id}"/><field name="active"/></group>
+      <group><field name="name"/><field name="owner_id" string="Собственик на възела (клиент)"/><field name="company_id" string="Вътрешна фирма в Odoo"/><field name="project_id" domain="[('company_id', '=', company_id)]" context="{'default_company_id': company_id}"/><field name="active"/></group>
       <div class="alert alert-info" role="status">A concrete plant is an installation grouping existing machines at a site, not an internal machine component.</div>
       <field name="assignment_ids" readonly="True"><list create="false" edit="false" delete="false" decoration-muted="ended_at"><field name="machine_id"/><field name="project_id"/><field name="started_at"/><field name="ended_at"/></list></field>
     </sheet></form></field>
   </record>
   <record id="plant_action" model="ir.actions.act_window"><field name="name">Concrete plants</field><field name="res_model">hm.concrete.plant</field><field name="view_mode">list,form</field></record>
-  <menuitem id="menu_sites_root" name="Sites and Plants" sequence="90" groups="hydromotor_service.group_service_user,sales_team.group_sale_salesman"/>
+  <menuitem id="menu_sites_root" web_icon="hydromotor_site_plant,static/description/icon.png" name="Sites and Plants" sequence="90" groups="hydromotor_service.group_service_user,sales_team.group_sale_salesman"/>
   <menuitem id="menu_plants" name="Concrete plants" parent="menu_sites_root" action="plant_action" sequence="10"/>
   <menuitem id="menu_assignments" name="Actual machine assignments" parent="menu_sites_root" action="assignment_action" sequence="20"/>
 
@@ -73,11 +101,13 @@
         <field name="hm_target_plant_id" domain="[('project_id', '=', hm_target_project_id), ('company_id', '=', company_id)]"/>
       </xpath>
       <xpath expr="//field[@name='order_line']/list/field[@name='product_id']" position="after">
+        <field name="hm_part_code" widget="CopyClipboardChar" readonly="1" optional="show"/>
         <field name="hm_use_order_target" optional="hide"/>
         <field name="hm_target_project_id" optional="show" domain="[('company_id', '=', company_id)]" context="{'default_company_id': company_id}"/>
         <field name="hm_target_plant_id" optional="show" domain="[('project_id', '=', hm_target_project_id), ('company_id', '=', company_id)]"/>
       </xpath>
       <xpath expr="//field[@name='order_line']/form//field[@name='product_id']" position="after">
+        <field name="hm_part_code" widget="CopyClipboardChar" readonly="1"/>
         <field name="hm_use_order_target"/><field name="hm_target_project_id" domain="[('company_id', '=', company_id)]" context="{'default_company_id': company_id}"/>
         <field name="hm_target_plant_id" domain="[('project_id', '=', hm_target_project_id), ('company_id', '=', company_id)]"/>
       </xpath>
