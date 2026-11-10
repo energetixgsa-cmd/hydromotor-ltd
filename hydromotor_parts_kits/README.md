@@ -34,9 +34,8 @@ The action blocks duplicate insertion of the same kit into the same service job 
 на данни.
 
 ### Поставяне в Odoo.sh Development
-1. Разархивирайте пакета. Заменете файловете в съществуващата папка
-   hydromotor_parts_kits на Development клона и направете commit.
-   Не създавайте второ копие на модула и не качвайте само ZIP файла в Git.
+1. Разархивирайте пакета. Заменете файловете в съществуващата папка hydromotor_parts_kits на Development клона и направете commit. Не създавайте второ копие на модула и не качвайте само ZIP файла в Git.
+
 2. Изчакайте успешния build на Odoo.sh и отворете тестовата база на този клон.
 3. В Apps намерете hydromotor_parts_kits. При неуспешна предишна инсталация
    изберете Install. Ако вече е инсталиран, изберете Upgrade.
