@@ -1,1 +1,1 @@
-from . import site_plant, sale
+from . import site_plant, sale, quick_order

@@ -53,6 +53,38 @@ class TestSitePlant(TransactionCase):
         arch = etree.fromstring(order.get_view(view_id=self.env.ref('sale.view_order_form').id)['arch'])
         self.assertTrue(arch.xpath("//field[@name='hm_part_code'][@widget='CopyClipboardChar']"))
 
+    def test_17_report_current_site(self):
+        self.env['hm.machine.assignment'].create({'machine_id': self.machine.id, 'project_id': self.project.id, 'plant_id': self.plant.id})
+        order = self.env['sale.order'].create({'partner_id': self.partner.id})
+        html = self.env['ir.qweb']._render('hydromotor_parts_kits.report_machine_identity', {'doc': order, 'hm_machine': self.machine})
+        text = str(html)
+        import os
+        if os.environ.get('HM_PRINT_EVIDENCE'):
+            from pathlib import Path
+            evidence = Path(os.environ['HM_PRINT_EVIDENCE'])
+            evidence.mkdir(parents=True, exist_ok=True)
+            (evidence / 'machine-location.html').write_text('<html><meta charset="utf-8"/><body>' + text + '</body></html>', encoding='utf-8')
+        self.assertIn(self.project.name, text)
+        self.assertIn(self.plant.name, text)
+
+    def test_18_service_report_site(self):
+        self.env['hm.machine.assignment'].create({'machine_id': self.machine.id, 'project_id': self.project.id, 'plant_id': self.plant.id})
+        job = self.env['x_hm_job'].create({'x_name': 'Local print fixture', 'x_machine_id': self.machine.id, 'x_partner_id': self.partner.id})
+        html, _ = self.env['ir.actions.report']._render_qweb_html('hydromotor_service.report_service_protocol', job.ids)
+        self.assertIn(self.project.name, html.decode())
+        self.assertIn(self.plant.name, html.decode())
+
+    def test_19_invoice_location_template(self):
+        self.env['hm.machine.assignment'].create({'machine_id': self.machine.id, 'project_id': self.project.id, 'plant_id': self.plant.id})
+        order = self.env['sale.order'].create({'partner_id': self.partner.id, 'x_hm_order_machine_id': self.machine.id})
+        sale_line = self.env['sale.order.line'].create({'order_id': order.id, 'product_id': self.product.id})
+        invoice = self.env['account.move'].create({'move_type': 'out_invoice', 'partner_id': self.partner.id, 'invoice_line_ids': [(0, 0, {'product_id': self.product.id, 'quantity': 1, 'price_unit': 10, 'sale_line_ids': [(6, 0, sale_line.ids)]})]})
+        template = self.env.ref('hydromotor_site_plant.invoice_line_location', raise_if_not_found=False)
+        self.assertTrue(template, 'Invoice location template missing')
+        html = self.env['ir.qweb']._render('hydromotor_site_plant.invoice_line_location', {'doc': invoice, 'line': invoice.invoice_line_ids})
+        self.assertIn(self.project.name, str(html))
+        self.assertIn(self.plant.name, str(html))
+
     def test_05_existing_machine_company_guard_is_preserved(self):
         self.env['hm.machine.assignment'].create({'machine_id': self.machine.id, 'project_id': self.project.id})
         other = self.env['res.company'].create({'name': 'Local company mutation'})

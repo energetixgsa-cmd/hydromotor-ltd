@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <template id="report_machine_current_location" inherit_id="hydromotor_parts_kits.report_machine_identity">
+    <xpath expr="//t[@t-if='hm_machine']" position="inside">
+      <div class="hm-current-location small">
+        <strong t-out="'Текущ обект: ' if hm_machine_bg else 'Current site: '"/>
+        <span t-if="hm_machine.x_hm_site_id" t-out="hm_machine.x_hm_site_id.name"/>
+        <span t-else="" t-out="'Няма зачисляване' if hm_machine_bg else 'Unassigned'"/>
+        <t t-if="hm_machine.x_hm_plant_id">
+          <span> | </span><strong t-out="'Текущ бетонов възел: ' if hm_machine_bg else 'Current concrete plant: '"/>
+          <span t-out="hm_machine.x_hm_plant_id.name"/>
+        </t>
+      </div>
+    </xpath>
+  </template>
+  <template id="service_report_location" inherit_id="hydromotor_service.service_protocol">
+    <xpath expr="//span[@t-field='o.x_machine_id.x_serial']/ancestor::tr" position="after">
+      <tr><td><strong>Текущ обект</strong></td><td><span t-if="o.x_machine_id.x_hm_site_id" t-out="o.x_machine_id.x_hm_site_id.name"/><span t-else="">Няма зачисляване</span></td></tr>
+      <tr t-if="o.x_machine_id.x_hm_plant_id"><td><strong>Текущ бетонов възел</strong></td><td><span t-out="o.x_machine_id.x_hm_plant_id.name"/></td></tr>
+    </xpath>
+  </template>
+  <template id="invoice_line_location">
+    <t t-if="doc._name == 'account.move'">
+      <t t-foreach="line.sale_line_ids.mapped('x_hm_parts_machine_id')" t-as="hm_machine">
+        <t t-call="hydromotor_parts_kits.report_machine_identity"/>
+      </t>
+    </t>
+  </template>
+  <template id="invoice_report_location" inherit_id="hydromotor_report_signatures.report_customer_invoice_page">
+    <xpath expr="//table[@name='hm_invoice_line_table']//tr[@t-else='']/td[2]" position="inside">
+      <div t-if="doc._name == 'account.move'" class="small text-muted">
+        <t t-call="hydromotor_site_plant.invoice_line_location"/>
+      </div>
+    </xpath>
+  </template>
+</odoo>
