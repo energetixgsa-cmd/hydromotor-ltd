@@ -196,3 +196,24 @@ class TestSitePlant(TransactionCase):
         self.assertEqual(machine.x_hm_plant_id, plant)
         self.assertEqual(machine.x_partner_id, partner)
         self.assertEqual(machine.x_hm_assignment_ids, assignment)
+
+
+    def test_13_site_entry_form_defaults_and_independent_owner(self):
+        from odoo.tools.safe_eval import safe_eval
+        action = self.env.ref('hydromotor_site_plant.site_action', raise_if_not_found=False)
+        self.assertTrue(action, 'Dedicated site entry action is missing')
+        context = safe_eval(action.context, {'allowed_company_ids': [self.env.company.id], 'uid': self.env.uid})
+        with Form(self.env['project.project'].with_context(**context), view='hydromotor_site_plant.site_form') as form:
+            form.name = 'Local site creation regression'
+        site = form.record
+        self.assertEqual(site.company_id, self.env.company)
+        owner = self.env['res.partner'].create({'name': 'Independent plant owner'})
+        with Form(self.env['hm.concrete.plant'], view='hydromotor_site_plant.plant_form') as form:
+            form.name = 'Local owned plant'
+            form.project_id = site
+            form.owner_id = owner
+        self.assertEqual(form.record.owner_id, owner)
+        self.assertFalse(site.partner_id)
+        shared = self.env['project.project'].create({'name': 'Shared not a site', 'company_id': False})
+        with self.assertRaises(ValidationError), self.cr.savepoint():
+            self.env['hm.concrete.plant'].create({'name': 'Rejected shared site', 'project_id': shared.id})

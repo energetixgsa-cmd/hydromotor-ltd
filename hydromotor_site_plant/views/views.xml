@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <odoo>
   <record id="assignment_list" model="ir.ui.view">
     <field name="name">hm.machine.assignment.list</field><field name="model">hm.machine.assignment</field>
@@ -14,8 +14,8 @@
       <header><button name="action_end" type="object" string="End actual assignment now" invisible="not id or ended_at" groups="hydromotor_service.group_service_user" confirm="End this actual assignment? This does not transfer ownership."/></header>
       <sheet><div class="alert alert-info" role="status">Actual placement only. New entry closes the previous actual assignment. Owner and commercial quotation targets are not changed.</div>
         <group><field name="machine_id" readonly="id" options="{'no_create': True}"/>
-          <field name="company_id" readonly="True" groups="base.group_multi_company"/>
-          <field name="project_id" readonly="id" domain="[('company_id', '=', company_id)]"/>
+          <field name="company_id" readonly="True"/>
+          <field name="project_id" readonly="id" domain="[('company_id', '=', company_id)]" context="{'default_company_id': company_id}"/>
           <field name="plant_id" readonly="id" domain="[('project_id', '=', project_id), ('company_id', '=', company_id)]"/>
           <field name="request_key" invisible="True"/>
           <field name="started_at" readonly="True" invisible="not id"/>
@@ -37,11 +37,11 @@
   <record id="assign_machine_action" model="ir.actions.act_window"><field name="name">Record actual assignment</field><field name="res_model">hm.machine.assignment</field><field name="view_mode">form</field><field name="view_id" ref="assignment_form"/><field name="target">new</field></record>
 
   <record id="plant_list" model="ir.ui.view"><field name="name">hm.concrete.plant.list</field><field name="model">hm.concrete.plant</field>
-    <field name="arch" type="xml"><list><field name="name"/><field name="project_id"/><field name="company_id" groups="base.group_multi_company"/><field name="active" optional="hide"/></list></field>
+    <field name="arch" type="xml"><list><field name="name"/><field name="owner_id"/><field name="project_id"/><field name="company_id" groups="base.group_multi_company"/><field name="active" optional="hide"/></list></field>
   </record>
   <record id="plant_form" model="ir.ui.view"><field name="name">hm.concrete.plant.form</field><field name="model">hm.concrete.plant</field>
     <field name="arch" type="xml"><form><header><button name="%(assign_machine_action)d" type="action" string="Assign existing machine" context="{'default_project_id': project_id, 'default_plant_id': id, 'default_company_id': company_id}" groups="hydromotor_service.group_service_user"/></header><sheet>
-      <group><field name="name"/><field name="company_id" groups="base.group_multi_company"/><field name="project_id" domain="[('company_id', '=', company_id)]"/><field name="active"/></group>
+      <group><field name="name"/><field name="owner_id"/><field name="company_id"/><field name="project_id" domain="[('company_id', '=', company_id)]" context="{'default_company_id': company_id}"/><field name="active"/></group>
       <div class="alert alert-info" role="status">A concrete plant is an installation grouping existing machines at a site, not an internal machine component.</div>
       <field name="assignment_ids" readonly="True"><list create="false" edit="false" delete="false" decoration-muted="ended_at"><field name="machine_id"/><field name="project_id"/><field name="started_at"/><field name="ended_at"/></list></field>
     </sheet></form></field>
@@ -69,18 +69,29 @@
   <record id="sale_target_form" model="ir.ui.view"><field name="name">sale.order.planned.site.form</field><field name="model">sale.order</field><field name="inherit_id" ref="sale.view_order_form"/>
     <field name="arch" type="xml">
       <xpath expr="//field[@name='partner_id']" position="after">
-        <field name="hm_target_project_id" domain="[('company_id', '=', company_id)]"/>
+        <field name="hm_target_project_id" domain="[('company_id', '=', company_id)]" context="{'default_company_id': company_id}"/>
         <field name="hm_target_plant_id" domain="[('project_id', '=', hm_target_project_id), ('company_id', '=', company_id)]"/>
       </xpath>
       <xpath expr="//field[@name='order_line']/list/field[@name='product_id']" position="after">
         <field name="hm_use_order_target" optional="hide"/>
-        <field name="hm_target_project_id" optional="show" domain="[('company_id', '=', company_id)]"/>
+        <field name="hm_target_project_id" optional="show" domain="[('company_id', '=', company_id)]" context="{'default_company_id': company_id}"/>
         <field name="hm_target_plant_id" optional="show" domain="[('project_id', '=', hm_target_project_id), ('company_id', '=', company_id)]"/>
       </xpath>
       <xpath expr="//field[@name='order_line']/form//field[@name='product_id']" position="after">
-        <field name="hm_use_order_target"/><field name="hm_target_project_id" domain="[('company_id', '=', company_id)]"/>
+        <field name="hm_use_order_target"/><field name="hm_target_project_id" domain="[('company_id', '=', company_id)]" context="{'default_company_id': company_id}"/>
         <field name="hm_target_plant_id" domain="[('project_id', '=', hm_target_project_id), ('company_id', '=', company_id)]"/>
       </xpath>
     </field>
   </record>
+<record id="site_form" model="ir.ui.view">
+<field name="name">project.project.hydromotor.site.entry</field><field name="model">project.project</field>
+<field name="arch" type="xml"><form string="Site"><sheet>
+<group><field name="name"/><field name="partner_id"/><field name="company_id" required="1"/></group>
+<notebook><page string="Plants and machines">
+<field name="hm_plant_ids" context="{'default_project_id': id, 'default_company_id': company_id}"><list><field name="name"/><field name="owner_id"/></list></field>
+<field name="hm_assignment_ids" readonly="1"><list create="false" edit="false" delete="false"><field name="machine_id"/><field name="plant_id"/><field name="started_at"/><field name="ended_at"/></list></field>
+</page></notebook></sheet></form></field></record>
+<record id="site_action" model="ir.actions.act_window"><field name="name">Sites</field><field name="res_model">project.project</field><field name="view_mode">list,form</field><field name="context">{'default_company_id': allowed_company_ids[0]}</field></record>
+<record id="site_action_form" model="ir.actions.act_window.view"><field name="sequence">20</field><field name="view_mode">form</field><field name="view_id" ref="site_form"/><field name="act_window_id" ref="site_action"/></record>
+<menuitem id="menu_sites" name="Sites" parent="menu_sites_root" action="site_action" sequence="5"/>
 </odoo>

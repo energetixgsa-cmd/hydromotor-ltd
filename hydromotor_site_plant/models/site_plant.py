@@ -11,6 +11,7 @@ class ConcretePlant(models.Model):
     _check_company_auto = True
 
     name = fields.Char(required=True)
+    owner_id = fields.Many2one('res.partner', string='Plant owner', ondelete='restrict')
     active = fields.Boolean(default=True)
     company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company, ondelete='restrict')
     project_id = fields.Many2one('project.project', string='Site / Project', required=True, check_company=True, ondelete='restrict')

@@ -1,0 +1,106 @@
+msgid ""
+msgstr ""
+"Language: bg\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+#. module: hydromotor_site_plant
+#: model_terms:ir.ui.view,arch_db:hydromotor_site_plant.assignment_form
+msgid "End actual assignment now"
+msgstr "Приключи зачисляването сега"
+
+#. module: hydromotor_site_plant
+#: model_terms:ir.ui.view,arch_db:hydromotor_site_plant.assignment_search
+msgid "Current actual assignments"
+msgstr "Текущи зачислявания"
+
+#. module: hydromotor_site_plant
+#: model_terms:ir.ui.view,arch_db:hydromotor_site_plant.assignment_search
+#: model_terms:ir.ui.view,arch_db:hydromotor_site_plant.site_form
+msgid "Site"
+msgstr "Обект"
+
+#. module: hydromotor_site_plant
+#: model_terms:ir.ui.view,arch_db:hydromotor_site_plant.assignment_search
+msgid "Concrete plant"
+msgstr "Бетонов възел"
+
+#. module: hydromotor_site_plant
+#: model:ir.actions.act_window,name:hydromotor_site_plant.assignment_action
+#: model:ir.ui.menu,name:hydromotor_site_plant.menu_assignments
+msgid "Actual machine assignments"
+msgstr "Зачислявания на машини"
+
+#. module: hydromotor_site_plant
+#: model:ir.actions.act_window,name:hydromotor_site_plant.assign_machine_action
+msgid "Record actual assignment"
+msgstr "Зачисляване на машина"
+
+#. module: hydromotor_site_plant
+#: model_terms:ir.ui.view,arch_db:hydromotor_site_plant.plant_form
+msgid "Assign existing machine"
+msgstr "Зачисли съществуваща машина"
+
+#. module: hydromotor_site_plant
+#: model:ir.actions.act_window,name:hydromotor_site_plant.plant_action
+#: model:ir.ui.menu,name:hydromotor_site_plant.menu_plants
+msgid "Concrete plants"
+msgstr "Бетонови възли"
+
+#. module: hydromotor_site_plant
+#: model_terms:ir.ui.view,arch_db:hydromotor_site_plant.machine_site_form
+msgid "Actual site assignment"
+msgstr "Текущо зачисляване"
+
+#. module: hydromotor_site_plant
+#: model_terms:ir.ui.view,arch_db:hydromotor_site_plant.machine_site_form
+msgid "Assign / move existing machine"
+msgstr "Зачисли / премести машина"
+
+#. module: hydromotor_site_plant
+#: model_terms:ir.ui.view,arch_db:hydromotor_site_plant.project_site_form
+#: model_terms:ir.ui.view,arch_db:hydromotor_site_plant.site_form
+msgid "Plants and machines"
+msgstr "Възли и машини"
+
+#. module: hydromotor_site_plant
+#: model_terms:ir.ui.view,arch_db:hydromotor_site_plant.project_site_form
+msgid "Assign existing machine to site"
+msgstr "Зачисли машина към обекта"
+
+#. module: hydromotor_site_plant
+#: model_terms:ir.ui.view,arch_db:hydromotor_site_plant.project_site_form
+msgid "Actual assignment history"
+msgstr "История на зачисляванията"
+
+#. module: hydromotor_site_plant
+#: model:ir.actions.act_window,name:hydromotor_site_plant.site_action
+#: model:ir.ui.menu,name:hydromotor_site_plant.menu_sites
+msgid "Sites"
+msgstr "Обекти"
+
+#. module: hydromotor_site_plant
+#: model:ir.ui.menu,name:hydromotor_site_plant.menu_sites_root
+msgid "Sites and Plants"
+msgstr "Обекти и възли"
+
+#. module: hydromotor_site_plant
+#: model:ir.model.fields,field_description:hydromotor_site_plant.field_hm_concrete_plant__owner_id
+msgid "Plant owner"
+msgstr "Собственик на възела"
+
+#. module: hydromotor_site_plant
+#: model:ir.model.fields,field_description:hydromotor_site_plant.field_hm_concrete_plant__project_id
+msgid "Site / Project"
+msgstr "Обект / Проект"
+
+#. module: hydromotor_site_plant
+#: model:ir.model.fields,field_description:hydromotor_site_plant.field_sale_order__hm_target_project_id
+#: model:ir.model.fields,field_description:hydromotor_site_plant.field_sale_order_line__hm_target_project_id
+msgid "Planned site / Project"
+msgstr "Планиран обект / Проект"
+
+#. module: hydromotor_site_plant
+#: model:ir.model.fields,field_description:hydromotor_site_plant.field_sale_order__hm_target_plant_id
+#: model:ir.model.fields,field_description:hydromotor_site_plant.field_sale_order_line__hm_target_plant_id
+msgid "Planned concrete plant"
+msgstr "Планиран бетонов възел"
