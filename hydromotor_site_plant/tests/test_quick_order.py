@@ -21,6 +21,18 @@ class TestQuickOrder(TransactionCase):
         arch = self.env['sale.order'].get_view(view_id=self.env.ref('sale.view_order_form').id)['arch']
         self.assertIn('Печат на поръчка', arch)
 
+    def test_bg_total_labels(self):
+        self.env['res.lang']._activate_lang('bg_BG')
+        currency = self.env.company.currency_id
+        totals = {'same_tax_base': True, 'subtotals': [{'name': 'Необложена сума', 'base_amount_currency': 100, 'tax_groups': [{'group_name': 'ДДС 20%', 'display_base_amount_currency': False, 'tax_amount_currency': 20}]}], 'total_amount_currency': 120}
+        html = str(self.env['ir.qweb'].with_context(lang='bg_BG')._render('sale.document_tax_totals', {'tax_totals': totals, 'currency': currency, 'oe_subtotal_footer_separator': ''}))
+        self.assertIn('Данъчна основа', html)
+        self.assertIn('Обща сума по документа', html)
+        self.assertNotIn('Необложена сума', html)
+        english = str(self.env['ir.qweb'].with_context(lang='en_US')._render('sale.document_tax_totals', {'tax_totals': totals, 'currency': currency, 'oe_subtotal_footer_separator': ''}))
+        self.assertIn('Total', english)
+        self.assertNotIn('Обща сума по документа', english)
+
     def test_export_preserves_codes(self):
         partner = self.env['res.partner'].create({'name': 'Local export fixture'})
         product = self.env['product.product'].create({'name': 'Local part', 'default_code': '000123-A'})
