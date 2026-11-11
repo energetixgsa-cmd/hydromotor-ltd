@@ -8,7 +8,7 @@
     </xpath>
   </template>
   <template id="customer_invoice_total_label" inherit_id="hydromotor_report_signatures.report_customer_invoice_page">
-    <xpath expr="//tr[@class='o_total']/td[1]/strong" position="attributes">
+    <xpath expr="//tr[hasclass('o_total')]/td[1]/strong" position="attributes">
       <attribute name="t-out">'Обща сума по документа' if hm_bg else 'TOTAL'</attribute>
     </xpath>
   </template>
