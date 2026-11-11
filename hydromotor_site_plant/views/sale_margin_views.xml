@@ -1,0 +1,29 @@
+<odoo>
+    <record id="sale_margin_internal" model="ir.ui.view">
+        <field name="name">hydromotor.sale.margin.internal</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale_margin.sale_margin_sale_order"/>
+        <field name="priority">1000</field>
+        <field name="arch" type="xml">
+            <xpath expr="//div[label[@for='margin']]" position="replace"/>
+            <xpath expr="//page[@name='other_information']" position="inside">
+                <group name="hm_internal_profitability" string="Вътрешна информация — рентабилност">
+                    <field name="margin" readonly="1"/>
+                    <field name="margin_percent" widget="percentage" readonly="1"/>
+                </group>
+            </xpath>
+            <xpath expr="//field[@name='order_line']//list/field[@name='purchase_price']" position="attributes">
+                <attribute name="column_invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']//list/field[@name='margin']" position="attributes">
+                <attribute name="column_invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']//list/field[@name='margin_percent']" position="attributes">
+                <attribute name="column_invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']//form//field[@name='purchase_price']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

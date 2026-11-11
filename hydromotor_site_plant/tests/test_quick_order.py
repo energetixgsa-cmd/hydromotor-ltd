@@ -7,6 +7,14 @@ from odoo.exceptions import UserError
 
 @tagged('post_install', '-at_install')
 class TestQuickOrder(TransactionCase):
+    def test_margin_is_internal_only(self):
+        arch = etree.fromstring(self.env['sale.order'].get_view(view_id=self.env.ref('sale.view_order_form').id)['arch'])
+        self.assertTrue(arch.xpath("//page[@name='other_information']//group[@name='hm_internal_profitability']/field[@name='margin']"))
+        self.assertFalse(arch.xpath("//group[@name='sale_total']//field[@name='margin']"))
+        for name in ('purchase_price', 'margin', 'margin_percent'):
+            for node in arch.xpath("//field[@name='order_line']//list/field[@name='%s']" % name):
+                self.assertEqual(node.get('column_invisible'), '1')
+
     def test_purchase_export_supplier_code(self):
         partner = self.env['res.partner'].create({'name': 'Local vendor'})
         product = self.env['product.product'].create({'name': 'Local purchase part', 'default_code': 'INTERNAL'})
