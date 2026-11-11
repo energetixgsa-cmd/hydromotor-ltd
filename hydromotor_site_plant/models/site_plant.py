@@ -148,7 +148,14 @@ class MachineAssignment(models.Model):
                 current.flush_recordset(['ended_at'])
             vals['started_at'] = now
             result[index] = super().create([vals]).id
+        self._invalidate_sale_locations()
         return self.browse(result)
+
+    def _invalidate_sale_locations(self):
+        # Nonstored sale computes cannot declare XML-only paths at bootstrap.
+        # Invalidate the environment cache without searching/elevating sale records.
+        for model in ('sale.order', 'sale.order.line'):
+            self.env[model].invalidate_model(['hm_current_site_id', 'hm_current_plant_id'])
 
     def write(self, vals):
         raise ValidationError('Assignment history is immutable. Record a new assignment or end the current one.')
@@ -163,5 +170,6 @@ class MachineAssignment(models.Model):
             record.invalidate_recordset(['ended_at'])
             if not record.ended_at:
                 super(MachineAssignment, record).write({'ended_at': fields.Datetime.now()})
+        self._invalidate_sale_locations()
         return True
 

@@ -18,8 +18,23 @@ def validate_target(record):
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
-    hm_current_site_id = fields.Many2one(related='x_hm_order_machine_id.x_hm_site_id', string='Текущ обект на машината', compute_sudo=False)
-    hm_current_plant_id = fields.Many2one(related='x_hm_order_machine_id.x_hm_plant_id', string='Текущ бетонов възел', compute_sudo=False)
+    hm_current_site_id = fields.Many2one('project.project', string='Текущ обект на машината', compute='_compute_hm_current_site_and_plant', store=False, compute_sudo=False)
+    hm_current_plant_id = fields.Many2one('hm.concrete.plant', string='Текущ бетонов възел', compute='_compute_hm_current_site_and_plant', store=False, compute_sudo=False)
+
+    @api.depends('x_hm_order_machine_id')
+    def _compute_hm_current_site_and_plant(self):
+        """Compute both site and plant in ONE pass to avoid circular deps."""
+        for record in self:
+            machine = record.x_hm_order_machine_id
+            current_site = False
+            current_plant = False
+            if machine:
+                assignments = machine.x_hm_assignment_ids
+                current = assignments.filtered(lambda a: not a.ended_at)[:1]
+                current_site = current.project_id if current else False
+                current_plant = current.plant_id if current else False
+            record.hm_current_site_id = current_site
+            record.hm_current_plant_id = current_plant
 
     hm_target_project_id = fields.Many2one('project.project', string='Planned site / Project', check_company=True, copy=False, ondelete='restrict', index=True,
         help='Commercial destination only. Quotation, sale and delivery do not prove installation.')
@@ -64,8 +79,23 @@ class SaleOrderLine(models.Model):
 
     hm_part_code = fields.Char(related='product_id.default_code', string='Код на частта', compute_sudo=False)
 
-    hm_current_site_id = fields.Many2one(related='x_hm_parts_machine_id.x_hm_site_id', string='Текущ обект на машината', compute_sudo=False)
-    hm_current_plant_id = fields.Many2one(related='x_hm_parts_machine_id.x_hm_plant_id', string='Текущ бетонов възел', compute_sudo=False)
+    hm_current_site_id = fields.Many2one('project.project', string='Текущ обект на машината', compute='_compute_hm_current_site_and_plant', store=False, compute_sudo=False)
+    hm_current_plant_id = fields.Many2one('hm.concrete.plant', string='Текущ бетонов възел', compute='_compute_hm_current_site_and_plant', store=False, compute_sudo=False)
+
+    @api.depends('x_hm_parts_machine_id')
+    def _compute_hm_current_site_and_plant(self):
+        """Compute both site and plant in ONE pass to avoid circular deps."""
+        for record in self:
+            machine = record.x_hm_parts_machine_id
+            current_site = False
+            current_plant = False
+            if machine:
+                assignments = machine.x_hm_assignment_ids
+                current = assignments.filtered(lambda a: not a.ended_at)[:1]
+                current_site = current.project_id if current else False
+                current_plant = current.plant_id if current else False
+            record.hm_current_site_id = current_site
+            record.hm_current_plant_id = current_plant
 
     hm_use_order_target = fields.Boolean(string='Use order planned destination', default=True, copy=False)
     hm_target_project_id = fields.Many2one('project.project', string='Planned site / Project', check_company=True, copy=False, ondelete='restrict', index=True)
