@@ -1,5 +1,5 @@
 <odoo>
-  <template id="bg_amount_labels" inherit_id="account.document_tax_totals_template">
+  <template id="bg_amount_labels" inherit_id="account.document_tax_totals_template" priority="1000">
     <xpath expr="//span[@t-out=&quot;subtotal['name']&quot;]" position="attributes">
       <attribute name="t-out">'Данъчна основа' if (env.context.get('lang') or '').startswith('bg') else subtotal['name']</attribute>
     </xpath>
@@ -8,7 +8,7 @@
     </xpath>
   </template>
   <template id="customer_invoice_total_label" inherit_id="hydromotor_report_signatures.report_customer_invoice_page">
-    <xpath expr="//strong[contains(@t-out, &quot;'ОБЩО'&quot;)]" position="attributes">
+    <xpath expr="//tr[@class='o_total']/td[1]/strong" position="attributes">
       <attribute name="t-out">'Обща сума по документа' if hm_bg else 'TOTAL'</attribute>
     </xpath>
   </template>
