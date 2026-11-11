@@ -1,10 +1,10 @@
 <odoo>
   <template id="bg_amount_labels" inherit_id="account.document_tax_totals_template" priority="1000">
     <xpath expr="//tr[hasclass('o_subtotal')]/td[1]/span" position="attributes">
-      <attribute name="t-out">'Данъчна основа' if (env.context.get('lang') or '').startswith('bg') else subtotal['name']</attribute>
+      <attribute name="t-out">'Данъчна основа' if ((doc.env.context.get('lang') if doc else (o.env.context.get('lang') if o else env.context.get('lang'))) or '').startswith('bg') else subtotal['name']</attribute>
     </xpath>
     <xpath expr="//tr[hasclass('o_total')]/td[1]/strong" position="replace">
-      <strong t-if="(env.context.get('lang') or '').startswith('bg')">Обща сума по документа</strong>
+      <strong t-if="((doc.env.context.get('lang') if doc else (o.env.context.get('lang') if o else env.context.get('lang'))) or '').startswith('bg')">Обща сума по документа</strong>
     </xpath>
   </template>
   <template id="customer_invoice_total_label" inherit_id="hydromotor_report_signatures.report_customer_invoice_page">

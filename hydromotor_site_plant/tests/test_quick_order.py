@@ -33,6 +33,20 @@ class TestQuickOrder(TransactionCase):
         self.assertIn('Total', english)
         self.assertNotIn('Обща сума по документа', english)
 
+    def test_document_language_overrides_session(self):
+        self.env['res.lang']._activate_lang('bg_BG')
+        partner = self.env['res.partner'].create({'name': 'Language regression', 'lang': 'en_US'})
+        order = self.env['sale.order'].create({'partner_id': partner.id})
+        for session_lang, document_lang, expected, forbidden in [
+            ('bg_BG', 'en_US', 'Total', 'Данъчна основа'),
+            ('en_US', 'bg_BG', 'Данъчна основа', 'Untaxed Amount'),
+        ]:
+            totals = {'same_tax_base': True, 'subtotals': [{'name': 'Untaxed Amount', 'base_amount_currency': 100, 'tax_groups': [{'group_name': 'VAT', 'display_base_amount_currency': False, 'tax_amount_currency': 0}]}], 'total_amount_currency': 100}
+            html = str(self.env['ir.qweb'].with_context(lang=session_lang)._render('sale.document_tax_totals', {'doc': order.with_context(lang=document_lang), 'tax_totals': totals, 'currency': self.env.company.currency_id, 'oe_subtotal_footer_separator': ''}))
+            self.assertIn(expected, html)
+            self.assertNotIn(forbidden, html)
+            self.assertIn('100', html)
+
     def test_export_preserves_codes(self):
         partner = self.env['res.partner'].create({'name': 'Local export fixture'})
         product = self.env['product.product'].create({'name': 'Local part', 'default_code': '000123-A'})
