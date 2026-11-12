@@ -1,6 +1,6 @@
 {
     'name': 'Hydromotor Sites and Concrete Plants',
-    'version': '19.0.1.0.10',
+    'version': '19.0.1.0.11',
     'license': 'LGPL-3',
     'author': 'Hydromotor',
     'depends': ['sale_margin', 'purchase', 'project', 'hydromotor_machine_sales', 'hydromotor_parts_kits'],

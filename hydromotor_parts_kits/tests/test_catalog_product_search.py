@@ -65,8 +65,15 @@ class TestCatalogProductSearch(TransactionCase):
             product = service._assembly_product(kit)
             kit.invalidate_recordset(['x_catalog_product_id'])
             self.assertEqual(kit.x_catalog_product_id, product)
-            probe = kits.new({'x_assembly_product_id': product.id})
-            if probe.filtered_domain([('x_assembly_product_id', operator, value)]):
+            # Native SQL relational semantics include product display-name search;
+            # filtered_domain on a virtual record compares its display string instead.
+            probe = kits.create({'x_name': 'Native search oracle', 'x_active': True,
+                                 'x_company_id': kits.env.company.id,
+                                 'x_assembly_product_id': product.id or False})
+            matched = kits.search_count([('id', '=', probe.id),
+                                         ('x_assembly_product_id', operator, value)])
+            probe.unlink()
+            if matched:
                 expected.add(kit.id)
         actual = kits.search([
             ('id', 'in', kits.ids), ('x_catalog_product_id', operator, value),
@@ -110,7 +117,9 @@ class TestCatalogProductSearch(TransactionCase):
 
     def test_product_edits_and_ambiguity_are_dynamic(self):
         self.assertIn(self.implicit, self._assert_computed_search('=', self.product.id))
-        duplicate = self.product.copy({'default_code': self.code})
+        duplicate = self.Product.create({'name': 'Duplicate catalog fixture',
+                                         'default_code': self.code, 'sale_ok': True,
+                                         'company_id': False})
         self.assertIn(self.implicit, self._assert_computed_search('=', False))
         duplicate.write({'sale_ok': False})
         self.assertIn(self.implicit, self._assert_computed_search('=', self.product.id))
@@ -149,7 +158,9 @@ class TestCatalogProductSearch(TransactionCase):
         self.assertIn(self.implicit, self._assert_computed_search('=', self.product.id))
 
     def test_product_and_kit_record_rules_are_not_bypassed(self):
-        duplicate = self.product.copy({'default_code': self.code})
+        duplicate = self.Product.create({'name': 'Duplicate catalog fixture',
+                                         'default_code': self.code, 'sale_ok': True,
+                                         'company_id': False})
         self.env['ir.rule'].create({
             'name': 'Catalog hide duplicate',
             'model_id': self.env['ir.model']._get_id('product.product'),
