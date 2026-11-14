@@ -1,0 +1,33 @@
+/* Local full-glyph static TTF fonts, licensed under SIL OFL 1.1. */
+@font-face {
+    font-family: 'Hydromotor Noto Sans Condensed';
+    src: url('/hydromotor_report_signatures/static/src/fonts/NotoSans-Condensed.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Hydromotor Noto Sans Condensed';
+    src: url('/hydromotor_report_signatures/static/src/fonts/NotoSans-CondensedBold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Hydromotor Noto Sans Condensed';
+    src: url('/hydromotor_report_signatures/static/src/fonts/NotoSans-CondensedItalic.ttf') format('truetype');
+    font-weight: 400;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'Hydromotor Noto Sans Condensed';
+    src: url('/hydromotor_report_signatures/static/src/fonts/NotoSans-CondensedBoldItalic.ttf') format('truetype');
+    font-weight: 700;
+    font-style: italic;
+}
+/* Report assets only; preserve icon fonts and all existing sizes/weights. */
+body, .page, .article, .header, .footer,
+.page *:not(.fa):not(.oi):not(.o_icon),
+.article *:not(.fa):not(.oi):not(.o_icon),
+.header *:not(.fa):not(.oi):not(.o_icon),
+.footer *:not(.fa):not(.oi):not(.o_icon) {
+    font-family: 'Hydromotor Noto Sans Condensed', sans-serif !important;
+}

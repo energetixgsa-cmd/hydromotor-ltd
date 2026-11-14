@@ -1,6 +1,11 @@
 {
     "name": "Hydromotor Report Signatures",
-    "version": "19.0.1.2.11",
+    "version": "19.0.1.2.12",
+    "assets": {
+        "web.report_assets_common": [
+            "hydromotor_report_signatures/static/src/css/report_fonts.css",
+        ],
+    },
     "summary": "Bulgarian-compliant customer invoices, client-language documents and invoice-style pro-formas",
     "category": "Accounting/Accounting",
     "author": "Hydromotor",
