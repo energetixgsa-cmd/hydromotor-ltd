@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="access_service_signing" model="ir.model.access">
+    <field name="name">Service signing users</field>
+    <field name="model_id" ref="model_hm_service_signing"/>
+    <field name="group_id" ref="hydromotor_service.group_service_user"/>
+    <field name="perm_read" eval="True"/><field name="perm_write" eval="True"/>
+    <field name="perm_create" eval="True"/><field name="perm_unlink" eval="False"/>
+  </record>
+  <record id="rule_service_signing_company" model="ir.rule">
+    <field name="name">Service signing company isolation</field>
+    <field name="model_id" ref="model_hm_service_signing"/>
+    <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+  </record>
+</odoo>

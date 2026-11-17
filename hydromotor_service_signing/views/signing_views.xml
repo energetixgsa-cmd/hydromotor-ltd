@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+ <record id="signing_list" model="ir.ui.view">
+  <field name="name">hm.service.signing.list</field><field name="model">hm.service.signing</field>
+  <field name="arch" type="xml"><list><field name="job_id"/><field name="technician_name"/><field name="technician_signed_at"/><field name="customer_name"/><field name="customer_signed_at"/></list></field>
+ </record>
+ <record id="signing_form" model="ir.ui.view">
+  <field name="name">hm.service.signing.form</field><field name="model">hm.service.signing</field>
+  <field name="arch" type="xml">
+   <form string="Service signatures"><header>
+    <button name="action_seal_technician" type="object" string="Seal technician signature" class="oe_highlight" invisible="technician_signed_at"/>
+    <button name="action_seal_customer" type="object" string="Seal customer signature" invisible="customer_signed_at"/>
+   </header><sheet>
+    <group><field name="job_id" readonly="id"/><field name="company_id" groups="base.group_multi_company"/><field name="snapshot_hash" readonly="1"/></group>
+    <div class="alert alert-info">Signatures apply to the captured document below, not to subsequent changes of the service job.</div>
+    <group><group string="Performed by — technician">
+     <field name="technician_name" readonly="technician_signed_at"/>
+     <field name="technician_signature" widget="signature" readonly="technician_signed_at"/>
+     <field name="technician_signed_at" readonly="1"/><field name="technician_user_id" readonly="1"/>
+    </group><group string="Accepted by — customer">
+     <field name="customer_name" readonly="customer_signed_at"/><field name="customer_title" readonly="customer_signed_at"/>
+     <field name="customer_signature" widget="signature" readonly="customer_signed_at"/>
+     <field name="customer_signed_at" readonly="1"/>
+    </group></group>
+    <group string="Captured document"><field name="snapshot_json" readonly="1" nolabel="1"/></group>
+   </sheet></form>
+  </field>
+ </record>
+ <record id="action_signing" model="ir.actions.act_window">
+  <field name="name">Service signatures</field><field name="res_model">hm.service.signing</field><field name="view_mode">list,form</field>
+ </record>
+ <record id="action_job_signing" model="ir.actions.server">
+  <field name="name">Service signatures</field><field name="model_id" ref="hydromotor_service.model_job"/>
+  <field name="binding_model_id" ref="hydromotor_service.model_job"/><field name="binding_view_types">form</field><field name="state">code</field>
+  <field name="code">record.ensure_one()
+action = env.ref('hydromotor_service_signing.action_signing').read()[0]
+action['domain'] = [('job_id', '=', record.id)]
+action['context'] = {'default_job_id': record.id}</field>
+ </record>
+ <record id="job_signing_button" model="ir.ui.view">
+  <field name="name">hm.job.signing.button</field><field name="model">x_hm_job</field><field name="inherit_id" ref="hydromotor_service.job_form"/>
+  <field name="arch" type="xml"><xpath expr="//form/header" position="inside"><button name="%(action_job_signing)d" type="action" string="Service signatures" groups="hydromotor_service.group_service_user"/></xpath></field>
+ </record>
+</odoo>

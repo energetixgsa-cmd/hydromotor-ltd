@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+ <record id="report_signing" model="ir.actions.report">
+  <field name="name">Signed service protocol</field><field name="model">hm.service.signing</field><field name="report_type">qweb-pdf</field>
+  <field name="report_name">hydromotor_service_signing.protocol</field><field name="binding_model_id" ref="model_hm_service_signing"/><field name="binding_type">report</field>
+ </record>
+ <template id="protocol"><t t-call="web.html_container"><t t-foreach="docs" t-as="o"><t t-call="web.external_layout">
+  <div class="page"><h2>Signed service protocol</h2>
+   <p>Document fingerprint: <span t-field="o.snapshot_hash"/></p>
+   <pre style="white-space:pre-wrap" t-field="o.snapshot_json"/>
+   <table class="table table-borderless" style="page-break-inside:avoid"><tr>
+    <td style="width:50%"><h4>Performed by — technician</h4><p t-field="o.technician_name"/><img t-if="o.technician_signature and o.technician_signed_at" t-att-src="image_data_uri(o.technician_signature)" style="max-width:230px;max-height:90px"/><p t-field="o.technician_signed_at"/></td>
+    <td><h4>Accepted by — customer</h4><p t-field="o.customer_name"/><p t-field="o.customer_title"/><img t-if="o.customer_signature and o.customer_signed_at" t-att-src="image_data_uri(o.customer_signature)" style="max-width:230px;max-height:90px"/><p t-field="o.customer_signed_at"/></td>
+   </tr></table>
+  </div>
+ </t></t></t></template>
+</odoo>
