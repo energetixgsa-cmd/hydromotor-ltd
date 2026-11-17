@@ -463,7 +463,7 @@ action = {'type': 'ir.actions.act_window', 'res_model': 'sale.order', 'view_mode
 <table class="table table-sm"><tbody><tr><td><strong>Отработени часове</strong></td><td><span t-field="o.x_labor_hours"/></td><td><strong>Пробег (км)</strong></td><td><span t-field="o.x_travel_km"/></td></tr><tr t-if="o.x_has_meter"><td><strong>Отчетени моточасове</strong></td><td colspan="3"><span t-field="o.x_meter_hours"/></td></tr><tr><td><strong>Заплащане / покритие</strong></td><td colspan="3"><span t-field="o.x_coverage"/></td></tr></tbody></table>
 <p style="white-space: pre-wrap;" t-field="o.x_coverage_note"/>
 <h4>Приемане от клиента</h4><p style="white-space: pre-wrap;" t-field="o.x_acceptance_note"/>
-<div style="page-break-inside: avoid; margin-top: 18px;"><p>Представител на клиента: <span t-field="o.x_signer_name"/></p><img t-if="o.x_customer_signature" t-att-src="image_data_uri(o.x_customer_signature)" style="max-height: 80px; max-width: 250px;"/><p t-if="not o.x_customer_signature">Подпис на клиента: __________________________</p><p style="margin-top: 28px;">Подпис на техника: __________________________</p></div>
+<div style="page-break-inside: avoid; margin-top: 18px;"><p>Представител на клиента: <span t-field="o.x_signer_name"/></p><img t-if="o.x_customer_signature" t-att-src="image_data_uri(o.x_customer_signature)" style="max-height: 80px; max-width: 250px;"/><p t-if="not o.x_customer_signature">Подпис на клиента: __________________________</p><p style="margin-top: 28px;">Извършил — техник: <span t-field="o.x_technician_id"/></p><img t-if="o.x_technician_signature" t-att-src="image_data_uri(o.x_technician_signature)" style="max-height: 80px; max-width: 250px;"/><p t-if="not o.x_technician_signature">Подпис на техника: __________________________</p></div>
 </div>
         </t>
       </t>
@@ -933,7 +933,7 @@ action = {'type': 'ir.actions.act_window', 'res_model': 'sale.order', 'view_mode
 <notebook><page string="Задача и изпълнение"><group><field name="x_problem"/><field name="x_diagnosis"/><field name="x_work_done" readonly="x_state == 'done'"/></group></page>
 <page string="Отчет на посещението"><group><group><field name="x_labor_hours" readonly="x_state == 'done'"/><field name="x_travel_km" readonly="x_state == 'done'"/></group><group><field name="x_has_meter" readonly="x_state == 'done'"/><field name="x_meter_hours" invisible="not x_has_meter" readonly="x_state == 'done'"/></group></group></page>
 <page string="Гаранция и продажби"><group><group><field name="x_coverage"/><field name="x_coverage_note"/></group><group><field name="x_repair_id" domain="[('company_id', '=', x_company_id)]" options="{'no_create': True}" groups="stock.group_stock_user"/><field name="x_sale_order_id" domain="[('company_id', '=', x_company_id)]" options="{'no_create': True}" groups="sales_team.group_sale_salesman"/></group></group></page>
-<page string="Приемане от клиента"><group><field name="x_signer_name"/><field name="x_acceptance_note"/><field name="x_customer_signature" widget="signature"/></group></page></notebook>
+<page string="Подписи — Извършил и Приел"><group><group string="Извършил — техник"><field name="x_technician_id" readonly="1"/><field name="x_technician_signature" widget="signature"/></group><group string="Приел — клиент"><field name="x_signer_name"/><field name="x_acceptance_note"/><field name="x_customer_signature" widget="signature"/></group></group></page></notebook>
 </sheet><chatter/></form>
     </field>
   </record>
