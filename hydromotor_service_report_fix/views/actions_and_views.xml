@@ -36,7 +36,7 @@
                     break-after: avoid;
                     margin: 0 0 14px;
                     padding: 0 0 10px;
-                    border-bottom: 1px solid #66717c;
+
                 }
                 .hm_service_protocol .hm_company_table {
                     width: 100%;
@@ -96,7 +96,7 @@
             <t t-out="0"/>
         </div>
         <div class="footer hm_service_protocol_footer" style="font-family: DejaVu Sans, sans-serif; font-size: 10px; line-height: 1.3;">
-            <div style="border-top: 1px solid #66717c; padding-top: 5px;">
+            <div style="padding-top: 5px;">
                 <div t-field="company.report_footer"/>
                 <div t-if="report_type == 'pdf'" style="text-align: right;">
                     Страница <span class="page"/> / <span class="topage"/>

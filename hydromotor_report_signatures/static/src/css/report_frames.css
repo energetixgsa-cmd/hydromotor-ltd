@@ -1,0 +1,18 @@
+/* Report-only: remove layout boxes and side dividers, not signature rules
+   or the horizontal rules of line-item and totals tables. */
+.footer .o_footer_content.border-top {
+    border-top: 0 !important;
+}
+.article table, .article table > thead, .article table > tbody,
+.article table > tfoot, .article table tr,
+.article table th, .article table td {
+    border-left: 0 !important;
+    border-right: 0 !important;
+    box-shadow: none !important;
+}
+.article table:not(.o_main_table):not(.o_total_table):not(.o_has_total_table):not(.table),
+.article table:not(.o_main_table):not(.o_total_table):not(.o_has_total_table):not(.table) > tbody,
+.article table:not(.o_main_table):not(.o_total_table):not(.o_has_total_table):not(.table) > tbody > tr,
+.article table:not(.o_main_table):not(.o_total_table):not(.o_has_total_table):not(.table) > tbody > tr > td {
+    border: 0 !important;
+}

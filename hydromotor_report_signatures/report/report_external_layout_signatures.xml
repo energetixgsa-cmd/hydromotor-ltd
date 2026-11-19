@@ -99,15 +99,18 @@
         <!-- Keep the original company contents and VAT logic. Render the pair
              in the body so long addresses flow normally and do not repeat as
              part of the PDF page header. -->
+        <xpath expr="//img[@alt='Logo' and contains(@class, 'o_company_logo_small')]" position="attributes">
+            <attribute name="t-att-style">'height: 14mm; width: auto; max-width: 70mm; max-height: 14mm; object-fit: contain;' if hm_align_sale_addresses and address else None</attribute>
+        </xpath>
         <xpath expr="//div[@name='company_address']" position="replace">
             <t t-set="hm_company_address_content">$0</t>
             <t t-if="not (hm_align_sale_addresses and address)" t-out="hm_company_address_content"/>
         </xpath>
         <xpath expr="//t[@t-call='web.address_layout']" position="replace">
             <table t-if="hm_align_sale_addresses and address" name="hm_sale_address_pair"
-                   style="width: 100%; table-layout: fixed; border-collapse: collapse; margin: 0 0 2mm; font-size: 1.1em; page-break-inside: avoid;">
+                   style="width: 86%; table-layout: fixed; border-collapse: collapse; margin: 0 auto 2mm; page-break-inside: avoid;">
                 <tr>
-                    <td style="width: 50%; vertical-align: top; padding: 0 1rem 0 0; overflow-wrap: break-word;">
+                    <td style="width: 44%; vertical-align: top; padding: 0 1rem 0 0; overflow-wrap: break-word;">
                         <style type="text/css">
                             .article table[name="hm_sale_address_pair"],
                             .article table[name="hm_sale_address_pair"] tbody,
@@ -129,7 +132,7 @@
                         </style>
                         <t t-out="hm_company_address_content"/>
                     </td>
-                    <td style="width: 50%; vertical-align: top; padding: 0 0 0 1rem; overflow-wrap: break-word;">
+                    <td style="width: 56%; vertical-align: top; padding: 0 0 0 1rem; overflow-wrap: break-word;">
                         <t t-out="address"/>
                     </td>
                 </tr>
