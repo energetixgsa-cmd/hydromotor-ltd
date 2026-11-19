@@ -99,7 +99,7 @@
         <!-- Keep the original company contents and VAT logic. Render the pair
              in the body so long addresses flow normally and do not repeat as
              part of the PDF page header. -->
-        <xpath expr="//img[@alt='Logo' and contains(@class, 'o_company_logo_small')]" position="attributes">
+        <xpath expr="//img[@t-att-src='image_data_uri(company.logo)']" position="attributes">
             <attribute name="t-att-style">'height: 14mm; width: auto; max-width: 70mm; max-height: 14mm; object-fit: contain;' if hm_align_sale_addresses and address else None</attribute>
         </xpath>
         <xpath expr="//div[@name='company_address']" position="replace">
