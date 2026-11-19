@@ -1,6 +1,6 @@
 {
     "name": "Hydromotor Report Signatures",
-    "version": "19.0.1.2.12",
+    "version": "19.0.1.2.13",
     "assets": {
         "web.report_assets_common": [
             "hydromotor_report_signatures/static/src/css/report_fonts.css",
