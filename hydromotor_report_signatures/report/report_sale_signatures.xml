@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>    
-<!--
+<odoo>
+    <template id="report_saleorder_compact_pdf" inherit_id="sale.report_saleorder_raw">
+        <xpath expr="//t[@t-call='web.html_container']" position="inside">
+            <!-- Reduce the PDF body inset without shifting the logo header.
+                 Sale pro formas have a separate report entry point. -->
+            <t t-if="report_type == 'pdf'">
+                <t t-set="data_report_margin_top" t-value="25"/>
+                <t t-set="data_report_header_spacing" t-value="25"/>
+            </t>
+        </xpath>
+    </template>
+ <!--
         Quotations and sales orders use Bulgarian for Bulgarian customers and
         English for all foreign customers, independent of an accidentally
         mismatched partner language setting. Signature rendering is handled
